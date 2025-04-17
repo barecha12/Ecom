@@ -1,14 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import { useNavigate } from "react-router-dom";
-import 'react-toastify/dist/ReactToastify.css';
-//import './styles/notification.css'; // Import custom CSS file
+import React, { useState } from 'react';
+import "./styles/notification.css"; // Your custom CSS
 
+const Notification = () => {
+    const [notifications, setNotifications] = useState([
+        { message: "You have a new message!", time: "10:30 AM" },
+        { message: "Your order has been shipped!", time: "11:00 AM" },
+        { message: "Don't forget to check our latest updates!", time: "11:15 AM" }
+    ]);
 
-function Notification() {
-  return (
-    <h1>Notification</h1>
-  );
-}
+    const handleDelete = (index) => {
+        setNotifications(prev => {
+            const newNotifications = [...prev];
+            newNotifications.splice(index, 1);
+            return newNotifications;
+        });
+        alert("This is message deleted");
+    };
+
+    return (
+        <div className="notification-container">
+            <h1 className="notification-title">Notifications</h1>
+            {notifications.map((notif, index) => (
+                <div className="notification-item" key={index}>
+                    <button 
+                        className="delete-button" 
+                        onClick={() => handleDelete(index)}
+                    >
+                        X
+                    </button>
+                    <p className="notification-message">{notif.message}</p>
+                    <span className="notification-time">{notif.time}</span>
+                </div>
+            ))}
+        </div>
+    );
+};
 
 export default Notification;

@@ -1,157 +1,75 @@
-import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../App.css'; // Ensure this file contains responsive styles
-import { Link, useNavigate } from "react-router-dom"
-function LoginVendro() {
+import React, { useState } from "react";
+import { FaUser, FaLock } from "react-icons/fa";
+import "./style/login.css";  // You may rename the CSS file accordingly
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [alert, setAlert] = useState(null);  // State for alert visibility
-    const navigate = useNavigate();
-    async function login(e) {
-        e.preventDefault(); // Prevent form submission from refreshing the page
+const LoginVendro= () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-        let items = { email, password, };
-        console.warn("API One:", email,password);
-        try {
-            let response = await fetch("http://localhost:8000/api/vendor/login", {
-                method: 'POST',
-                body: JSON.stringify(items),
-                headers: {
-                    "Content-Type": 'application/json',
-                    "Accept": 'application/json'
-                }
-            });
-
-            let result = await response.json(); // Log the API response to see the structure
-
-            // If success is true, show success alert
-            if (result.success) {
-                setAlert({ type: 'success', message: result.message });
-
-                console.warn("API Response:", result.storeData);
-                localStorage.setItem("user-info", JSON.stringify(result.storeData))
-
-                navigate("/vendor/personalinfo"); // Redirects to /abc
-
-            } else {
-                setAlert({ type: 'danger', message: result.message || 'Failed to create account. Please try again.' });
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            setAlert({ type: 'danger', message: 'An error occurred. Please try again later.' });
-        }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      setError("Please enter both email and password.");
+    } else {
+      setError("");
+      // Add authentication logic here (e.g., call API)
+      console.log("Logging in with", { email, password });
     }
+  };
 
+  return (
+    <div className="vendor-login-wrapper">
+      <div className="vendor-login-container">
+        <h2 className="text-center mb-4 vendor-login-header">Vendor Login</h2>
 
+        {error && <div className="alert alert-danger vendor-error-message">{error}</div>}
 
+        <form onSubmit={handleSubmit} className="vendor-login-form">
+          <div className="form-group mb-3 vendor-form-group">
+            <label htmlFor="email" className="form-label vendor-form-label">
+              <FaUser className="me-2" /> Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              className="form-control vendor-form-control"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+            />
+          </div>
 
+          <div className="form-group mb-3 vendor-form-group">
+            <label htmlFor="password" className="form-label vendor-form-label">
+              <FaLock className="me-2" /> Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              className="form-control vendor-form-control"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+            />
+          </div>
 
+          <button type="submit" className="btn btn-success vendor-btn-submit w-100">
+            Login
+          </button>
+        </form>
 
-
-
-
-
-    return (
-        <div
-            style={{
-                background: 'linear-gradient(to right, #6912cc, #2772fb)',
-                minHeight: '100vh',
-                padding: '20px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}
-        >
-            <div className="card" style={{
-                backgroundColor: '#332d2d',
-                border: 'none',
-                width: '100%', // Full width on small screens
-                maxWidth: '400px', // Fixed maximum width for larger screens
-                padding: '20px'
-            }}>
-                <div className="card-body">
-                    <h2 className="card-title text-center" style={{ color: 'white', fontWeight: 'bold' }}>LOGIN VENDOR</h2>
-                    <p className="text-center" style={{ color: 'white' }}>Please enter your login and password!</p>
-                    {/* Show the alert if available */}
-                    {alert && (
-                        <div className={`alert alert-${alert.type}`} role="alert">
-                            {alert.message}
-                        </div>
-                    )}
-
-                    <form>
-                        <div className="mb-3 text-center">
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="form-control"
-                                id="email"
-                                placeholder="Enter your email"
-                                style={{
-                                    width: '80%', // Full width within the card
-                                    margin: '0 auto',
-                                    backgroundColor: '#444',
-                                    color: 'white',
-                                    border: '1px solid white',
-                                    borderRadius: '5px',
-                                    padding: '10px'
-                                }}
-                            />
-                        </div>
-                        <div className="mb-3 text-center">
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="form-control"
-                                id="password"
-                                placeholder="Enter your password"
-                                style={{
-                                    width: '80%', // Full width within the card
-                                    margin: '0 auto',
-                                    backgroundColor: '#444',
-                                    color: 'white',
-                                    border: '1px solid white',
-                                    borderRadius: '5px',
-                                    padding: '10px'
-                                }}
-                            />
-                        </div>
-                        <div className="d-grid text-center">
-                            <button
-                                type="submit"
-                                onClick={login}
-                                className="btn"
-                                style={{
-                                    width: '50%', // Full width within the card
-                                    margin: '0 auto',
-                                    backgroundColor: '#332d2d',
-                                    color: 'white',
-                                    border: '1px solid white',
-                                    borderRadius: '5px',
-                                    padding: '10px'
-                                }}
-                            >
-                                Login
-                            </button>
-                        </div>
-                        <div className="text-center mt-3">
-                            <Link to="/reset" style={{ color: 'white' }}>
-                                Forgot password?
-                            </Link>
-                        </div>
-                        <div className="text-center mt-3">
-                            <p style={{ color: 'white' }}>Don't have an account? <Link to="/vendor/register" style={{ textDecoration: 'none' }}>
-                                Sign Up
-                            </Link></p>
-                        </div>
-                    </form>
-                </div>
-            </div>
+        <div className="text-center mt-3">
+          <a href="/vendor/reset" className="text-muted vendor-forgot-link">
+            Forgot Password?
+          </a>
+          <p className="text-muted">
+          Don't have an account? Register? <a href="/vendor/register" className="vendor-login-link">Login here</a>
+          </p>
         </div>
-    );
-}
+      </div>
+    </div>
+  );
+};
 
 export default LoginVendro;

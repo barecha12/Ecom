@@ -6,45 +6,33 @@ import {
   FaShoppingCart,
   FaComments,
   FaUser,
+  FaPen,
+  FaTimes,
 } from "react-icons/fa";
-import {
-  Card,
-} from "react-bootstrap";
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
-import "./style/dashboard.css";
+import { Link } from "react-router-dom";
+import "../style/new-orders.css";
 
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title);
-
-function VendorDashboard() {
+function ControlOrder() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
-  const data = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-    datasets: [
-      {
-        label: 'Sales ($)',
-        data: [1500, 2000, 1800, 2200, 3000, 2500],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-      },
-    ],
-  };
+  const [entries, setEntries] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalProducts = 100; // Example total product count
+  const totalPages = Math.ceil(totalProducts / entries);
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Monthly Sales Analytics',
-      },
-    },
-  };
+  const products = Array.from({ length: totalProducts }, (_, i) => ({
+    id: i + 1,
+    name: `Product ${i + 1}`,
+    code: `P${i + 1}01`,
+    color: "Blue",
+    image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    category: "T-Shirts",
+    section: "Clothing",
+    addedBy: "Vendor",
+    status: i % 2 === 0,
+  }));
+
+  const displayedProducts = products.slice((currentPage - 1) * entries, currentPage * entries);
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -124,45 +112,83 @@ function VendorDashboard() {
 
       <div className={`main-content ${sidebarVisible ? "with-sidebar" : "full-width"}`}>
         <div className="custom-header text-center">
-          <h1 className="h4 mb-0">Welcome to the Vendor Dashboard</h1>
+          <h1 className="h4 mb-0">Order Items</h1>
         </div>
 
-        {/* Analytics Section */}
-        <div id="analytics" className="analytics-section">
-          <h2 className="h5">Analytics Dashboard</h2>
-          <div className="analytics-cards">
-            <Card className="analytics-card">
-              <Card.Body>
-                <Card.Title>Total Orders</Card.Title>
-                <Card.Text>1,500</Card.Text>
-              </Card.Body>
-            </Card>
-            <Card className="analytics-card">
-              <Card.Body>
-                <Card.Title>Pending Orders</Card.Title>
-                <Card.Text>200</Card.Text>
-              </Card.Body>
-            </Card>
-            <Card className="analytics-card">
-              <Card.Body>
-                <Card.Title>Complete Orders</Card.Title>
-                <Card.Text>1,200</Card.Text>
-              </Card.Body>
-            </Card>
-            <Card className="analytics-card">
-              <Card.Body>
-                <Card.Title>Reviews</Card.Title>
-                <Card.Text>350</Card.Text>
-              </Card.Body>
-            </Card>
+        <div className="filters">
+          <div className="show-entries">
+            <label className="me-2">Show</label>
+            <select value={entries} onChange={(e) => setEntries(Number(e.target.value))} className="entries-select">
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+            <label className="ms-2">Entries</label>
           </div>
-          <div className="analytics-chart">
-            <Bar data={data} options={options} />
+
+          <div className="search-bar">
+            <label className="me-2">Search:</label>
+            <input type="text" placeholder="Search" className="search-input" />
           </div>
+        </div>
+
+        <div className="table-responsive">
+          <table className="custom-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Product Name</th>
+                <th>Product Code</th>
+                <th>Product Color</th>
+                <th>Product Image</th>
+                <th>Category</th>
+                <th>Section</th>
+                <th>Added by</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {displayedProducts.map((product) => (
+                <tr key={product.id}>
+                  <td>{product.id}</td>
+                  <td>{product.name}</td>
+                  <td>{product.code}</td>
+                  <td>{product.color}</td>
+                  <td>
+                    <img src={product.image} alt={product.name} className="product-image" />
+                  </td>
+                  <td>{product.category}</td>
+                  <td>{product.section}</td>
+                  <td>{product.addedBy}</td>
+                  <td>
+                    <input type="checkbox" checked={product.status} readOnly />
+                  </td>
+                  <td>
+                    <div className="actions">
+                      <button className="edit-button">
+                        <FaPen />
+                      </button>
+                      <button className="delete-button">
+                        <FaTimes />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="pagination">
+          <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
         </div>
       </div>
     </div>
   );
 }
 
-export default VendorDashboard;
+export default ControlOrder;

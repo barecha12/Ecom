@@ -1,0 +1,45 @@
+.notification-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: auto;
+}
+
+.notification-title {
+    color: #e0a822;
+    text-align: left; /* Align title to the left */
+    margin-bottom: 20px;
+}
+
+.notification-item {
+    background-color: #f9f9f9;
+    border-left: 5px solid #e0a822;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    position: relative; /* Make position relative for the button */
+}
+
+.notification-message {
+    color: #333;
+    margin: 0;
+}
+
+.notification-time {
+    color: #999;
+    font-size: 12px;
+    margin-top: 5px; /* Add margin to separate from message */
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    color: #e0a822;
+    cursor: pointer;
+    font-size: 18px;
+    position: absolute; /* Position button absolutely */
+    top: 10px; /* Position from the top */
+    right: 10px; /* Position from the right */
+}

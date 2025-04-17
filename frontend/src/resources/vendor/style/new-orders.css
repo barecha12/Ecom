@@ -1,0 +1,236 @@
+/* Dashboard Wrapper */
+.dashboard-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f3f5f9;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Header */
+.header {
+  background-color: #3b9943;
+  color: white;
+  padding: 15px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background-color: #333;
+  color: #f3f5f9;
+  padding: 15px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translateX(0);
+  transition: transform 0.4s ease-in-out;
+  z-index: 2000;
+}
+
+.sidebar.hide {
+  transform: translateX(-100%);
+}
+
+.sidebar.show {
+  transform: translateX(0);
+}
+
+/* Main Content */
+.main-content {
+  transition: margin-left 0.4s ease-in-out;
+  margin-top: 70px;
+  padding: 20px;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+}
+
+.main-content.with-sidebar {
+  margin-left: 280px; /* Sidebar width */
+}
+
+.main-content.full-width {
+  margin-left: 0;
+}
+
+/* Table Responsive Styling */
+.table-responsive {
+  overflow-x: auto; /* Allow horizontal scrolling */
+  width: 100%; /* Ensure it takes full width */
+  display: flex;
+  justify-content: center; /* Center the table */
+}
+
+/* Custom Table Styles */
+.custom-table {
+  min-width: 600px; /* Set a minimum width for the table */
+  width: 100%; /* Ensure it takes full width */
+  border-collapse: collapse; /* Collapse borders */
+  background-color: #ffffff; /* Table background */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add a shadow for depth */
+  margin: 20px 0; /* Add margin for spacing */
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 12px; /* Add padding for cells */
+  text-align: left; /* Align text to the left */
+  border-bottom: 1px solid #ddd; /* Light gray border */
+}
+
+.custom-table th {
+  background-color: #3b9943; /* Header background color */
+  color: white; /* Header text color */
+}
+
+.custom-table tr:hover {
+  background-color: #f1f1f1; /* Row hover color */
+}
+
+/* Button Styles */
+.edit-button,
+.delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #3b9943; /* Button color */
+  font-size: 16px; /* Font size for buttons */
+}
+
+.edit-button:hover,
+.delete-button:hover {
+  color: #ff4d4d; /* Change color on hover */
+}
+
+/* Sidebar Links */
+.sidebar-link {
+  color: #f3f5f9;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.sidebar-link:hover {
+  background-color: #24b47e !important;
+}
+
+/* Dropdown Menus */
+.dropdown-menu {
+  background-color: #444;
+  padding: 0;
+  list-style: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 250px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: none;
+  z-index: 2001;
+}
+
+.sidebar .dropdown:hover .dropdown-menu,
+.sidebar .dropdown .dropdown-menu:hover {
+  display: block;
+}
+
+/* Dropdown Items */
+.dropdown-item {
+  color: #f3f5f9;
+  padding: 12px 15px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  border-bottom: 1px solid #555;
+}
+
+.dropdown-item:hover {
+  background-color: #24b47e;
+  border-color: #24b47e;
+  border-radius: 7px;
+  transform: translateX(5px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+/* Hamburger Button */
+.hamburger-button {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  z-index: 3000;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-content.with-sidebar {
+    margin-left: 0; /* Remove margin when sidebar is hidden */
+  }
+
+  .sidebar {
+    width: 250px; /* Adjust sidebar width */
+  }
+
+  .table-responsive {
+    padding: 0 15px; /* Provide some padding */
+  }
+}
+
+.custom-css {
+  font-weight: bold;
+  font-size: 22px;
+  color: white;
+}
+/* Filters Section */
+.filters {
+  display: flex;
+  justify-content: space-between; /* Space between the entries and search bar */
+  align-items: center; /* Center items vertically */
+  width: 100%; /* Ensure it takes full width */
+  margin-bottom: 20px; /* Add some space below */
+}
+
+.show-entries {
+  display: flex;
+  align-items: center; /* Center items vertically */
+}
+
+.search-bar {
+  display: flex;
+  align-items: center; /* Center items vertically */
+}
+
+.entries-select,
+.search-input {
+  margin-left: 8px; /* Add space between label and input */
+  padding: 5px; /* Padding for better appearance */
+}
+.custom-css {
+  font-weight: bold;
+  font-size: 22px;
+  color: white;
+}

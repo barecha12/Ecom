@@ -1,19 +1,32 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Card, Modal, ListGroup, Button, Navbar, Nav, Dropdown, Form, Table, Image } from "react-bootstrap";
+import {
+  FaBars,
+  FaChartLine,
+  FaBox,
+  FaShoppingCart,
+  FaComments,
+  FaUser,
+  FaPen,
+  FaTimes,
+} from "react-icons/fa";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  ListGroup,
+  Button,
+  Modal,
+  Form,
+  Image,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { FaTachometerAlt, FaEnvelope, FaPen, FaTimes, FaClipboardList, FaShoppingCart, FaStar, FaUser, FaAddressBook, FaSignOutAlt, FaBars, FaCog, FaPlus, FaTag, FaTruck, FaUndo, FaCheck, FaComment, FaBell, FaUserCog } from "react-icons/fa";
-import './style.css';
+import "../style/add-products.css";
 
-function AddProducts() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [productManagementOpen, setProductManagementOpen] = useState(false);
-  const [orderManagementOpen, setOrderManagementOpen] = useState(false);
-  const [messageManagementOpen, setMessageManagementOpen] = useState(false);
-  const [accountSettingOpen, setAccountSettingOpen] = useState(false);
+function AddProduct() {
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [openDropdown, setOpenDropdown] = useState(null);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
-  const [showEditeProductModal, setShowEditeProductModal] = useState(false);
-
-
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
   const [productName, setProductName] = useState("");
@@ -21,24 +34,219 @@ function AddProducts() {
   const [productPrice, setProductPrice] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productImages, setProductImages] = useState({ selectedproductImages: [] });
-  async function addProduct(e) {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("category", category);
-    formData.append("subCategory", subCategory);
-    formData.append("productName", productName);
-    formData.append("totalProduct", totalProduct);
-    formData.append("productPrice", productPrice);
-    formData.append("productDescription", productDescription);
-    productImages.selectedproductImages.forEach((image, index) => {
-      formData.append(`productImages[${index}]`, image);
-    });
+  const [entries, setEntries] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalProducts = 100; // Example total product count
+  const totalPages = Math.ceil(totalProducts / entries);
 
-    let items = { productName, totalProduct, productPrice, productDescription, productImages: productImages.selectedproductImages.map(image => image.name) // or image.url if URLs are available
-    };
-    console.log(items);
-  }
-  const handleClear = () => {
+  const toggleSidebar = () => {
+    setSidebarVisible(!sidebarVisible);
+  };
+
+  const handleDropdown = (menu) => {
+    setOpenDropdown(openDropdown === menu ? null : menu);
+  };
+
+  const handleImageChange = (e) => {
+    const { name, files } = e.target;
+    if (name === "selectedproductImages") {
+      setProductImages({
+        ...productImages,
+        selectedproductImages: Array.from(files).slice(0, 5)
+      });
+    }
+  };
+
+  const addProduct = (e) => {
+    e.preventDefault();
+    const newProduct = { category, subCategory, productName, totalProduct, productPrice, productDescription, productImages };
+    console.log("Product Added:", newProduct);
+    handleCloseAddProductModal();
+  };
+  const products = [
+    {
+      id: 1,
+      name: "Smartphone",
+      totalProduct: 50,
+      price: "$699",
+      category: "Electronics",
+      subcategory: "Phone",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 2,
+      name: "Laptop",
+      totalProduct: 30,
+      price: "$999",
+      category: "Electronics",
+      subcategory: "Computer",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 3,
+      name: "Headphones",
+      totalProduct: 100,
+      price: "$199",
+      category: "Electronics",
+      subcategory: "Audio",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 4,
+      name: "Smartwatch",
+      totalProduct: 75,
+      price: "$249",
+      category: "Electronics",
+      subcategory: "Wearable",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 5,
+      name: "Men's T-Shirt",
+      totalProduct: 200,
+      price: "$29",
+      category: "Cloth",
+      subcategory: "Men",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 6,
+      name: "Women's Dress",
+      totalProduct: 150,
+      price: "$49",
+      category: "Cloth",
+      subcategory: "Women",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 7,
+      name: "Kids' Backpack",
+      totalProduct: 80,
+      price: "$39",
+      category: "Cloth",
+      subcategory: "Kid",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 8,
+      name: "Bluetooth Speaker",
+      totalProduct: 60,
+      price: "$89",
+      category: "Electronics",
+      subcategory: "Audio",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 9,
+      name: "Gaming Mouse",
+      totalProduct: 40,
+      price: "$59",
+      category: "Electronics",
+      subcategory: "Computer",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 10,
+      name: "4K Monitor",
+      totalProduct: 25,
+      price: "$399",
+      category: "Electronics",
+      subcategory: "Display",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 11,
+      name: "Sports Shoes",
+      totalProduct: 120,
+      price: "$79",
+      category: "Cloth",
+      subcategory: "Footwear",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 12,
+      name: "Leather Wallet",
+      totalProduct: 200,
+      price: "$45",
+      category: "Cloth",
+      subcategory: "Accessories",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 13,
+      name: "Gaming Chair",
+      totalProduct: 50,
+      price: "$199",
+      category: "Electronics",
+      subcategory: "Furniture",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 14,
+      name: "Action Camera",
+      totalProduct: 20,
+      price: "$299",
+      category: "Electronics",
+      subcategory: "Camera",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 15,
+      name: "Electric Toothbrush",
+      totalProduct: 90,
+      price: "$59",
+      category: "Electronics",
+      subcategory: "Personal Care",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 16,
+      name: "Wireless Charger",
+      totalProduct: 150,
+      price: "$29",
+      category: "Electronics",
+      subcategory: "Accessories",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 17,
+      name: "Portable SSD",
+      totalProduct: 60,
+      price: "$99",
+      category: "Electronics",
+      subcategory: "Storage",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 18,
+      name: "Smart Home Hub",
+      totalProduct: 30,
+      price: "$149",
+      category: "Electronics",
+      subcategory: "Smart Home",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 19,
+      name: "Fitness Tracker",
+      totalProduct: 120,
+      price: "$99",
+      category: "Electronics",
+      subcategory: "Wearable",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+    {
+      id: 20,
+      name: "HD Webcam",
+      totalProduct: 70,
+      price: "$49",
+      category: "Electronics",
+      subcategory: "Camera",
+      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
+    },
+  ];
+  const handleCloseAddProductModal = () => {
+    setShowAddProductModal(false);
     setCategory("");
     setSubCategory("");
     setProductName("");
@@ -48,455 +256,194 @@ function AddProducts() {
     setProductImages({ selectedproductImages: [] });
   };
 
-  const [previewImage, setPreviewImage] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-
-  const handlePreview = (image) => {
-    setPreviewImage(image);
-    setShowModal(true);
-  };
-  const handleImageChange = (e) => {
-    const { name, files } = e.target;
-    if (name === "selectedproductImages") {
-      setProductImages({
-        ...productImages,
-        selectedproductImages: Array.from(files).slice(0, 5)
-      });
-    } else {
-      setProductImages({
-        ...productImages,
-        [name]: files[0]
-      });
-    }
-  };
-  // Handle category change
-  const handleCategoryChange = (e) => {
-    setCategory(e.target.value);
-  };
-
-  // Define the subcategories rendering logic outside of conditional hooks
-  const renderSubcategories = (category) => {
-    if (category === 'Electronics') {
-      return (
-        <>
-          <option value="Electronics-Phone">Phone</option>
-          <option value="Electronics-Computer">Computer</option>
-          <option value="Electronics-Bord">Bord</option>
-        </>
-      );
-    } else if (category === 'Cloth') {
-      return (
-        <>
-          <option value="Cloth-Men">Men</option>
-          <option value="Cloth-Women">Women</option>
-          <option value="Cloth-Kid">Kid</option>
-        </>
-      );
-    }
-    return null; // Return nothing if no category is selected
-  };
-
-  const toggleProductManagement = () => {
-    setProductManagementOpen(!productManagementOpen);
-  };
-
-  const toggleOrderManagement = () => {
-    setOrderManagementOpen(!orderManagementOpen);
-  };
-
-  const toggleMessageManagement = () => {
-    setMessageManagementOpen(!messageManagementOpen);
-  };
-
-  const toggleAccountSetting = () => {
-    setAccountSettingOpen(!accountSettingOpen);
-  };
-
-  const [entries, setEntries] = useState(10);
-  const products = Array.from({ length: 100 }, (_, i) => ({
-    name: `Surveillance & Security Cameras`,
-    code: `${i + 3}`,
-    color: "100$",
-    image: "https://www.beyiddondolo.com/media/5679-84.jpg",
-    category: "Electronics",
-    section: "Camera",
-    status: i % 2 === 0,
-  }));
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(products.length / entries);
-  const displayedProducts = products.slice((currentPage - 1) * entries, currentPage * entries);
-
   return (
-    <div style={{ backgroundColor: '#181818', minHeight: '100vh' }}>
-      <Container fluid >
+    <div className="dashboard-wrapper">
+      <button className="hamburger-btn" onClick={toggleSidebar}>
+        <FaBars />
+      </button>
 
-        {/* Top Navbar */}
-        <Navbar expand="lg" className="px-3 w-100 fixed-top" style={{ backgroundColor: '#252525', color: '#FF0000', minHeight: '80px', marginBottom: '56px' }}>
-          <Button variant="dark" className="me-3 d-block" onClick={() => setSidebarOpen(!sidebarOpen)}>
-            <FaBars size={24} />
-          </Button>
-          <Navbar.Brand > <span className="fw-bold text-white" style={{ fontSize: '24px' }}>WALIYA MARKET      VENDRO</span></Navbar.Brand>
-          <Nav className="ms-auto">
-            <Dropdown align="end">
-              <Dropdown.Toggle variant="link" className="text-white dropdown-toggle-no-arrow">
-                <FaUser className="me-2" size={30} />
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item as={Link} to="/vendorsettings">
-                  <FaCog className="me-2" /> Settings
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to="/vendorlogout">
-                  <FaSignOutAlt className="me-2" /> Logout
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </Nav>
-        </Navbar>
+      <div className={`custom-sidebar ${sidebarVisible ? "show" : "hide"}`}>
+        <div className="d-flex align-items-center mb-3">
+          <h2 className="text-center custom-css flex-grow-1 mt-2 ms-4">Vendor Dashboard</h2>
+        </div>
 
-        <Row>
-          {/* Sidebar */}
-          <Col
-            lg={2}
-            className={`sidebar bg-dark text-white p-3 d-lg-block ${sidebarOpen ? 'sidebar-open' : ''}`}
-            style={{
-              minHeight: "100vh",
-              position: 'fixed',
-              backgroundColor: '#212121',
-              color: '#FF0000',
-              zIndex: 999,
-              top: '56px',
-              left: sidebarOpen ? 0 : '-250px',
-              transition: 'left 0.3s ease',
-            }}
-          >
-            <ListGroup variant="flush">
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaTachometerAlt className="me-2" size={24} />
-                <Link to="/vendor/dashboard" style={{ textDecoration: 'none', color: 'white' }}><span className="fw-bold" style={{ fontSize: '18px' }}>Dashboard</span></Link>
-              </ListGroup.Item>
-              {/* Product Management Section with Expandable Content */}
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center" onClick={toggleProductManagement}>
-                <FaClipboardList className="me-2 " size={24} />
-                <span className="fw-bold" style={{ fontSize: '18px' }}>Products</span>
-                {/* Products Management */}
-              </ListGroup.Item>
+        <a href="/vendor" className="custom-link">
+          <FaChartLine className="me-2" /> Analytics
+        </a>
 
-              {/* Expanded content for Product Management */}
-              <div className={`product-management-dropdown ${productManagementOpen ? 'open' : ''}`}>
-                <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                  <FaPlus className="me-2" />
-                  <Link to="/vendor/add-product" style={{ textDecoration: 'none', color: 'white' }}>Add Product</Link>
-                </ListGroup.Item>
-                <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                  <FaTag className="me-2" />
-                  <Link to="/vendor/coupons" style={{ textDecoration: 'none', color: 'white' }}>Coupons</Link>
-                </ListGroup.Item>
-              </div>
+        <div className="dropdown">
+          <div className="custom-link" onClick={() => handleDropdown("products")}>
+            <FaBox className="me-2" /> Manage Products
+          </div>
+          {openDropdown === "products" && (
+            <ul className="dropdown-menu custom-dropdown-menu">
+              <li><a href="/vendor/add-products" className="dropdown-item-vendor">Add Products</a></li>
+              <li><a href="/vendor/coupons" className="dropdown-item-vendor">Add Coupons</a></li>
+            </ul>
+          )}
+        </div>
 
-              {/* Order Management Section with Expandable Content */}
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center" onClick={toggleOrderManagement}>
-                <FaShoppingCart className="me-2 " size={24} />
-                <span className="fw-bold" style={{ fontSize: '18px' }}>Orders</span>
-              </ListGroup.Item>
-              <div className={`product-management-dropdown ${orderManagementOpen ? 'open' : ''}`}>
-                <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                  <FaShoppingCart className="me-2" />
-                  <Link to="/vendor/orders" style={{ textDecoration: 'none', color: 'white' }}>Orders</Link>
-                </ListGroup.Item>
-                <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                  <FaTruck className="me-2" />
-                  <Link to="/vendor/shipped" style={{ textDecoration: 'none', color: 'white' }}>Shipped</Link>
-                </ListGroup.Item>
-                <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                  <FaUndo className="me-2" />
-                  <Link to="/vendor/refunds" style={{ textDecoration: 'none', color: 'white' }}>Refunds</Link>
-                </ListGroup.Item>
-                <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                  <FaCheck className="me-2" />
-                  <Link to="/vendor/completed" style={{ textDecoration: 'none', color: 'white' }}>Completed Orders</Link>
-                </ListGroup.Item>
-              </div>
+        <div className="dropdown">
+          <div className="custom-link" onClick={() => handleDropdown("orders")}>
+            <FaShoppingCart className="me-2" /> Manage Orders
+          </div>
+          {openDropdown === "orders" && (
+            <ul className="dropdown-menu custom-dropdown-menu">
+              <li><a href="/vendor/new-orders" className="dropdown-item-vendor">New Order</a></li>
+              <li><a href="/vendor/shipped" className="dropdown-item-vendor">Shipped</a></li>
+              <li><a href="/vendor/refunds" className="dropdown-item-vendor">Refund</a></li>
+              <li><a href="/vendor/completed" className="dropdown-item-vendor">Completed</a></li>
+            </ul>
+          )}
+        </div>
 
-              {/* Message Management Section with Expandable Content */}
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center" onClick={toggleMessageManagement}>
-                <FaEnvelope className="me-2 " size={24} />
-                <span className="fw-bold" style={{ fontSize: '18px' }}>Messages</span>
-              </ListGroup.Item>
-              <div className={`product-management-dropdown ${messageManagementOpen ? 'open' : ''}`}>
-                <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                  <FaComment className="me-2" />
-                  <Link to="/vendor/user-messages" style={{ textDecoration: 'none', color: 'white' }}>User Messages</Link>
-                </ListGroup.Item>
-                <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                  <FaUser className="me-2" />
-                  <Link to="/vendor/admin-messages" style={{ textDecoration: 'none', color: 'white' }}>Admin Messages</Link>
-                </ListGroup.Item>
-                <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                  <FaStar className="me-2" />
-                  <Link to="/vendor/review-messages" style={{ textDecoration: 'none', color: 'white' }}>Review Messages</Link>
-                </ListGroup.Item>
-                <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                  <FaBell className="me-2" />
-                  <Link to="/vendor/notifications" style={{ textDecoration: 'none', color: 'white' }}>Notifications</Link>
-                </ListGroup.Item>
-              </div>
+        <div className="dropdown">
+          <div className="custom-link" onClick={() => handleDropdown("messages")}>
+            <FaComments className="me-2" /> Manage Messages
+          </div>
+          {openDropdown === "messages" && (
+            <ul className="dropdown-menu custom-dropdown-menu">
+              <li><a href="/vendor/user-messages" className="dropdown-item-vendor">User Message</a></li>
+              <li><a href="/vendor/admin-messages" className="dropdown-item-vendor">Admin Message</a></li>
+              <li><a href="/vendor/review-messages " className="dropdown-item-vendor">Review Message</a></li>
+              <li><a href="/vendor/notifications" className="dropdown-item-vendor">Notification</a></li>
+            </ul>
+          )}
+        </div>
 
-              {/* Account Management Section with Expandable Content */}
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center" onClick={toggleAccountSetting}>
-                <FaAddressBook className="me-2 " size={24} />
-                <span className="fw-bold" style={{ fontSize: '18px' }}>Settings</span>
-              </ListGroup.Item>
-              <div className={`product-management-dropdown ${accountSettingOpen ? 'open' : ''}`}>
-                <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                  <FaUserCog className="me-2" />
-                  <Link to="/vendor/manage-profile" style={{ textDecoration: 'none', color: 'white' }}>Manage Profile</Link>
-                </ListGroup.Item>
-              </div>
-            </ListGroup>
-          </Col>
+        <div className="dropdown">
+          <div className="custom-link" onClick={() => handleDropdown("profile")}>
+            <FaUser className="me-2" /> Profile
+          </div>
+          {openDropdown === "profile" && (
+            <ul className="dropdown-menu custom-dropdown-menu">
+              <li><a href="/vendor/manage-profile" className="dropdown-item-vendor">Updated Password</a></li>
+              <li><a href="#logout" className="dropdown-item-vendor">Logout</a></li>
+            </ul>
+          )}
+        </div>
+      </div>
 
-          {/* Main Content */}
-          <Col
-            lg={sidebarOpen ? 10 : 12}
-            className="p-4"
-            style={{
-              marginLeft: sidebarOpen ? '250px' : '0',
-              transition: 'margin-left 0.3s ease',
-              padding: '20px 15px'
-            }}
-          >
-            <h3>...</h3>
-            <Row className="mb-3 d-flex justify-content-end">
+      <div className={`main-content ${sidebarVisible ? "with-sidebar" : "full-width"}`}>
+        <div className="custom-header text-center">
+          <h1 className="h4 mb-0">Product Lists</h1>
+        </div>
 
-            </Row>
-            <Row className="mb-3 d-flex justify-content-end">
-              <Col xs="auto" className="d-flex justify-content-end mt-3 mt-sm-0">
-                <Button
-                  variant="primary"
-                  className="add-product-btn"
-                  onClick={() => setShowAddProductModal(true)}
-                >
-                  Add Product
-                </Button>
+        {/* Main Content Starts Here */}
+        <Container fluid>
+          <Row>
+            <Col lg={12} className="p-4">
+              <Row className="mt-3">
+                <Col lg={12} className=" d-flex justify-content-end">
+                  <Button
+                    variant="primary"
+                    className="add-product-btn"
+                    onClick={() => setShowAddProductModal(true)}
+                  >
+                    Add Product
+                  </Button>
+                </Col>
+              </Row>
 
-              </Col>
-            </Row>
-            <Row className="mb-3 d-flex justify-content-between align-items-center">
-              <Col xs="auto" className="d-flex align-items-center">
-                <label className="me-2 text-white">Show</label>
-                <Form.Select value={entries} onChange={(e) => setEntries(Number(e.target.value))} style={{ width: '100px' }}>
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </Form.Select>
-                <label className="ms-2  text-white">Entries</label>
-              </Col>
-              <Col xs="auto" className="d-flex align-items-center mt-3 mt-sm-0">
-                <label className="me-2  text-white">Search:</label>
-                <Form.Control type="text" placeholder="Search" style={{ width: '150px' }} />
-              </Col>
-            </Row>
+              {/* Product Cards Grid */}
+              <Row className="mt-3">
+                {products.slice(0, 4).map((product) => (
+                  <Col xs={12} md={6} lg={3} key={product.id}>
+                    <Card className="shadow-sm rounded-4 p-3 product-card-vendor">
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        fluid
+                        rounded
+                        className="mb-3"
+                        style={{ height: "150px", objectFit: "contain" }} // Updated style
+                      />
+                      <h5 className="fw-bold">{product.name}</h5>
+                      <p>Total Product: {product.totalProduct}</p>
+                      <p>Product Price: {product.price}</p>
+                      <p>Category: {product.category}</p>
+                      <p>Subcategory: {product.subcategory}</p>
+                      <div className="d-flex justify-content-between mt-3">
+                        <Button variant="warning" size="sm"><FaPen /></Button>
+                        <Button variant="danger" size="sm"><FaTimes /></Button>
+                      </div>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </Col>
+          </Row>
 
-            {/* Product Cards Grid with 5 columns on large screens */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fill, minmax(220px, 1fr))", // Responsive sizing
-                gap: "20px",
-              }}
-              className="custom-grid"
-            >
-              {displayedProducts.map((product) => (
-                <Card
-                  key={product.id}
-                  className="shadow-sm rounded-4 p-3 d-flex flex-column justify-content-between"
-                >
-                  <div>
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fluid
-                      rounded
-                      className="mb-3"
-                      style={{ height: "150px", objectFit: "cover" }}
-                    />
-                    <h5 className="fw-bold">{product.name}</h5>
-                    <p className="mb-1 text-muted">Total Product: {product.code}</p>
-                    <p className="mb-1">Product Price: {product.color}</p>
-                    <p className="mb-1">Category: {product.category}</p>
-                    <p className="mb-1">Subcategory: {product.section}</p>
-                    <Form.Check
-                      type="switch"
-                      label="Active"
-                      checked={product.status}
-                      readOnly
-                      className="mt-2"
-                    />
-                  </div>
+          {/* Add Product Modal */}
+          <Modal show={showAddProductModal} onHide={handleCloseAddProductModal} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Add New Product</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form onSubmit={addProduct}>
+                <Form.Group controlId="category">
+                  <Form.Label>Select Category</Form.Label>
+                  <Form.Select onChange={(e) => setCategory(e.target.value)} value={category}>
+                    <option value="">Select a Category</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Cloth">Cloth</option>
+                  </Form.Select>
+                </Form.Group>
 
-                  {/* Actions */}
-                  <div className="d-flex justify-content-between mt-3 flex-column flex-sm-row gap-2">
-                    <Button
-                      variant="warning"
-                      size="sm"
-                      className="fixed-button-size"
-                      onClick={() => setShowEditeProductModal(true)}
-                    >
-                      <FaPen />
-                    </Button>
-
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      className="fixed-button-size"
-                    >
-                      {/* Your icon or text */}
-                      <FaTimes />
-                    </Button>
-
-                  </div>
-                </Card>
-              ))}
-            </div>
-
-            {/* Pagination */}
-            <Row className="d-flex justify-content-between mt-3">
-              <Col xs="auto">
-                <Button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>Previous</Button>
-              </Col>
-              <Col xs="auto">
-                Page {currentPage} of {totalPages}
-              </Col>
-              <Col xs="auto">
-                <Button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next</Button>
-              </Col>
-            </Row>
-            <Modal
-              show={showAddProductModal || showEditeProductModal}
-              onHide={() => {
-                if (showAddProductModal) {
-                  setShowAddProductModal(false);
-                } else if (showEditeProductModal) {
-                  setShowEditeProductModal(false);
-                }
-              }}
-              centered
-            >
-
-              {showAddProductModal ? (
-                <Modal.Header closeButton>
-                  <Modal.Title>Add New Product</Modal.Title>
-                </Modal.Header>
-              ) : (
-                <Modal.Header closeButton>
-                  <Modal.Title>Edit Product</Modal.Title>
-                </Modal.Header>
-              )}
-
-              <Modal.Body>
-                <Form>
-                  <Form.Group className="mb-3" controlId="category">
-                    <Form.Label>Select Category</Form.Label>
-                    <Form.Select onChange={handleCategoryChange} value={category}>
-                      <option value="">Select a Category</option>
-                      <option value="Electronics">Electronics</option>
-                      <option value="Cloth">Cloth</option>
+                {/* Subcategory based on Category selection */}
+                {category && (
+                  <Form.Group controlId="subCategory">
+                    <Form.Label>Select Subcategory</Form.Label>
+                    <Form.Select onChange={(e) => setSubCategory(e.target.value)} value={subCategory}>
+                      <option value="">Select a Subcategory</option>
+                      {category === 'Electronics' && (
+                        <>
+                          <option value="Electronics-Phone">Phone</option>
+                          <option value="Electronics-Computer">Computer</option>
+                        </>
+                      )}
+                      {category === 'Cloth' && (
+                        <>
+                          <option value="Cloth-Men">Men</option>
+                          <option value="Cloth-Women">Women</option>
+                        </>
+                      )}
                     </Form.Select>
-
-                    {category && (
-                      <>
-                        <Form.Label>Select Subcategory</Form.Label>
-                        <Form.Select>
-                          <option value="">Select a Subcategory</option>
-                          {renderSubcategories(category)}
-                        </Form.Select>
-                      </>
-                    )}
                   </Form.Group>
+                )}
 
-                  <Form.Group className="mb-3" controlId="productCode">
-                    <Form.Label>Product Name</Form.Label>
-                    <Form.Control type="text" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Enter product code" />
-                  </Form.Group>
-
-                  <Form.Group className="mb-3" controlId="productCategory">
-                    <Form.Label>Total Product</Form.Label>
-                    <Form.Control type="text" value={totalProduct} onChange={(e) => setTotalProduct(e.target.value)} placeholder="Enter category" />
-                  </Form.Group>
-
-                  <Form.Group className="mb-3" controlId="productImage">
-                    <Form.Label>Product Price</Form.Label>
-                    <Form.Control type="text" value={productPrice} onChange={(e) => setProductPrice(e.target.value)} placeholder="Enter image URL" />
-                  </Form.Group>
-
-                  <Form.Group controlId="selectedproductImages" className="mb-4 text-start">
-                    <Form.Label className="d-block">Product Images (Max 5)</Form.Label>
-                    <Form.Control
-                      type="file"
-                      name="selectedproductImages"
-                      multiple
-                      onChange={handleImageChange}
-                    />
-                    <div className="mt-2">
-                      {productImages.selectedproductImages.map((file, index) => (
-                        <img
-                          key={index}
-                          src={URL.createObjectURL(file)}
-                          alt={`Proof ${index + 1}`}
-                          className="img-thumbnail me-2"
-                          width="100"
-                          onClick={() => handlePreview(URL.createObjectURL(file))}
-                          style={{ cursor: 'pointer' }}
-                        />
-                      ))}
-                    </div>
-                  </Form.Group>
-
-
-                  <Form.Group className="mb-3" controlId="productDescription">
-                    <Form.Label>Product Description</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      value={productDescription} onChange={(e) => setProductDescription(e.target.value)}
-                      rows={4}
-                      placeholder="Enter product description"
-                    />
-                  </Form.Group>
-
-                </Form>
-              </Modal.Body>
-
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleClear}>
-                  Clear
-                </Button>
-                <Button variant="primary" onClick={(e) => {
-                  // Handle your submission logic here!
-                  setShowAddProductModal(false);
-                  addProduct(e);
-                }}>
-                  Save Product
-                </Button>
-              </Modal.Footer>
-            </Modal>
-
-          </Col>
-        </Row>
-        <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-          <Modal.Body className="text-center">
-            {previewImage && <img src={previewImage} alt="Preview" className="img-fluid" />}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>Close</Button>
-          </Modal.Footer>
-        </Modal>
-      </Container>
-
+                <Form.Group controlId="productName">
+                  <Form.Label>Product Name</Form.Label>
+                  <Form.Control type="text" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Enter product name" />
+                </Form.Group>
+                <Form.Group controlId="totalProduct">
+                  <Form.Label>Total Product</Form.Label>
+                  <Form.Control type="text" value={totalProduct} onChange={(e) => setTotalProduct(e.target.value)} placeholder="Enter total product" />
+                </Form.Group>
+                <Form.Group controlId="productPrice">
+                  <Form.Label>Product Price</Form.Label>
+                  <Form.Control type="text" value={productPrice} onChange={(e) => setProductPrice(e.target.value)} placeholder="Enter product price" />
+                </Form.Group>
+                <Form.Group controlId="productDescription">
+                  <Form.Label>Product Description</Form.Label>
+                  <Form.Control as="textarea" value={productDescription} onChange={(e) => setProductDescription(e.target.value)} rows={3} placeholder="Enter product description" />
+                </Form.Group>
+                <Form.Group controlId="selectedproductImages">
+                  <Form.Label>Product Images (Max 5)</Form.Label>
+                  <Form.Control type="file" name="selectedproductImages" multiple onChange={handleImageChange} />
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleCloseAddProductModal}>Close</Button>
+              <Button variant="primary" onClick={addProduct}>Save Product</Button>
+            </Modal.Footer>
+          </Modal>
+        </Container>
+        {/* Main Content Ends Here */}
+      </div>
     </div>
   );
 }
 
-export default AddProducts;
+export default AddProduct;

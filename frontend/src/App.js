@@ -5,9 +5,7 @@ import LoginAdmin from"./resources/admin/login"
 import Reset from"./resources/user/reset"
 import Register from "./resources/user/register"
 
-import PersonalInfo from "./resources/vendor/personalinfo"
-import BusinessInfo from "./resources/vendor/businessinfo"
-import BankInfo from "./resources/vendor/bankinfo"
+
 
 import Cart from "./resources/user/cart"
 import ChatVendor from "./resources/user/chat-to-vendor"
@@ -23,23 +21,35 @@ import Test from "./resources/user/test"
 import ProtectPath from "./resources/user/protectpath"
 import Notification from "./resources/user/notification"
 
-import VendorDashboard from "./resources/vendor/dashboard"
+
 import AdminDashboard from "./resources/admin/dashboard"
 import SAdminDashboard from "./resources/superadmin/dashboard"
 import CategoryForm from "./resources/superadmin/catalog/add-categories"
+
+
+
+import VendorDashboard from "./resources/vendor/dashboard"
 import LoginVendor from "./resources/vendor/login"
 import RegisterVendor from "./resources/vendor/register"
-import TestOne from "./resources/vendor/testone"
-// import TestFive from "./resources/vendor/testfive"
-// import TestSix from "./resources/vendor/testsix"
+import RestePassword from "./resources/vendor/reset-password"
 
+import ManageProfile from "./resources/vendor/setting/manage-profile"
 
-
-
+import UserMessages from "./resources/vendor/message/user-messages"
 import AdminMessages from "./resources/vendor/message/admin-messages"
 import Notifications from "./resources/vendor/message/notifications"
 import ReviewMessages from "./resources/vendor/message/review-messages"
-import UserMessages from "./resources/vendor/message/user-messages"
+
+
+// import PersonalInfo from "./resources/vendor/personalinfo"
+// import BusinessInfo from "./resources/vendor/businessinfo"
+// import BankInfo from "./resources/vendor/bankinfo"
+
+import TestOne from "./resources/vendor/testone"
+
+
+
+
 
 import ListUsers from "./resources/admin/user/list-users"
 import UserMessagesAdmin from "./resources/admin/user/user-messages"
@@ -54,14 +64,18 @@ import AddBanner from "./resources/admin/banner/add-banner"
 import ManageProfileAdmin from "./resources/admin/setting/manage-profile"
 import UpdatePassword from "./resources/admin/setting/update-password"
 
-import CompletedOrders from "./resources/vendor/order/completed"
-import ControlOrder from "./resources/vendor/order/orders"
-import Refunds from "./resources/vendor/order/refunds"
-import Shipped from "./resources/vendor/order/shipped"
 
 import AddProduct from "./resources/vendor/product/add-products"
-import AddCoupons from "./resources/vendor/product/coupons"
-import ManageProfile from "./resources/vendor/setting/manage-profile"
+
+import ControlOrder from "./resources/vendor/order/new-orders"
+
+
+// import CompletedOrders from "./resources/vendor/order/completed"
+// import Refunds from "./resources/vendor/order/refunds"
+// import Shipped from "./resources/vendor/order/shipped"
+
+// import AddProduct from "./resources/vendor/product/add-products"
+// import AddCoupons from "./resources/vendor/product/coupons"
 
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -92,43 +106,43 @@ function App() {
                 <Route path="/admin/manage-profile" element={<ManageProfileAdmin />} />
                 <Route path="/admin/manage-password" element={<UpdatePassword />} />
 
+
+                
                 <Route path="/vendor/dashboard" element={<VendorDashboard />} />
-                <Route path="/vendor/add-product" element={<AddProduct />} />
+                <Route path="/vendor" element={<VendorDashboard />} />
+                <Route path="/vendor/login" element={<LoginVendor />} />
+                <Route path="/vendor/register" element={<RegisterVendor />} />
+                <Route path="/vendor/reset" element={<RestePassword />} />
+
+                <Route path="/vendor/manage-profile" element={<ManageProfile />} />
+
+                <Route path="/vendor/user-messages" element={<UserMessages />} />
+                <Route path="/vendor/admin-messages" element={<AdminMessages />} />
+                <Route path="/vendor/notifications" element={<Notifications />} />
+                <Route path="/vendor/review-messages" element={<ReviewMessages />} />
+                <Route path="/vendor/new-orders" element={<ControlOrder />} />
+                <Route path="/vendor/add-products" element={<AddProduct />} />
+
+                <Route path="/vendor/testone" element={<TestOne />} />
+
+                {/* 
+                
                 <Route path="/vendor/coupons" element={<AddCoupons />} />
 
-                <Route path="/vendor/orders" element={<ControlOrder />} />
+                <Route path="/vendor/neworders" element={<ControlOrder />} />
                 <Route path="/vendor/shipped" element={<Shipped />} />
                 <Route path="/vendor/refunds" element={<Refunds />} />
                 <Route path="/vendor/completed" element={<CompletedOrders />} />
                 
-                <Route path="/vendor/user-messages" element={<UserMessages />} />
-                <Route path="/vendor/admin-messages" element={<AdminMessages />} />
-                <Route path="/vendor/review-messages" element={<ReviewMessages />} />
-                <Route path="/vendor/notifications" element={<Notifications />} />
+               
 
-                <Route path="/vendor/manage-profile" element={<ManageProfile />} />
-                <Route path="/vendor" element={<VendorDashboard />} />
+                
                 
                 <Route path="/vendor/dashboard" element={<VendorDashboard />} />
-                <Route path="/vendor/login" element={<LoginVendor />} />
-                <Route path="/vendor/register" element={<RegisterVendor />} />
                 <Route path="/vendor/personalinfo" element={<PersonalInfo />} />
                 <Route path="/vendor/businessinfo" element={<BusinessInfo />} />
                 <Route path="/vendor/bankinfo" element={<BankInfo />} />
-                <Route path="/vendor/testone" element={<TestOne />} />
-                {/* 
-                
-                
-                
-                <Route path="/vendor/testfive" element={<TestFive />} />
-                <Route path="/vendor/testsix" element={<TestSix />} /> */}
-                {/* 
-              
-                <Route path="/vendor/testseven" element={<TestSeven />} />
-                <Route path="/vendor/testeight" element={<TestEight />} />
-                <Route path="/vendor/testnine" element={<Testnine />} /> */}
-
-
+ */}
 
 
                 <Route path="/" element={<Home />} />
