@@ -1,0 +1,65 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.sidebar {
+    width: 280px;
+    background-color: #333;
+    color: #f3f5f9;
+    padding: 15px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s ease;
+}
+
+.sidebar.hidden {
+    transform: translateX(-100%);
+}
+
+.sidebar a {
+    color: #f3f5f9;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #24b47e;
+}
+
+.dropdown-content {
+    display: none; /* Hide by default */
+    position: absolute;
+    left: 100%; /* Position to the right of the parent */
+    top: 0;
+    background-color: #444;
+    min-width: 200px; /* Set minimum width */
+}
+
+.dropdown:hover .dropdown-content {
+    display: block; /* Show on hover */
+}
+
+.content-wrapper {
+    margin-left: 0; /* Set to 0 for overlapping */
+    width: 100%;
+    transition: margin-left 0.3s ease;
+}
+
+@media (min-width: 769px) {
+    .content-wrapper {
+        margin-left: 280px; /* Push content to the right when sidebar is visible */
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px; /* Adjust width if needed */
+    }
+}

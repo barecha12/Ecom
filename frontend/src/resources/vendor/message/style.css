@@ -1,0 +1,34 @@
+.custom-table th,
+.custom-table td {
+  white-space: nowrap; /* Prevent text from wrapping */
+  padding: 0.5rem; /* Adjust padding */
+}
+
+.table-responsive {
+  overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+/* Minimized width for dropdown and search input */
+@media (max-width: 520px) {
+  .d-flex.justify-content-between {
+    flex-direction: column-reverse; /* Stack Entries dropdown and Search field */
+  }
+
+  .d-flex.align-items-center {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .add-product-btn {
+    margin-left: 15px; /* Space between search input and button */
+  }
+
+  .table-responsive {
+    margin-top: 10px;
+  }
+
+  /* Set smaller width for select and input */
+  .form-select, .form-control {
+    width: 120px;
+  }
+}

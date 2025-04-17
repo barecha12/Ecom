@@ -1,0 +1,113 @@
+/* dashboard.css */
+
+/* Sidebar styling */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px; /* Initially hidden off-screen */
+  width: 250px; /* Width of the sidebar */
+  height: 100%; /* Full height */
+  background-color: #343a40; /* Sidebar background color */
+  transition: left 0.3s ease; /* Smooth transition when sliding in and out */
+  z-index: 999; /* Ensure it's above other content */
+  padding-top: 56px; /* Offset for the navbar */
+}
+
+/* When the sidebar is open */        
+.sidebar-open {
+  left: 0; /* Sidebar slides in from the left */
+}
+
+/* Top navbar adjustment (make space for sidebar) */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Ensures the navbar stays on top */
+  margin-bottom: 56px; /* Makes space for the navbar when scrolling */
+}
+
+/* Main content area */
+.main-content {
+  margin-left: 0; /* By default no shift */
+  transition: margin-left 0.3s ease; /* Smooth transition for shifting */
+  padding-top: 56px; /* Offset for the fixed navbar */
+}
+
+/* When the sidebar is open, shift the main content to the right */
+.sidebar-open + .main-content {
+  margin-left: 250px; /* Move the main content to the right when sidebar is open */
+}
+/* dashboard.css */
+@media (max-width: 991px) {
+    .sidebar {
+      width: 250px; /* Set a fixed width for the sidebar */
+      display: none; /* Hide the sidebar by default */
+      position: fixed;
+      top: 0;
+      left: -250px; /* Start the sidebar off-screen */
+      height: 100vh;
+      background-color: #343a40;
+      transition: left 0.3s ease; /* Smooth transition for sliding */
+    }
+  
+    .sidebar.sidebar-open {
+      display: block; /* Show the sidebar when it's open */
+      left: 0; /* Slide the sidebar in */
+    }
+  
+    .main-content {
+      margin-left: 0; /* No margin needed for mobile view */
+      transition: margin-left 0.3s ease; /* Smooth transition for content shifting */
+    }
+  
+    /* Ensure the content shifts correctly when sidebar is open */
+    .sidebar-open + .main-content {
+      margin-left: 250px; /* Adjust the margin-left when sidebar is open */
+    }
+
+    /* Make the hamburger button visible on small screens */
+    .d-lg-none {
+      display: block !important;
+    }
+    .custom-card {
+  max-width: 200px; /* Adjust width as needed */
+  margin: 0 auto; /* Center the card */
+}
+
+}
+
+/* Hide the dropdown toggle arrow */
+.dropdown-toggle-no-arrow::after {
+  display: none; /* This will remove the default arrow */
+}
+
+
+/* Animation for expanding the product management section */
+.product-management-dropdown {
+  max-height: 0; /* Initially hide the content */
+  overflow: hidden; /* Hide anything overflowing */
+  padding-left: 30px;
+  padding-top: 10px;
+  transition: max-height 0.3s ease-in-out, padding-top 0.3s ease-in-out; /* Smooth transition */
+}
+
+.product-management-dropdown.open {
+  max-height: 500px; /* Set a maximum height for the expanded state */
+  padding-top: 10px; /* Set padding when open */
+}
+
+.product-management-dropdown a {
+  display: block;
+  padding: 8px 0;
+  color: white;
+  text-decoration: none;
+}
+
+/* Additional styling for links */
+.product-management-dropdown a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+

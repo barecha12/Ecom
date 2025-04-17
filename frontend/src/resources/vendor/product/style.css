@@ -1,0 +1,193 @@
+.custom-table th,
+.custom-table td {
+  white-space: nowrap; /* Prevent text from wrapping */
+  padding: 0.5rem; /* Adjust padding */
+}
+
+.table-responsive {
+  overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+/* Minimized width for dropdown and search input */
+@media (max-width: 520px) {
+  .d-flex.justify-content-between {
+    flex-direction: column-reverse; /* Stack Entries dropdown and Search field */
+  }
+
+  .d-flex.align-items-center {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .add-product-btn {
+    margin-left: 15px; /* Space between search input and button */
+  }
+
+  .table-responsive {
+    margin-top: 10px;
+  }
+
+  /* Set smaller width for select and input */
+  .form-select, .form-control {
+    width: 120px;
+  }
+}
+
+
+
+
+
+/* Custom Table Styles */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  color: #333;
+}
+
+.custom-table th {
+  background-color: #007bff;
+  color: white;
+  text-align: left;
+  padding: 12px 15px;
+  font-weight: bold;
+}
+
+.custom-table td {
+  background-color: #f9f9f9;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+.custom-table tr:nth-child(even) {
+  background-color: #f1f1f1;
+}
+
+.custom-table tr:hover {
+  background-color: #e0e0e0;
+}
+
+.custom-table .image-cell img {
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+.custom-table .actions-btns {
+  display: flex;
+  justify-content: space-around;
+  gap: 5px;
+}
+
+.custom-table .actions-btns button {
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.custom-table .actions-btns button:hover {
+  opacity: 0.8;
+}
+
+/* Add button hover effect */
+.add-product-btn:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.table-responsive {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 20px;
+}
+
+.pagination-buttons {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 20px;
+}
+
+.pagination-buttons button {
+  border-radius: 5px;
+  padding: 5px 15px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.pagination-buttons button:hover {
+  opacity: 0.8;
+}
+
+.pagination-buttons .disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+
+/* Zoom effect when hovering over the card */
+.card-hover-zoom {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover-zoom:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+.product-grid {
+  margin-top: 20px;
+}
+
+.card-body h5 {
+  font-size: 1.1rem;
+}
+
+.card-body p {
+  font-size: 0.9rem;
+}
+
+.product-card-image {
+  object-fit: cover;
+}
+
+.custom-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+/* Force 5 columns on large screens */
+@media (min-width: 1200px) {
+  .custom-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* 3 columns on medium screens */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .custom-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.fixed-button-size {
+  width: 70px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+/* Increase size on mobile screens */
+@media (max-width: 767px) {
+  .fixed-button-size {
+    width: 100%;   /* Increased width */
+    height:40px;   /* Increased height */
+  }
+  
+}

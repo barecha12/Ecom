@@ -1,0 +1,113 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate,useParams  } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles/ProductDetail.css'; // Custom CSS file for additional styles
+
+function ProductDetail() {
+  const [mainImage, setMainImage] = useState("https://www.pcworld.com/wp-content/uploads/2024/03/alienware-gaming-laptop.jpg?resize=1024%2C576&quality=50&strip=all");
+  const navigate = useNavigate();
+  const [productdetail, setProductDetail] = useState([]);
+  const { product_id } = useParams(); // Get product_id from URL parameters
+  const thumbnails = [
+    "https://www.pcworld.com/wp-content/uploads/2024/03/alienware-gaming-laptop.jpg?resize=1024%2C576&quality=50&strip=all",
+    "https://www.apple.com/newsroom/images/2024/09/apple-debuts-iphone-16-pro-and-iphone-16-pro-max/article/Apple-iPhone-16-Pro-hero-240909_inline.jpg.large.jpg",
+    "https://www.pcworld.com/wp-content/uploads/2024/03/alienware-gaming-laptop.jpg?resize=1024%2C576&quality=50&strip=all",
+    "https://www.apple.com/newsroom/images/2024/09/apple-debuts-iphone-16-pro-and-iphone-16-pro-max/article/Apple-iPhone-16-Pro-hero-240909_inline.jpg.large.jpg",
+    "https://www.pcworld.com/wp-content/uploads/2024/03/alienware-gaming-laptop.jpg?resize=1024%2C576&quality=50&strip=all"
+  ];
+
+
+
+
+  useEffect(() => {
+    async function listProductDetail(product_id) {
+      console.warn("ID NO:", product_id);
+      try {
+        let response = await fetch(`http://localhost:8000/api/productdetails/${product_id}`, {
+          method: 'POST',
+          body: JSON.stringify({ product_id }),
+          headers: {
+            "Content-Type": 'application/json',
+            "Accept": 'application/json'
+          }
+        });
+  
+        let result = await response.json();
+        setProductDetail(result);
+        console.warn("Received Data:", result);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    }
+  
+    listProductDetail(product_id);
+  }, [product_id]);
+  
+
+  const changeImage = (src) => {
+    setMainImage(src);
+  };
+  function handleContactSeller() {
+    navigate('/ChatVendor'); // Redirect to /ChatVendor
+  };
+  return (
+    <div>
+      {/* Navigation Bar */}
+
+
+      {/* Product Detail Container */}
+      <div className="container my-5 p-4 bg-white rounded shadow">
+        <div className="row ">
+          <div className="d-flex justify-content-end">
+            <button className="btn btn-warning contact-seller" onClick={handleContactSeller}>Contact Seller</button>
+
+          </div>
+          <div className="col-md-6 mt-5">
+            <div className="product-image text-center">
+              <img src={mainImage} alt="Example Product" className="img-fluid" style={{ width: '250px', height: '300px', objectFit: 'contain' }} />
+              <div className="thumbnails d-flex justify-content-center mt-2">
+                {
+                thumbnails.map((src, index) => (
+                  <img key={index} src={src} alt={`Thumbnail ${index + 1}`} className="img-thumbnail me-2" onClick={() => changeImage(src)} />
+                ))
+                
+
+
+
+
+
+                }
+              </div>
+            </div>
+          </div>
+          <div className="col-md-6 mt-4">
+            <div className="description mt-3 text-start">
+              <h3>Description</h3>
+              <p>This is a detailed description of Example Product 1. It includes features, specifications, and all the important information you need to know before purchasing.</p>
+            </div>
+            <div className="d-flex justify-content-between align-items-center">
+              <h3 className="mt-3">Product Reviews</h3>
+              <div className="rating">★★★★☆</div>
+            </div>
+            <div className="reviews-section mt-4 text-start">
+              <div className="review"><p><strong>John D.:</strong> Great product! Highly recommend.</p></div>
+              <div className="review"><p><strong>Jane S.:</strong> Good value for the price. Satisfied with my purchase.</p></div>
+              <div className="review"><p><strong>Mike T.:</strong> Average quality, but it works fine.</p></div>
+              <div className="review"><p><strong>Emily R.:</strong> Love it! Exceeded my expectations.</p></div>
+              <div className="review"><p><strong>Sarah K.:</strong> Not what I expected, but decent enough.</p></div>
+              <div className="review"><p><strong>Tom B.:</strong> Excellent performance for the price!</p></div>
+              <div className="review"><p><strong>Lisa C.:</strong> Would buy again, very satisfied.</p></div>
+            </div>
+          </div>
+          <div className="product-info mt-4">
+            <h2>Product Price</h2>
+            <p><strong>Price:</strong> $20.00</p>
+            <button className="btn btn-warning add-to-cart-button">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default ProductDetail;

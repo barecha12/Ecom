@@ -1,0 +1,63 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    
+}
+
+.login-form {
+    background-color: #ffffff;
+    padding: 60px; /* Increased padding */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 500px; /* Increased width */
+}
+
+.login-form h2 {
+    margin-bottom: 20px;
+}
+
+.login-form a {
+    color: #fbbe28;
+}
+
+.login-form a:hover {
+    text-decoration: underline;
+}
+
+.forgot-password {
+    color: #007bff; /* Bootstrap primary color */
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Ensure labels are left-aligned */
+.form-label {
+    text-align: left; /* Align labels to the left */
+    margin-bottom: 0.5rem; /* Optional: space below labels */
+}
+
+.custom-form-control  {
+    width: 100%; /* Ensure inputs take full width */
+    padding: 7px; /* Add padding for better touch target */
+    border: 1px solid #ced4da; /* Default border color */
+    border-radius: 0.25rem; /* Bootstrap's default border radius */
+    font-size: 16px; /* Increase font size for better readability */
+    text-align: left; /* Align text to the left */
+    box-sizing: border-box; /* Include padding and border in element's total width */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for border and shadow */
+}
+
+.custom-form-control:focus {
+    outline: none; /* Remove default outline */
+    border-color: #80bdff; /* Bootstrap's focus border color */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Bootstrap's focus shadow */
+}

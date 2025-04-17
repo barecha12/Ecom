@@ -1,0 +1,157 @@
+/* Ensure step-container is centered */
+.step-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+}
+
+/* Step Circle */
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.step-circle.completed { background-color: green; }
+#bank-info { background-color: green; }
+.step-circle.in-progress { background-color: white; color: black; border: 1px solid black; }
+.step-circle.pending { background-color: white; color: black; border: 1px solid black; }
+
+.step-label { font-size: 14px; text-align: center; }
+
+/* Centering the connector lines */
+.connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0; /* Remove space between steps */
+}
+
+.connecting-line {
+    width: 40px; /* Smaller width for connector lines */
+    height: 2px;
+    background-color: #ccc;
+}
+
+/* Responsive adjustments for mobile devices */
+@media (max-width: 767px) {
+    .step-container {
+        flex-direction: column; /* Stack the steps vertically */
+        align-items: center;
+    }
+
+    /* Adjust the width of the step circle */
+    .step-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    .step-label {
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .connector {
+        width: 50px; /* Reduce connector line width */
+        justify-content: center;
+    }
+
+    .connecting-line {
+        width: 30px; /* Further reduce the width of connector lines on small screens */
+    }
+
+    /* Optional: Adjust card and button sizes for mobile */
+    .img-thumbnail {
+        max-width: 80px;
+        margin-top: 5px;
+    }
+
+    .d-grid .btn {
+        font-size: 14px;
+    }
+}
+
+/* Additional responsiveness for screens under 500px */
+@media (max-width: 500px) {
+    .step-circle {
+        width: 28px; /* Further reduce step circle size */
+        height: 28px;
+        font-size: 10px; /* Reduce font size for the step number */
+    }
+
+    .step-label {
+        font-size: 10px; /* Further reduce the label font size */
+    }
+
+    .connecting-line {
+        width: 20px; /* Reduce width of connector lines for very small screens */
+    }
+
+    .connector {
+        width: 30px; /* Adjust connector width further */
+    }
+
+    /* Optional: Adjust margins for the form and buttons */
+    .d-grid .btn {
+        font-size: 12px; /* Smaller buttons */
+    }
+
+    .img-thumbnail {
+        max-width: 70px; /* Even smaller image thumbnails */
+    }
+
+    /* Adjust the width of the card */
+    .card {
+        max-width: 95%; /* Allow the card to take up more space */
+    }
+}
+
+/* Further adjustments for screens under 300px */
+@media (max-width: 300px) {
+    .step-circle {
+        width: 24px; /* Further reduce step circle size */
+        height: 24px;
+        font-size: 8px; /* Even smaller font size for step number */
+    }
+
+    .step-label {
+        font-size: 8px; /* Reduce label font size to fit the small screen */
+        margin-top: 3px;
+    }
+
+    .connecting-line {
+        width: 15px; /* Significantly reduce the width of connector lines */
+    }
+
+    .connector {
+        width: 20px; /* Reduce connector space further */
+    }
+
+    /* Optional: Adjust buttons and form elements for ultra-small screens */
+    .d-grid .btn {
+        font-size: 10px; /* Reduce button font size to fit better */
+    }
+
+    .img-thumbnail {
+        max-width: 60px; /* Smaller image thumbnails */
+    }
+
+    /* Adjust the width of the card */
+    .card {
+        max-width: 90%; /* Slightly reduce card width */
+    }
+
+    /* Further tweak form input field padding and sizes */
+    .form-control {
+        font-size: 10px;
+        padding: 5px; /* Reduce padding for form fields */
+    }
+}

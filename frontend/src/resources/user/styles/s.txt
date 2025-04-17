@@ -1,0 +1,27 @@
+
+.navbar {
+  position: relative; /* Ensure the navbar is positioned */
+}
+
+.search-bar {
+  position: absolute; /* Use absolute positioning */
+  left: 50%; /* Position it at 50% of the navbar */
+  transform: translateX(-50%); /* Center it horizontally */
+  top: 35%; /* Position vertically at 50% */
+  transform: translate(-50%, -50%); /* Center it both horizontally and vertically */
+  display: flex; /* Keep the flex layout for input and button */
+  align-items: center; /* Align items vertically */
+}
+
+.search-bar input {
+  font-size: 16px; /* Set font size */
+  border: 1px solid #ddd; /* Set border */
+  border-radius: 5px; /* Rounded corners */
+  background-color: #fff; /* Background color */
+  color: #000; /* Text color */
+}
+
+.search-bar input::placeholder {
+  color: #999; /* Placeholder color */
+  opacity: 1; /* Ensure visibility */
+}

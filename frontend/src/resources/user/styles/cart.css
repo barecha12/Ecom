@@ -1,0 +1,262 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+/* Main Content */
+.main-content {
+  padding: 20px;
+}
+
+/* Header */
+.headers {
+  background-color: #fbbe28;
+  color: #000000;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center; /* This centers the text */
+  margin-bottom: 20px;
+  width: 100%; /* Ensures the header spans the full width */
+  display: flex; /* Enable Flexbox */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically (if needed) */
+}
+
+/* Cart Table */
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cart-table th,
+.cart-table td {
+  padding: 15px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.cart-table th {
+  background-color: #fbbe28;
+  color: #000000;
+  font-weight: bold;
+}
+
+/* Hover effect for product rows */
+.cart-table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.cart-table tbody tr:hover {
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
+}
+
+.cart-table td img {
+  width: 100px;
+  height: 100px;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.cart-table .product-info {
+  display: flex;
+  align-items: center;
+}
+
+.cart-table .product-name {
+  margin-left: 10px;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* Quantity Selector */
+.quantity-container {
+  display: flex;
+  align-items: center;
+}
+
+.quantity-btn {
+  background-color: #fbbe28;
+  color: #000000;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 5px;
+}
+
+.quantity-btn:hover {
+  background-color: #e0a822;
+}
+
+.quantity-value {
+  margin: 0 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.cart-table .remove-btn {
+  background-color: #ff4d4f;
+  color: #ffffff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cart-table .remove-btn:hover {
+  background-color: #d43f3f;
+}
+
+/* Coupon Section */
+.coupon-container {
+  display: flex;
+  align-items: center;
+  
+}
+
+.coupon-container input {
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  flex: 1;
+  text-transform: uppercase;
+  width: 10px;
+}
+
+.coupon-container button {
+  background-color: #fbbe28;
+  color: #000000;
+  border: none;
+  padding: 5px 10px;
+  margin-left: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.coupon-container button:hover {
+  background-color: #e0a822;
+}
+
+/* Summary Section */
+.summary {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.summary h2 {
+  margin-bottom: 20px;
+  color: #000000;
+}
+
+.summary p {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #666666;
+}
+
+.summary button {
+  background-color: #fbbe28;
+  color: #000000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.summary button:hover {
+  background-color: #e0a822;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .cart-table th, .cart-table td {
+    font-size: 14px;
+    padding: 10px;
+    display: block; /* Stack the cells */
+    text-align: right; /* Right-align for smaller screens */
+  }
+
+  .cart-table th {
+    display: none; /* Hide headers on small screens */
+  }
+
+  .cart-table tr {
+    margin-bottom: 15px; /* Add space between rows */
+    display: block; /* Make rows block elements */
+  }
+
+  .summary {
+    padding: 15px;
+  }
+
+  .summary button {
+    width: 100%;
+  }
+
+  .coupon-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .coupon-container input {
+    padding: 5px;
+    font-size: 14px;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+    flex: 1;
+    text-transform: uppercase;
+    width: 100%;
+  }
+  
+  .coupon-container button {
+    margin-left: 0;
+    margin-top: 10px;
+    width: 100%;
+  }
+  .quantity-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+/* Ensure proper styling for the navbar and responsive behavior */
+.navbar {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.navbar-toggler {
+  border: none; /* Remove the border for cleaner look */
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .navbar-collapse {
+    display: none; /* Initially hide the navbar collapse */
+  }
+
+  .navbar-collapse.show {
+    display: flex; /* Show the navbar when toggled */
+    flex-direction: column; /* Stack items vertically */
+  }
+
+  .navbar-toggler {
+    margin-left: auto; /* Align the toggle button */
+  }
+}

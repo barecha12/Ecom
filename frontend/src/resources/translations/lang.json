@@ -1,0 +1,17 @@
+{
+  "english": {
+    "title": "Welcome",
+    "describe": "This is a description.",
+    "search":"Search"
+  },
+  "amharic": {
+    "title": "እንኳን ደህና መጣችሁ",
+    "describe": "ይህ መግለጫ ነው።",
+     "search":"ፈልግ"
+  },
+  "arabic": {
+    "title": "أهلا بك",
+    "describe": "هذا هو الوصف.",
+     "search":"يبحث"
+  }
+}

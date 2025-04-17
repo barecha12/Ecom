@@ -1,0 +1,80 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+
+
+.settings-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left; /* Align text to the left */
+}
+
+h2 {
+    color: #333333;
+}
+
+.custom-button {
+    padding: 10px 15px;
+    background-color: #fbbe28 !important; /* Original background color */
+    color: black; /* Change text color to black */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px; /* Add margin for spacing */
+}
+
+.custom-button:hover {
+    background-color: #e0a822 !important; /* Keep the hover effect */
+    color:black;
+}
+
+.form-group {
+    margin-bottom: 15px; /* Custom margin */
+    text-align: left; /* Ensure form group elements align left */
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between; /* Space between buttons */
+    align-items: center; /* Center vertically */
+    margin-top: 20px; /* Add space above the button container */
+}
+
+.modal-content {
+    border-radius: 8px; /* Rounded corners */
+}
+
+.modal-header, .modal-footer {
+    border: none; /* Remove default borders */
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between; /* Space between buttons */
+    width: 100%; /* Use full width */
+}
+
+
+.custom-button-save {
+    padding: 10px 15px;
+    background-color: #fbbe28 !important; /* Original background color */
+    color: black; /* Change text color to black */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px; /* Add margin for spacing */
+}
+
+.custom-button-save:hover {
+    background-color: #e0a822 !important; /* Keep the hover effect */
+    color:black;
+}
+
