@@ -82,7 +82,7 @@ function UserMessages() {
           {openDropdown === "products" && (
             <ul className="dropdown-menu custom-dropdown-menu">
               <li><a href="/vendor/add-products" className="dropdown-item-vendor">Add Products</a></li>
-              <li><a href="/vendor/coupons" className="dropdown-item-vendor">Add Coupons</a></li>
+              <li><a href="/vendor/add-coupons" className="dropdown-item-vendor">Add Coupons</a></li>
             </ul>
           )}
         </div>

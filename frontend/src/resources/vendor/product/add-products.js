@@ -38,7 +38,22 @@ function AddProduct() {
   const [currentPage, setCurrentPage] = useState(1);
   const totalProducts = 100; // Example total product count
   const totalPages = Math.ceil(totalProducts / entries);
+  const [selectedFilesCount, setSelectedFilesCount] = useState(0);
 
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showEditProductModal, setShowEditProductModal] = useState(false);
+
+  const openEditProductModal = (product) => {
+    setSelectedProduct(product);
+    setShowEditProductModal(true);
+  };
+  const deleteProduct = (productId) => {
+    console.warn("FUCK ID:", productId);
+  };
+  const handleCloseEditProductModal = () => {
+    setShowEditProductModal(false);
+    setSelectedProduct(null);
+  };
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };
@@ -50,10 +65,12 @@ function AddProduct() {
   const handleImageChange = (e) => {
     const { name, files } = e.target;
     if (name === "selectedproductImages") {
+      const slicedFiles = Array.from(files).slice(0, 5); // Limit to 5 files
       setProductImages({
         ...productImages,
-        selectedproductImages: Array.from(files).slice(0, 5)
+        selectedproductImages: slicedFiles
       });
+      setSelectedFilesCount(slicedFiles.length); // Update the count of selected files
     }
   };
 
@@ -278,7 +295,7 @@ function AddProduct() {
           {openDropdown === "products" && (
             <ul className="dropdown-menu custom-dropdown-menu">
               <li><a href="/vendor/add-products" className="dropdown-item-vendor">Add Products</a></li>
-              <li><a href="/vendor/coupons" className="dropdown-item-vendor">Add Coupons</a></li>
+              <li><a href="/vendor/add-coupons" className="dropdown-item-vendor">Add Coupons</a></li>
             </ul>
           )}
         </div>
@@ -347,7 +364,8 @@ function AddProduct() {
 
               {/* Product Cards Grid */}
               <Row className="mt-3">
-                {products.slice(0, 4).map((product) => (
+                {products.map((product) => (
+
                   <Col xs={12} md={6} lg={3} key={product.id}>
                     <Card className="shadow-sm rounded-4 p-3 product-card-vendor">
                       <Image
@@ -364,8 +382,10 @@ function AddProduct() {
                       <p>Category: {product.category}</p>
                       <p>Subcategory: {product.subcategory}</p>
                       <div className="d-flex justify-content-between mt-3">
-                        <Button variant="warning" size="sm"><FaPen /></Button>
-                        <Button variant="danger" size="sm"><FaTimes /></Button>
+                        <Button variant="warning" size="sm" onClick={() => openEditProductModal(product)}>
+                          <FaPen />
+                        </Button>
+                        <Button variant="danger" size="sm" onClick={() => deleteProduct(product.id)}><FaTimes /></Button>
                       </div>
                     </Card>
                   </Col>
@@ -441,6 +461,61 @@ function AddProduct() {
           </Modal>
         </Container>
         {/* Main Content Ends Here */}
+        <Modal show={showEditProductModal} onHide={() => setShowEditProductModal(false)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Edit Product</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={(e) => {
+              e.preventDefault();
+              // Handle product update logic here
+              handleCloseEditProductModal();
+            }}>
+              <Form.Group controlId="productName">
+                <Form.Label>Product Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={selectedProduct?.name || ""}
+                  onChange={(e) => setSelectedProduct({ ...selectedProduct, name: e.target.value })}
+                  placeholder="Enter product name"
+                />
+              </Form.Group>
+              <Form.Group controlId="totalProduct">
+                <Form.Label>Total Product</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={selectedProduct?.totalProduct || ""}
+                  onChange={(e) => setSelectedProduct({ ...selectedProduct, totalProduct: e.target.value })}
+                  placeholder="Enter total product"
+                />
+              </Form.Group>
+              <Form.Group controlId="productPrice">
+                <Form.Label>Product Price</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={selectedProduct?.price || ""}
+                  onChange={(e) => setSelectedProduct({ ...selectedProduct, price: e.target.value })}
+                  placeholder="Enter product price"
+                />
+              </Form.Group>
+              <Form.Group controlId="productDescription">
+                <Form.Label>Product Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  value={selectedProduct?.description || ""}
+                  onChange={(e) => setSelectedProduct({ ...selectedProduct, description: e.target.value })}
+                  rows={3}
+                  placeholder="Enter product description"
+                />
+              </Form.Group>
+              {/* Add more fields as necessary */}
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowEditProductModal(false)}>Close</Button>
+            <Button variant="primary" type="submit">Save Changes</Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );

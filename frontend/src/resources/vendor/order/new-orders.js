@@ -17,19 +17,22 @@ function ControlOrder() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [entries, setEntries] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   const totalProducts = 100; // Example total product count
   const totalPages = Math.ceil(totalProducts / entries);
 
   const products = Array.from({ length: totalProducts }, (_, i) => ({
     id: i + 1,
     name: `Product ${i + 1}`,
-    code: `P${i + 1}01`,
-    color: "Blue",
+    paymentMethod: `Chappa`,
+    orderTime: "2025-04-18 14:32:10",
     image: "https://www.beyiddondolo.com/media/5679-84.jpg",
-    category: "T-Shirts",
-    section: "Clothing",
-    addedBy: "Vendor",
-    status: i % 2 === 0,
+    status: "New Order",
+    address: "123 Vendor St, City, Country",
+    totalPaid: `$${(i + 1) * 10}`,
+    orderedQuantity: i + 1,
   }));
 
   const displayedProducts = products.slice((currentPage - 1) * entries, currentPage * entries);
@@ -40,6 +43,24 @@ function ControlOrder() {
 
   const handleDropdown = (menu) => {
     setOpenDropdown(openDropdown === menu ? null : menu);
+  };
+
+  const handleDetailClick = (product) => {
+    setSelectedProduct(product);
+    setPopupVisible(true);
+  };
+
+  const handlePrint = () => {
+    const printContent = `
+      <h1>Order Details</h1>
+      <p><strong>Address:</strong> ${selectedProduct.address}</p>
+      <p><strong>Total Paid:</strong> ${selectedProduct.totalPaid}</p>
+      <p><strong>Ordered Quantity:</strong> ${selectedProduct.orderedQuantity}</p>
+    `;
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.print();
   };
 
   return (
@@ -64,7 +85,7 @@ function ControlOrder() {
           {openDropdown === "products" && (
             <ul className="dropdown-menu custom-dropdown-menu">
               <li><a href="/vendor/add-products" className="dropdown-item-vendor">Add Products</a></li>
-              <li><a href="/vendor/coupons" className="dropdown-item-vendor">Add Coupons</a></li>
+              <li><a href="/vendor/add-coupons" className="dropdown-item-vendor">Add Coupons</a></li>
             </ul>
           )}
         </div>
@@ -115,37 +136,17 @@ function ControlOrder() {
           <h1 className="h4 mb-0">Order Items</h1>
         </div>
 
-        <div className="filters">
-          <div className="show-entries">
-            <label className="me-2">Show</label>
-            <select value={entries} onChange={(e) => setEntries(Number(e.target.value))} className="entries-select">
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-            </select>
-            <label className="ms-2">Entries</label>
-          </div>
-
-          <div className="search-bar">
-            <label className="me-2">Search:</label>
-            <input type="text" placeholder="Search" className="search-input" />
-          </div>
-        </div>
-
-        <div className="table-responsive">
+        <div className="custom-table-responsive">
           <table className="custom-table">
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Product Name</th>
-                <th>Product Code</th>
-                <th>Product Color</th>
                 <th>Product Image</th>
-                <th>Category</th>
-                <th>Section</th>
-                <th>Added by</th>
+                <th>Payment Method</th>
+                <th>Order Time</th>
                 <th>Status</th>
+                <th>Buyer Info</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -154,24 +155,21 @@ function ControlOrder() {
                 <tr key={product.id}>
                   <td>{product.id}</td>
                   <td>{product.name}</td>
-                  <td>{product.code}</td>
-                  <td>{product.color}</td>
                   <td>
                     <img src={product.image} alt={product.name} className="product-image" />
                   </td>
-                  <td>{product.category}</td>
-                  <td>{product.section}</td>
-                  <td>{product.addedBy}</td>
+                  <td>{product.paymentMethod}</td>
+                  <td>{product.orderTime}</td>
+                  <td>{product.status}</td>
                   <td>
-                    <input type="checkbox" checked={product.status} readOnly />
+                    <button className="see-detail" onClick={() => handleDetailClick(product)}>
+                      See Detail
+                    </button>
                   </td>
                   <td>
                     <div className="actions">
                       <button className="edit-button">
                         <FaPen />
-                      </button>
-                      <button className="delete-button">
-                        <FaTimes />
                       </button>
                     </div>
                   </td>
@@ -181,11 +179,37 @@ function ControlOrder() {
           </table>
         </div>
 
-        <div className="pagination">
-          <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
-          <span>Page {currentPage} of {totalPages}</span>
-          <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
-        </div>
+        {popupVisible && selectedProduct && (
+          <div className="popup">
+            <div className="popup-content">
+              <h2>Order Details</h2>
+              <p><strong>Address:</strong> {selectedProduct.address}</p>
+              <p><strong>Total Paid:</strong> {selectedProduct.totalPaid}</p>
+              <p><strong>Ordered Quantity:</strong> {selectedProduct.orderedQuantity}</p>
+              <button onClick={handlePrint}>Print as PDF</button>
+              <button onClick={() => setPopupVisible(false)}>Close</button>
+            </div>
+          </div>
+        )}
+
+{totalPages > 1 && (
+  <div className="pagination">
+    <button
+      disabled={currentPage === 1}
+      onClick={() => setCurrentPage(currentPage - 1)}
+    >
+      Previous
+    </button>
+    <span>Page {currentPage} of {totalPages}</span>
+    <button
+      disabled={currentPage === totalPages}
+      onClick={() => setCurrentPage(currentPage + 1)}
+    >
+      Next
+    </button>
+  </div>
+)}
+
       </div>
     </div>
   );
