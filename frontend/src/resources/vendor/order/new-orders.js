@@ -31,6 +31,7 @@ function ControlOrder() {
     image: "https://www.beyiddondolo.com/media/5679-84.jpg",
     status: "New Order",
     address: "123 Vendor St, City, Country",
+    phone:"0923746149",
     totalPaid: `$${(i + 1) * 10}`,
     orderedQuantity: i + 1,
   }));
@@ -54,6 +55,7 @@ function ControlOrder() {
     const printContent = `
       <h1>Order Details</h1>
       <p><strong>Address:</strong> ${selectedProduct.address}</p>
+      <p><strong>Phone:</strong> ${selectedProduct.phone}</p>
       <p><strong>Total Paid:</strong> ${selectedProduct.totalPaid}</p>
       <p><strong>Ordered Quantity:</strong> ${selectedProduct.orderedQuantity}</p>
     `;
@@ -133,7 +135,7 @@ function ControlOrder() {
 
       <div className={`main-content ${sidebarVisible ? "with-sidebar" : "full-width"}`}>
         <div className="custom-header text-center">
-          <h1 className="h4 mb-0">Order Items</h1>
+          <h1 className="h4 mb-0">New Order Items</h1>
         </div>
 
         <div className="custom-table-responsive">
@@ -184,6 +186,7 @@ function ControlOrder() {
             <div className="popup-content">
               <h2>Order Details</h2>
               <p><strong>Address:</strong> {selectedProduct.address}</p>
+              <p><strong>Phone:</strong> {selectedProduct.phone}</p>
               <p><strong>Total Paid:</strong> {selectedProduct.totalPaid}</p>
               <p><strong>Ordered Quantity:</strong> {selectedProduct.orderedQuantity}</p>
               <button onClick={handlePrint}>Print as PDF</button>

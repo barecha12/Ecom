@@ -11,14 +11,37 @@ const VendorInfo = () => {
         address: '',
         city: '',
         region: '',
-        mobile: ''
+        mobile: '',
+        idNumber: '',
+        idPhotoFront: null,
+        idPhotoBack: null
     });
+
+    const handlePersonalFileChange = (e) => {
+        const { name, files } = e.target;
+        setPersonalData({ ...personalData, [name]: files[0] });
+    };
 
     const [businessData, setBusinessData] = useState({
         shopName: '',
         shopAddress: '',
-        shopCity: ''
+        shopCity: '',
+        state: '',
+        shopMobile: '',
+        businessLicenseNumber: '',
+        addressProofImage: null,
+        otherProofImages: []
     });
+
+    const handleBusinessFileChange = (e) => {
+        const { name, files } = e.target;
+        if (name === 'otherProofImages') {
+            const selectedFiles = Array.from(files).slice(0, 5);
+            setBusinessData({ ...businessData, [name]: selectedFiles });
+        } else {
+            setBusinessData({ ...businessData, [name]: files[0] });
+        }
+    };
 
     const [bankData, setBankData] = useState({
         bankName: '',
@@ -26,8 +49,21 @@ const VendorInfo = () => {
         accountNumber: ''
     });
 
-    const isPersonalComplete = Object.values(personalData).every(val => val.trim() !== '');
-    const isBusinessComplete = Object.values(businessData).every(val => val.trim() !== '');
+    const isPersonalComplete = Object.entries(personalData).every(([key, val]) => {
+        if (typeof val === 'string') return val.trim() !== '';
+        if (val instanceof File) return val !== null;
+        return false;
+    });
+
+    const isBusinessComplete = (
+        businessData.shopName.trim() !== '' &&
+        businessData.shopAddress.trim() !== '' &&
+        businessData.shopCity.trim() !== '' &&
+        businessData.state.trim() !== '' &&
+        businessData.shopMobile.trim() !== '' &&
+        businessData.businessLicenseNumber.trim() !== '' &&
+        businessData.addressProofImage !== null
+    );
 
     const handlePersonalChange = (e) => {
         setPersonalData({ ...personalData, [e.target.name]: e.target.value });
@@ -44,21 +80,30 @@ const VendorInfo = () => {
     const handleVendorSubmit = async (e) => {
         e.preventDefault();
 
-        const vendorPayload = {
-            ...personalData,
-            ...businessData,
-            ...bankData
-        };
+        const formData = new FormData();
+
+        Object.entries(personalData).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+
+        Object.entries(businessData).forEach(([key, value]) => {
+            if (key === 'otherProofImages' && Array.isArray(value)) {
+                value.forEach((file, index) => {
+                    formData.append(`otherProofImages[${index}]`, file);
+                });
+            } else {
+                formData.append(key, value);
+            }
+        });
+
+        Object.entries(bankData).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
 
         try {
-            console.warn("Fuck",vendorPayload);
             const response = await fetch("http://localhost:8000/api/vendorinfo", {
                 method: "POST",
-                body: JSON.stringify(vendorPayload),
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
+                body: formData,
             });
 
             const result = await response.json();
@@ -102,6 +147,16 @@ const VendorInfo = () => {
 
                 <label>Mobile</label>
                 <input type="text" name="mobile" value={personalData.mobile} onChange={handlePersonalChange} />
+
+                <label>ID Number</label>
+                <input type="text" name="idNumber" value={personalData.idNumber} onChange={handlePersonalChange} />
+
+                <label>ID Photo (Front)</label>
+                <input type="file" name="idPhotoFront" accept="image/*" onChange={handlePersonalFileChange} />
+
+                <label>ID Photo (Back)</label>
+                <input type="file" name="idPhotoBack" accept="image/*" onChange={handlePersonalFileChange} />
+
             </form>
         </div>
     );
@@ -118,6 +173,22 @@ const VendorInfo = () => {
 
                 <label>Shop City</label>
                 <input type="text" name="shopCity" value={businessData.shopCity} onChange={handleBusinessChange} />
+
+                <label>State</label>
+                <input type="text" name="state" value={businessData.state} onChange={handleBusinessChange} />
+
+                <label>Shop Mobile</label>
+                <input type="text" name="shopMobile" value={businessData.shopMobile} onChange={handleBusinessChange} />
+
+                <label>Business License Number</label>
+                <input type="text" name="businessLicenseNumber" value={businessData.businessLicenseNumber} onChange={handleBusinessChange} />
+
+                <label>Address Proof (Image)</label>
+                <input type="file" name="addressProofImage" accept="image/*" onChange={handleBusinessFileChange} />
+
+                <label>Other Proof Images (Max 5)</label>
+                <input type="file" name="otherProofImages" accept="image/*" multiple onChange={handleBusinessFileChange} />
+
             </form>
         </div>
     );
@@ -184,3 +255,6 @@ const VendorInfo = () => {
 };
 
 export default VendorInfo;
+
+
+

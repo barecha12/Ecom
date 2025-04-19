@@ -116,8 +116,8 @@ function Cart() {
         </div>
       </nav>
 
-      <div className="main-content mt-4">
-        <div className="headers">
+      <div className="main-content mt-5">
+        <div className="headers mt-5">
           <h1>Your Shopping Cart</h1>
         </div>
 
