@@ -11,14 +11,34 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
-    if (localStorage.getItem('user-info')) {
-      navigate("/");
+    const userInfo = localStorage.getItem('user-info');
+    if (userInfo) {
+      const user = JSON.parse(userInfo);
+      if (user.admin_role_id === "SuperAdmin") {
+        navigate("/superadmin/");
+      } else if (user.vendor_role_id === "Vendor") {
+        navigate("/vendor/")
+      } else if (user.admin_role_id === "Admin") {
+        navigate("/admin/");
+      } else {
+        navigate("/");
+      }
     }
-
-  }, [])
+  }, []);
   async function login(e) {
     e.preventDefault();
 
+    if (!email || !password) {
+      toast.error("Please fill out all fields.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
     let items = { email, password };
 
     try {
@@ -32,7 +52,6 @@ function Login() {
       });
 
       let result = await response.json();
-
       if (result.success) {
         toast.success("Login Successful!", {
           position: "top-right",
@@ -57,7 +76,6 @@ function Login() {
         });
       }
     } catch (error) {
-      console.error('Error:', error);
       toast.error('An error occurred. Please try again later.');
     }
   }

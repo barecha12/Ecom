@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->string('bank_name', 100);
             $table->string('account_name', 100);
             $table->string('account_number', 100); // Changed to string for handling account numbers that may include dashes
-            $table->enum('status', ['active', 'inactive', 'pending'])->default('pending'); // Enum for status
+            $table->enum('status', ['Active', 'Inactive', 'Pending'])->default('Pending'); // Enum for status
             $table->unsignedInteger('admin_id'); // Foreign key reference to admins
             $table->unsignedInteger('vendor_id'); // Foreign key reference to vendors
             $table->timestamps(); // Adding created_at and updated_at timestamps

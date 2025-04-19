@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->increments('order_id'); // Auto-increment primary key
             $table->unsignedInteger('user_id'); // Foreign key reference to users
             $table->unsignedInteger('product_id'); // Foreign key reference to products
-            $table->enum('order_status', ['pending', 'completed', 'cancelled', 'shipped','refunded'])->default('pending'); // Enum for order status
+            $table->enum('order_status', ['Pending', 'Completed', 'Cancelled', 'Shipped','Refunded'])->default('Pending'); // Enum for order status
             $table->string('payment_method', 10); // Payment method used
             $table->float('total_paid'); // Total amount paid
             $table->integer('orderd_quantity'); // Quantity of the product ordered

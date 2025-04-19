@@ -51,6 +51,7 @@ const VendorInfo = () => {
         };
 
         try {
+            console.warn("Fuck",vendorPayload);
             const response = await fetch("http://localhost:8000/api/vendorinfo", {
                 method: "POST",
                 body: JSON.stringify(vendorPayload),

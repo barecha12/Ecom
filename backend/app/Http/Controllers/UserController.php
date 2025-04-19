@@ -30,8 +30,6 @@ class UserController extends Controller
                 'confirmed', // Ensure password matches password_confirmation
                          ],
 
-           // 'password' => 'required|string|min:6|confirmed',  // 'confirmed' rule ensures password matches password_confirmation
-            'role_id' => 'required|string', // Assuming role_id is required
         ]);
         // If validation fails, Laravel will automatically return a 422 response with validation errors
         if ($validated) {
@@ -40,7 +38,6 @@ class UserController extends Controller
             $user->name = $req->input('name');
             $user->email = $req->input('email');
             $user->password = Hash::make($req->input('password'));
-            $user->user_role_id = $req->input('role_id');
             
             // Save the user to the database
             if ($user->save()) {

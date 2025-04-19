@@ -13,8 +13,8 @@ return new class extends Migration {
             $table->string('password', 100);
             $table->bigInteger('phone'); // Using bigInteger for phone number
             $table->string('profile_img', 100)->nullable();
-            $table->string('admin_role_id', 10);
-            $table->enum('status', ['active','Suspended'])->default('active');
+            $table->string('admin_role_id', 10)->default('Admin');
+            $table->enum('status', ['Active','Suspended'])->default('Active');
             $table->timestamps(); // Adding created_at and updated_at timestamps
         });
     }

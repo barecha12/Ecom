@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->string('other_img_three', 255)->nullable();
             $table->string('other_img_four', 255)->nullable();
             $table->string('other_img_five', 255)->nullable();
-            $table->enum('status', ['active', 'inactive', 'pending'])->default('pending'); // Enum for status
+            $table->enum('status', ['Active', 'Inactive', 'Pending'])->default('Pending'); // Enum for status
             $table->unsignedInteger('admin_id'); // Foreign key reference to admins
             $table->unsignedInteger('vendor_id'); // Foreign key reference to vendors
             $table->timestamps(); // Adding created_at and updated_at timestamps

@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->unsignedInteger('personal_unique_id'); // Assuming unique_id is a number
             $table->string('id_front_side', 100);
             $table->string('id_back_side', 100);
-            $table->enum('status', ['active', 'inactive', 'pending'])->default('pending'); // Enum for status
+            $table->enum('status', ['Active', 'Inactive', 'Pending'])->default('Pending'); // Enum for status
             $table->unsignedInteger('vendor_id'); // Foreign key reference to vendors
             $table->unsignedInteger('admin_id'); // Foreign key reference to admins
             $table->timestamps(); // Adding created_at and updated_at timestamps

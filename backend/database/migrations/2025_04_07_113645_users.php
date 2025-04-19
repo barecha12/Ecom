@@ -12,8 +12,8 @@ return new class extends Migration {
             $table->string('name', 100);
             $table->string('email', 100);
             $table->string('password', 100);
-            $table->string('user_role_id', 100);
-            $table->enum('status', ['active','Suspended'])->default('active');
+            $table->string('user_role_id', 100)->default('User');
+            $table->enum('status', ['Active','Suspended'])->default('Active');
             $table->timestamps(); // Adding created_at and updated_at timestamps
         });
     }

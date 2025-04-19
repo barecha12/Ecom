@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,19 +11,37 @@ function Register() {
   const [password, setPassword] = useState("");
   const [passConfirm, setPassConfirm] = useState("");
   const navigate = useNavigate();
-  let role_id = "User";
 
-    useEffect(() => {
-      if (localStorage.getItem('user-info')) {
-        navigate("/");
-      }
-  
-    }, [])
+   useEffect(() => {
+     const userInfo = localStorage.getItem('user-info');
+     if (userInfo) {
+       const user = JSON.parse(userInfo);
+       if (user.admin_role_id === "SuperAdmin") {
+         navigate("/superadmin/");
+       } else if (user.vendor_role_id === "Vendor") {
+         navigate("/vendor/")
+       } else if (user.admin_role_id === "Admin") {
+         navigate("/admin/");
+       } else {
+         navigate("/");
+       }
+     }
+   }, []);
   async function signUp(e) {
     e.preventDefault(); // Prevent form submission from refreshing the page
 
     // Check if the passwords match
-    if (password !== passConfirm) {
+    if (!name || !email || !password || !passConfirm) {
+      toast.error("Please fill out all fields.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    } else if (password !== passConfirm) {
       toast.error("Passwords do not match. Please try again.", {
         position: "top-right",
         autoClose: 3000,
@@ -35,8 +53,8 @@ function Register() {
       return;
     }
 
-    let items = { name, email, password, password_confirmation: passConfirm, role_id };
-    console.warn("FUCK", items)
+    let items = { name, email, password, password_confirmation: passConfirm };
+
     try {
       let response = await fetch("http://localhost:8000/api/register", {
         method: 'POST',
@@ -48,7 +66,6 @@ function Register() {
       });
 
       let result = await response.json();
-      console.warn("API Response:", result);  // Log the API response to see the structure
 
       // If success is true, show success alert
       if (result.success) {
@@ -60,7 +77,7 @@ function Register() {
           pauseOnHover: true,
           draggable: true,
         });
-        localStorage.setItem("user-info", JSON.stringify(result.storeData));
+
         setTimeout(() => {
           navigate("/login");
         }, 1000); // Delay the navigation for 3 seconds

@@ -1,25 +1,105 @@
 import React, { useState } from "react";
 import { FaUser, FaEnvelope, FaLock, FaCheckCircle } from "react-icons/fa";
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
 import "./style/register.css";  // Make sure this points to your custom CSS file
 
 const RegisterVendor = () => {
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [passConfirm, setPassConfirm] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name || !email || !password || !confirmPassword) {
-      setError("Please fill out all fields.");
-    } else if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-    } else {
-      setError("");
-      // Add your sign-up logic here (e.g., call API to register the user)
-      console.log("Signing up with", { name, email, password });
+  useEffect(() => {
+    const userInfo = localStorage.getItem('user-info');
+    if (userInfo) {
+      const user = JSON.parse(userInfo);
+      if (user.admin_role_id === "SuperAdmin") {
+        navigate("/superadmin/");
+      } else if (user.vendor_role_id === "Vendor") {
+        navigate("/vendor/")
+      } else if (user.admin_role_id === "Admin") {
+        navigate("/admin/");
+      } else {
+        navigate("/");
+      }
     }
+  }, []);
+  
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!email || !password || !passConfirm) {
+      toast.error("Please fill out all fields.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    } else if (password !== passConfirm) {
+      toast.error("Passwords do not match. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
+
+let items = {email, password, password_confirmation: passConfirm };
+
+    try {
+      let response = await fetch("http://localhost:8000/api/vendorregister", {
+        method: 'POST',
+        body: JSON.stringify(items),
+        headers: {
+          "Content-Type": 'application/json',
+          "Accept": 'application/json'
+        }
+      });
+
+      let result = await response.json();
+
+      // If success is true, show success alert
+      if (result.success) {
+        toast.success("Registration Successful!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+
+        setTimeout(() => {
+          navigate("/vendor/login");
+        }, 1000); // Delay the navigation for 3 seconds
+
+      } else {
+        toast.error("Failed to create account. Please try again.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again later.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+
   };
 
   return (
@@ -27,22 +107,8 @@ const RegisterVendor = () => {
       <div className="vendor-signup-container">
         <h2 className="text-center mb-4 vendor-signup-header">Vendor Sign Up</h2>
 
-        {error && <div className="alert alert-danger vendor-error-message">{error}</div>}
-
         <form onSubmit={handleSubmit} className="vendor-signup-form">
-          <div className="form-group mb-3 vendor-form-group">
-            <label htmlFor="name" className="form-label vendor-form-label">
-              <FaUser className="me-2" /> Full Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              className="form-control vendor-form-control"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your full name"
-            />
-          </div>
+
 
           <div className="form-group mb-3 vendor-form-group">
             <label htmlFor="email" className="form-label vendor-form-label">
@@ -56,6 +122,7 @@ const RegisterVendor = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
             />
+
           </div>
 
           <div className="form-group mb-3 vendor-form-group">
@@ -73,15 +140,15 @@ const RegisterVendor = () => {
           </div>
 
           <div className="form-group mb-3 vendor-form-group">
-            <label htmlFor="confirmPassword" className="form-label vendor-form-label">
+            <label htmlFor="passConfirm" className="form-label vendor-form-label">
               <FaCheckCircle className="me-2" /> Confirm Password
             </label>
             <input
               type="password"
-              id="confirmPassword"
+              id="passConfirm"
               className="form-control vendor-form-control"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={passConfirm}
+              onChange={(e) => setPassConfirm(e.target.value)}
               placeholder="Confirm your password"
             />
           </div>
@@ -95,10 +162,11 @@ const RegisterVendor = () => {
           <p className="text-muted">
             Already have an account? <a href="/vendor/login" className="vendor-login-link">Login here</a>
           </p>
-          
         </div>
       </div>
+      <ToastContainer />
     </div>
+
   );
 };
 
