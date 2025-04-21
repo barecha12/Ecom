@@ -4,10 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+
 use App\Models\Vendor;
 use App\Models\PersonalInfo;
 use App\Models\BusinessInfo;
 use App\Models\BankInfo;
+use App\Models\Product;
+use App\Models\Cart;
+use App\Models\Orders;
 
 class VendorController extends Controller
 {
@@ -78,7 +84,8 @@ class VendorController extends Controller
             'storeData' => [
                 'email' => $user->email,
                 'password' => $user->password,
-            ]
+                'vendor_role_id' => $user->vendor_role_id,
+                "status" => $user->status,          ]
         ], 201); // HTTP 201 means "Created"
         }
     
@@ -190,4 +197,124 @@ class VendorController extends Controller
     function bankinfo(){
         return "bank info";
     }
+
+
+
+
+
+
+ public function addproduct(Request $request)
+{
+    // ✅ Step 1: Validate request data
+    $validated = $request->validate([
+        'product_name'      => 'required|string|max:100',
+        'total_product'     => 'required|integer',
+        'product_price'     => 'required|numeric',
+        'product_desc'      => 'required|string|max:100',
+        'vendor_id'         => 'required|exists:vendors,vendor_id',
+        'category_id'       => 'required|exists:category,category_id',
+        'sub_category_id'   => 'required|exists:sub_category,sub_category_id',
+        'status'            => 'in:Active,Inactive',
+        'product_img1'      => 'required|image|mimes:jpeg,png,jpg,gif',
+       // 'product_img1'      => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'product_img2'      => 'nullable|image|mimes:jpeg,png,jpg,gif',
+        'product_img3'      => 'nullable|image|mimes:jpeg,png,jpg,gif',
+        'product_img4'      => 'nullable|image|mimes:jpeg,png,jpg,gif',
+        'product_img5'      => 'nullable|image|mimes:jpeg,png,jpg,gif',
+    ]);
+
+    // ✅ Step 2: Handle image uploads
+    $imageFields = ['product_img1', 'product_img2', 'product_img3', 'product_img4', 'product_img5'];
+
+    foreach ($imageFields as $field) {
+        if ($request->hasFile($field)) {
+            $imageName = Str::uuid() . '.' . $request->file($field)->getClientOriginalExtension();
+            $path = 'products/' . $imageName;
+            $request->file($field)->storeAs('public/products', $imageName);
+            $validated[$field] = $path;
+        } else {
+            $validated[$field] = null;
+        }
+    }
+    // ✅ Step 3: Create product
+    $product = Product::create([
+        'product_name'      => $validated['product_name'],
+        'total_product'     => $validated['total_product'],
+        'product_price'     => $validated['product_price'],
+        'product_desc'      => $validated['product_desc'],
+        'vendor_id'         => $validated['vendor_id'],
+        'category_id'       => $validated['category_id'],
+        'sub_category_id'   => $validated['sub_category_id'],
+        'product_status'            => $validated['product_status'] ?? 'Active',
+        'product_img1'      => $validated['product_img1'],
+        'product_img2'      => $validated['product_img2'],
+        'product_img3'      => $validated['product_img3'],
+        'product_img4'      => $validated['product_img4'],
+        'product_img5'      => $validated['product_img5'],
+    ]);
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Product added successfully!',
+        'data' => $product
+    ], 201);
+}
+
+
+
+
+
+public function productlist(Request $request)
+{
+    // Get the vendor_id from the authenticated user
+ //   $vendor_id = auth()->user()->vendor_id;
+    $vendor_id = $request->input('vendor_id');
+    // Fetch products for the authenticated vendor
+    $products = Product::where('vendor_id', $vendor_id)
+        ->select(
+            'product_id',
+            'product_name',
+            'total_product',
+            'product_price',
+            'product_img1',
+            'product_img2',
+            'product_img3',
+            'product_img4',
+            'product_img5',
+            'product_desc',
+            'product_status',
+            'category_id',
+            'sub_category_id',
+            'vendor_id'
+        )
+        ->get();
+
+    return response()->json($products);
+}
+
+
+
+
+public function orderlist(Request $request)
+{
+    // Get the vendor_id from the authenticated user
+    $order_id = $request->input('order_id');
+    $order_status = $request->input('order_status');
+
+    
+    $orders = Orders::where('order_id', $order_id)
+        ->select(
+            'order_id',
+        )
+        ->get();
+
+    return response()->json($orders);
+}
+
+
+
+
+
+
+
 }

@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->string('password', 100);
             $table->enum('status', ['Pending', 'Verified', 'Rejected ','Suspended'])->default('Pending');
             $table->timestamps(); // Adding created_at and updated_at timestamps
-            $table->string('vendro_role_id', 10)->default('Vendor');
+            $table->string('vendor_role_id', 10)->default('Vendor');
         });
     }
 

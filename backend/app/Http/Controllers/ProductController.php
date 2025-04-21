@@ -48,7 +48,7 @@ public function productdetails($product_id)
         ->select(
             'product_id',
             'product_name',
-            'price',
+            'product_price',
             'product_img1',
             'product_img2',
             'product_img3',

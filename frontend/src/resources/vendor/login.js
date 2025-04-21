@@ -16,14 +16,25 @@ const LoginVendro = () => {
     const userInfo = localStorage.getItem("user-info");
     if (userInfo) {
       const user = JSON.parse(userInfo);
-      if (user.admin_role_id === "superadmin") {
+      console.warn("User",user.vendro_role_id);
+      if (user.vendor_role_id === "SuperAdmin") {
         navigate("/superadmin/");
-      } else if (user.vendor_role_id === "vendor") {
-        navigate("/vendor/");
-      } else if (user.admin_role_id === "admin") {
+      } else if (user.vendor_role_id === "Vendor") {
+        //status check
+        if(user.status === "Pending"){
+          navigate("/underreview/");
+        } else if(user.status === "Rejected"){
+          navigate("/vendor-info/");
+        } else if(user.status === "Suspended"){
+          navigate("/suspend/");
+        }else{
+          navigate("/vendor/");
+        }
+
+      } else if (user.vendor_role_id === "Admin") {
         navigate("/admin/");
       } else {
-        navigate("/");
+        navigate("/bxone");
       }
     }
   }, [navigate]);
@@ -46,7 +57,7 @@ const LoginVendro = () => {
 
     const items = { email, password };
     try {
-      let response = await fetch("http://localhost:8000/api/vendorlogin", {
+      let response = await fetch("http://localhost:8000/api/vendor/login", {
         method: "POST",
         body: JSON.stringify(items),
         headers: {
@@ -69,13 +80,13 @@ const LoginVendro = () => {
         localStorage.setItem("user-info", JSON.stringify(result.storeData));
 
         setTimeout(() => {
-          if(result.status === "Pending"){
+          if(result.storeData.status === "Pending"){
             navigate("/underreview/");
-          }else if(result.status === "Verified"){
+          }else if(result.storeData.status === "Verified"){
             navigate("/vendor/");
-          }else if(result.status === "Rejected"){
+          }else if(result.storeData.status === "Rejected"){
             navigate("/vendor-info/");
-          }else if(result.status === "Suspended"){
+          }else if(result.storeData.status === "Suspended"){
             navigate("/suspend/");
           }    
         }, 1000);

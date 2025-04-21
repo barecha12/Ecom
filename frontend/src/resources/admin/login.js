@@ -12,9 +12,9 @@ function LoginAdmin() {
         e.preventDefault(); // Prevent form submission from refreshing the page
 
         let items = {email,password,};
-
+        console.warn("Fuck",items); // Log the items to see what is being sent
         try {
-            let response = await fetch("http://localhost:8000/api/login", {
+            let response = await fetch("http://localhost:8000/api/loginadmin", {
                 method: 'POST',
                 body: JSON.stringify(items),
                 headers: {

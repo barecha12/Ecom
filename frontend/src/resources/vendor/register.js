@@ -53,7 +53,7 @@ const RegisterVendor = () => {
 let items = {email, password, password_confirmation: passConfirm };
 
     try {
-      let response = await fetch("http://localhost:8000/api/vendorregister", {
+      let response = await fetch("http://localhost:8000/api/vendor/register", {
         method: 'POST',
         body: JSON.stringify(items),
         headers: {
@@ -63,7 +63,7 @@ let items = {email, password, password_confirmation: passConfirm };
       });
 
       let result = await response.json();
-
+      console.warn(result);
       // If success is true, show success alert
       if (result.success) {
         toast.success("Registration Successful!", {

@@ -16,7 +16,7 @@ class Product extends Model
     protected $fillable = [
         'product_name',
         'total_product',
-        'price',
+        'product_price',
         'product_img1',
         'product_img2',
         'product_img3',
@@ -26,7 +26,7 @@ class Product extends Model
         'vendor_id',
         'category_id',
         'sub_category_id',
-        'status',
+        'product_status',
     ];
 
     public $timestamps = true; // You are using timestamps in migration
