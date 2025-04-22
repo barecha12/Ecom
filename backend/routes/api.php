@@ -39,7 +39,7 @@ Route::post('/vendor/login',[VendorController::class,'login']);
 Route::post('/vendor/addproduct',[VendorController::class,'addproduct']);
 Route::post('/vendor/productlist/', [VendorController::class, 'productlist']);
 Route::post('/vendor/orderlist/', [VendorController::class, 'orderlist']);
-
+Route::post('/vendor/updatepassword/', [VendorController::class, 'updatepassword']);
 
 Route::post('vendor/personalinfo',[VendorController::class,'personalinfo']);
 Route::post('vendor/businessinfo',[VendorController::class,'businessinfo']);

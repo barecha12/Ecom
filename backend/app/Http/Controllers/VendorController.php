@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 use App\Models\Vendor;
 use App\Models\PersonalInfo;
@@ -92,8 +93,44 @@ class VendorController extends Controller
 
     }
 
+    public function updatepassword(Request $request)
+    {
+        // Validate the incoming request to ensure passwords are valid
+        $request->validate([
+            'vendor_id' => 'required|integer', // Ensure vendor_id is provided
+            'current_password' => 'required|string', // Ensure current password is provided
+           'new_password' =>'required|string', // Ensure new password matches password_confirmation
+            
+        ]);
+
+        // Find the vendor by vendor_id
+        
+if($request->password_confirmation !== $request->new_password){ 
+           return response()->json([
+                'success' => false,
+                'message' => 'Password confirmation does not match.',
+            ], 400); // HTTP 400 for bad request
+        }
 
 
+        $vendor = Vendor::find($request->vendor_id);
+    
+        if (!$vendor) {
+            return response()->json(['error' => 'Vendor not found'], 404);
+        }
+    
+        // Check if the current password is correct
+        if (!Hash::check($request->current_password, $vendor->password)) {
+            return response()->json(['error' => 'Current password is incorrect'], 400);
+        }
+    
+        // Hash the new password and update it
+        $vendor->password = bcrypt($request->new_password);
+        $vendor->save();
+    
+        return response()->json(['message' => 'Password updated successfully'], 200);
+    }
+    
 
     public function personalinfo(Request $request)
     {
@@ -294,21 +331,46 @@ public function productlist(Request $request)
 
 
 
-
 public function orderlist(Request $request)
 {
-    // Get the vendor_id from the authenticated user
-    $order_id = $request->input('order_id');
+    // Get vendor_id and order_status from the request
+    $vendor_id = $request->input('vendor_id');
     $order_status = $request->input('order_status');
 
-    
-    $orders = Orders::where('order_id', $order_id)
+    // Get the orders for the given vendor_id and order_status, including product details
+    $orders = Orders::where('vendor_id', $vendor_id)
+        ->where('order_status', $order_status)
+        ->with([
+            'product' => function ($query) {
+                // Select the relevant product fields
+                $query->select('product_id', 'product_name', 'product_img1');
+            }
+        ])
         ->select(
             'order_id',
+            'user_id',
+            'product_id',
+            'payment_method',
+            'created_at as order_time',  // 'created_at' is typically used for order time
+            'order_status'
         )
         ->get();
 
-    return response()->json($orders);
+    // Format the response to include product details
+    $formattedOrders = $orders->map(function ($order) {
+        return [
+            'order_id' => $order->order_id,
+            'product_id' => $order->product_id,
+            'product_name' => $order->product->product_name, // Accessing the related product's name
+            'product_image' => $order->product->product_img1, // Accessing the related product's primary image
+            'payment_method' => $order->payment_method,
+            'order_time' => $order->order_time ? $order->order_time->toDateTimeString() : 'N/A', // Handle null created_at
+            'order_status' => $order->order_status,
+        ];
+    });
+
+    // Return the response as JSON
+    return response()->json($formattedOrders);
 }
 
 

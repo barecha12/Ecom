@@ -12,7 +12,8 @@ use App\Models\PersonalInfo;
 class Vendor extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
+    
+    protected $primaryKey = 'vendor_id';
     protected $table = 'vendors';
 
     protected $fillable = [
