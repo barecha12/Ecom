@@ -9,8 +9,7 @@ class Address extends Model
 {
     use HasFactory;
 
-    protected $table = 'addresses'; // Set table name if pluralized
-
+    protected $table = 'address';  // Fixed table name to 'address'
     protected $primaryKey = 'address_id';
 
     protected $fillable = [
@@ -25,9 +24,15 @@ class Address extends Model
 
     public $timestamps = true;
 
-    // Define relationship with User model
+    // Address belongs to a user
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
+
+    // Address can be linked to many orders (if reused)
+    public function orders()
+    {
+        return $this->hasMany(Orders::class, 'address_id', 'address_id');
     }
 }

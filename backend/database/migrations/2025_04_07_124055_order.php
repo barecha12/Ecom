@@ -12,16 +12,18 @@ return new class extends Migration {
             $table->unsignedInteger('user_id'); // Foreign key reference to users
             $table->unsignedInteger('product_id'); // Foreign key reference to products
             $table->unsignedInteger('vendor_id'); // Foreign key reference to vendors
-            $table->enum('order_status', ['Pending', 'Completed', 'Cancelled', 'Shipped','Refunded'])->default('Pending'); // Enum for order status
+            $table->enum('order_status', ['Pending', 'Completed', 'Cancelled', 'Shipped', 'Refunded'])->default('Pending'); // Enum for order status
             $table->string('payment_method', 10); // Payment method used
             $table->float('total_paid'); // Total amount paid
             $table->integer('orderd_quantity'); // Quantity of the product ordered
+            $table->unsignedInteger('address_id')->nullable(); // Added address_id to the orders table
             $table->timestamps(); // Adding created_at and updated_at timestamps
 
             // Foreign key constraints
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->foreign('product_id')->references('product_id')->on('product')->onDelete('cascade');
-            $table->foreign('vendor_id')->references('vendor_id')->on('vendors')->onDelete('cascade'); // NEW RELATION
+            $table->foreign('vendor_id')->references('vendor_id')->on('vendors')->onDelete('cascade');
+            $table->foreign('address_id')->references('address_id')->on('address')->onDelete('set null'); // Fixed table name to 'address'
         });
     }
 

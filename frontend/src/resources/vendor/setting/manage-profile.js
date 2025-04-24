@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   FaBars,
@@ -8,12 +7,17 @@ import {
   FaComments,
   FaUser,
 } from "react-icons/fa";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "../style/manage-profile.css";
 
 function ManageProfile() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -23,22 +27,72 @@ function ManageProfile() {
     setOpenDropdown(openDropdown === menu ? null : menu);
   };
 
-  // Sample product data (you can replace this with dynamic data later)
-  const products = [
-    { id: 1, name: "Product A", code: "A123", color: "Red", category: "Electronics", section: "New Arrivals", addedBy: "Admin", status: "Active" },
-    { id: 2, name: "Product B", code: "B456", color: "Blue", category: "Fashion", section: "Sale", addedBy: "Admin", status: "Inactive" },
-    { id: 3, name: "Product C", code: "C789", color: "Green", category: "Home", section: "Featured", addedBy: "Vendor 1", status: "Active" },
-    // Add more products here
-  ];
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+  
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error("All fields are required.");
+      return;
+    }
+  
+    if (newPassword !== confirmPassword) {
+      toast.error("New password and confirmation do not match.");
+      return;
+    }
+  
+    if (newPassword === currentPassword) {
+      toast.error("New password cannot be the same as the current password.");
+      return;
+    }
+  
+    // Get vendor_id from localStorage
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    const vendor_id = userInfo?.vendor_id;
+  
+    if (!vendor_id) {
+      toast.error("Vendor ID not found. Please login again.");
+      return;
+    }
+  
+    try {
+      const response = await fetch("http://localhost:8000/api/vendor/updatepassword", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          vendor_id,
+          current_password: currentPassword,
+          new_password: newPassword,
+          password_confirmation: confirmPassword,
+        }),
+      });
+  
+      const result = await response.json();
+  
+      if (response.ok) {
+        toast.success("Password updated successfully.");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      } else {
+        toast.error(result.message || result.error || "Failed to update password.");
+      }
+    } catch (error) {
+      toast.error("Something went wrong. Try again later.");
+    }
+  };
+  
+  
 
   return (
     <div className="dashboard-wrapper">
-      {/* Hamburger Button */}
       <button className="hamburger-btn" onClick={toggleSidebar}>
         <FaBars />
       </button>
 
-      {/* Sidebar */}
+     {/* Sidebar */}
       <div className={`custom-sidebar ${sidebarVisible ? "show" : "hide"}`}>
         <div className="d-flex align-items-center mb-3">
           <h2 className="text-center custom-css flex-grow-1 mt-2 ms-4">Vendor Dashboard</h2>
@@ -111,20 +165,41 @@ function ManageProfile() {
           <h2 className="mb-3">Change Password</h2>
           <p>Please enter your current password and choose a new one.</p>
 
-          <form className="update-password-form mt-4">
+          <form className="update-password-form mt-4" onSubmit={handleUpdatePassword}>
             <div className="form-group mb-3 text-start">
               <label htmlFor="currentPassword" className="form-label">Current Password</label>
-              <input type="password" id="currentPassword" className="form-control" placeholder="Enter current password" />
+              <input
+                type="password"
+                id="currentPassword"
+                className="form-control"
+                placeholder="Enter current password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
             </div>
 
             <div className="form-group mb-3 text-start">
               <label htmlFor="newPassword" className="form-label">New Password</label>
-              <input type="password" id="newPassword" className="form-control" placeholder="Enter new password" />
+              <input
+                type="password"
+                id="newPassword"
+                className="form-control"
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
             </div>
 
             <div className="form-group mb-4 text-start">
               <label htmlFor="confirmPassword" className="form-label">Confirm New Password</label>
-              <input type="password" id="confirmPassword" className="form-control" placeholder="Confirm new password" />
+              <input
+                type="password"
+                id="confirmPassword"
+                className="form-control"
+                placeholder="Confirm new password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
             </div>
 
             <button type="submit" className="btn btn-primary">Update Password</button>
@@ -132,6 +207,7 @@ function ManageProfile() {
         </div>
       </div>
 
+      <ToastContainer />
     </div>
   );
 }

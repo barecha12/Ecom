@@ -31,7 +31,7 @@ function ControlOrder() {
     image: "https://www.beyiddondolo.com/media/5679-84.jpg",
     status: "New Order",
     address: "123 Vendor St, City, Country",
-    phone:"0923746149",
+    phone: "0923746149",
     totalPaid: `$${(i + 1) * 10}`,
     orderedQuantity: i + 1,
   }));
@@ -195,23 +195,23 @@ function ControlOrder() {
           </div>
         )}
 
-{totalPages > 1 && (
-  <div className="pagination">
-    <button
-      disabled={currentPage === 1}
-      onClick={() => setCurrentPage(currentPage - 1)}
-    >
-      Previous
-    </button>
-    <span>Page {currentPage} of {totalPages}</span>
-    <button
-      disabled={currentPage === totalPages}
-      onClick={() => setCurrentPage(currentPage + 1)}
-    >
-      Next
-    </button>
-  </div>
-)}
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              Previous
+            </button>
+            <span>Page {currentPage} of {totalPages}</span>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              Next
+            </button>
+          </div>
+        )}
 
       </div>
     </div>

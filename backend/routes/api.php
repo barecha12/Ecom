@@ -32,14 +32,18 @@ Route::middleware('auth:api')->group(function () {
 
 
 
-Route::post('register',[UserController::class,'register']);
-Route::post('login',[UserController::class,'login']);
-Route::post('vendor/register',[VendorController::class,'register']);
-Route::post('/vendor/login',[VendorController::class,'login']);
+Route::post('register',[UserController::class,'register']);//done
+Route::post('login',[UserController::class,'login']);//done
+
+
+Route::post('vendor/register',[VendorController::class,'register']);//done
+Route::post('/vendor/login',[VendorController::class,'login']);//done
 Route::post('/vendor/addproduct',[VendorController::class,'addproduct']);
 Route::post('/vendor/productlist/', [VendorController::class, 'productlist']);
-Route::post('/vendor/orderlist/', [VendorController::class, 'orderlist']);
-Route::post('/vendor/updatepassword/', [VendorController::class, 'updatepassword']);
+Route::post('/vendor/orderlist/', [VendorController::class, 'orderlist']);//done
+Route::post('/vendor/updatepassword/', [VendorController::class, 'updatepassword']);//done
+
+Route::post('/vendor/update-order-status', [VendorController::class, 'updateorderstatus']);//done
 
 Route::post('vendor/personalinfo',[VendorController::class,'personalinfo']);
 Route::post('vendor/businessinfo',[VendorController::class,'businessinfo']);

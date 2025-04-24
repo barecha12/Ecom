@@ -84,6 +84,7 @@ class VendorController extends Controller
             'message' => 'Logged in successfully!',
             'storeData' => [
                 'email' => $user->email,
+                "vendor_id" => $user->vendor_id,
                 'password' => $user->password,
                 'vendor_role_id' => $user->vendor_role_id,
                 "status" => $user->status,          ]
@@ -337,45 +338,89 @@ public function orderlist(Request $request)
     $vendor_id = $request->input('vendor_id');
     $order_status = $request->input('order_status');
 
-    // Get the orders for the given vendor_id and order_status, including product details
+    // Retrieve orders with product and address details
     $orders = Orders::where('vendor_id', $vendor_id)
         ->where('order_status', $order_status)
         ->with([
             'product' => function ($query) {
-                // Select the relevant product fields
                 $query->select('product_id', 'product_name', 'product_img1');
+            },
+            'address' => function ($query) {
+                $query->select(
+                    'address_id',
+                    'full_name',
+                    'phone',
+                    'country',
+                    'state',
+                    'city',
+                    'post'
+                );
             }
         ])
         ->select(
             'order_id',
             'user_id',
             'product_id',
+            'address_id',
             'payment_method',
-            'created_at as order_time',  // 'created_at' is typically used for order time
-            'order_status'
+            'created_at as order_time',
+            'order_status',
+            'total_paid',
+            'orderd_quantity'
         )
         ->get();
 
-    // Format the response to include product details
+    // Format the response
     $formattedOrders = $orders->map(function ($order) {
+        $address = $order->address;
+        $fullAddress = $address
+            ? trim("{$address->country}, {$address->state}, {$address->city}, " . ($address->post ? $address->post : ''), ', ') 
+            : 'Address not available';
+        
+
         return [
             'order_id' => $order->order_id,
             'product_id' => $order->product_id,
-            'product_name' => $order->product->product_name, // Accessing the related product's name
-            'product_image' => $order->product->product_img1, // Accessing the related product's primary image
+            'product_name' => $order->product->product_name ?? 'N/A',
+            'product_image' => $order->product->product_img1 ?? null,
             'payment_method' => $order->payment_method,
-            'order_time' => $order->order_time ? $order->order_time->toDateTimeString() : 'N/A', // Handle null created_at
+            'order_time' => $order->order_time ? $order->order_time->toDateTimeString() : 'N/A',
             'order_status' => $order->order_status,
+
+            // Extra info
+            'address' => $fullAddress,
+            'phone' => $address->phone ?? 'N/A',
+            'full_name' => $address->full_name ?? 'N/A',
+            'total_paid' => $order->total_paid,
+            'ordered_quantity' => $order->orderd_quantity,
         ];
     });
 
-    // Return the response as JSON
     return response()->json($formattedOrders);
 }
 
+public function updateorderstatus(Request $request)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'order_id' => 'required|integer|exists:orders,order_id', // Ensure the order_id is valid and exists in the database
+            'new_status' => 'required|string|in:Pending,Completed,Cancelled,Shipped', // Only allow these statuses
+        ]);
 
+        // Find the order by ID
+        $order = Orders::find($request->order_id);
 
+        // Update the order status
+        $order->order_status = $request->new_status;
 
+        // Save the order with the new status
+        if ($order->save()) {
+            return response()->json(['message' => 'Order status updated successfully'], 200);
+        }
+
+        // Return error if save failed
+        return response()->json(['message' => 'Failed to update order statussss'], 500);
+    }
 
 
 
