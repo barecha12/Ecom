@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaBars,
   FaChartLine,
@@ -21,6 +21,7 @@ import {
   Image,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
 import "../style/add-products.css";
 
 function AddProduct() {
@@ -35,11 +36,13 @@ function AddProduct() {
   const [productDescription, setProductDescription] = useState("");
   const [productImages, setProductImages] = useState({ selectedproductImages: [] });
   const [entries, setEntries] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+
   const totalProducts = 100; // Example total product count
   const totalPages = Math.ceil(totalProducts / entries);
   const [selectedFilesCount, setSelectedFilesCount] = useState(0);
-
+  const [productlist, setProductList] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showEditProductModal, setShowEditProductModal] = useState(false);
 
@@ -47,9 +50,15 @@ function AddProduct() {
     setSelectedProduct(product);
     setShowEditProductModal(true);
   };
-  const deleteProduct = (productId) => {
-    console.warn("FUCK ID:", productId);
+  const handleDeleteClick = (productId) => {
+    setProductToDelete(productId); // Set the product ID to be deleted
+    setShowDeleteModal(true); // Show the confirmation modal
   };
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setProductToDelete(null);
+  };
+
   const handleCloseEditProductModal = () => {
     setShowEditProductModal(false);
     setSelectedProduct(null);
@@ -80,17 +89,8 @@ function AddProduct() {
     console.log("Product Added:", newProduct);
     handleCloseAddProductModal();
   };
-  const products = [
-    {
-      id: 1,
-      name: "Smartphone",
-      totalProduct: 50,
-      price: "$699",
-      category: "Electronics",
-      subcategory: "Phone",
-      image: "https://www.beyiddondolo.com/media/5679-84.jpg",
-    },
-  ];
+
+  
   const handleCloseAddProductModal = () => {
     setShowAddProductModal(false);
     setCategory("");
@@ -100,6 +100,64 @@ function AddProduct() {
     setProductPrice("");
     setProductDescription("");
     setProductImages({ selectedproductImages: [] });
+  };
+
+  useEffect(() => {
+    async function listProductDetail() {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem("user-info"));
+        const vendorId = storedUser?.vendor_id;
+
+        let response = await fetch(`http://localhost:8000/api/vendor/productlist`, {
+          method: 'POST',
+          body: JSON.stringify({
+            vendor_id: vendorId
+          }),
+          headers: {
+            "Content-Type": 'application/json',
+            "Accept": 'application/json'
+          }
+        });
+
+        let result = await response.json();
+        setProductList(result);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    }
+
+    listProductDetail();
+  }, []);
+
+  const handleDeleteProduct = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/vendor/delete-product`, {
+        method: 'DELETE',
+        body: JSON.stringify({
+          product_id: productToDelete,
+        }),
+        headers: {
+          "Content-Type": 'application/json',
+          "Accept": 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        toast.success("Product deleted successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        // Update state to remove the deleted product from the list
+        setProductList(productlist.filter(product => product.product_id !== productToDelete));
+        handleCloseDeleteModal(); // Close the modal
+
+      } else {
+        toast.error("Failed to delete the product.");
+
+      }
+    } catch (error) {
+      toast.error("Error while deleting product:", error);
+    }
   };
 
   return (
@@ -193,28 +251,33 @@ function AddProduct() {
 
               {/* Product Cards Grid */}
               <Row className="mt-3">
-                {products.map((product) => (
+                {productlist.map((product) => (
 
-                  <Col xs={12} md={6} lg={3} key={product.id}>
+
+                  <Col xs={12} md={6} lg={3} key={product.product_id}>
                     <Card className="shadow-sm rounded-4 p-3 product-card-vendor">
                       <Image
-                        src={product.image}
-                        alt={product.name}
+                        src={`http://localhost:8000/storage/${product.product_img1}`}
+                        alt={product.product_name}
                         fluid
                         rounded
                         className="mb-3"
                         style={{ height: "150px", objectFit: "contain" }} // Updated style
                       />
-                      <h5 className="fw-bold">{product.name}</h5>
-                      <p>Total Product: {product.totalProduct}</p>
-                      <p>Product Price: {product.price}</p>
-                      <p>Category: {product.category}</p>
-                      <p>Subcategory: {product.subcategory}</p>
+
+                      <h5 className="fw-bold">{product.product_name}</h5>
+                      <p>Total Product: {product.total_product}</p>
+                      <p>Product Price: {product.product_price}</p>
+                      <p>Category: {product.category_name}</p>
+                      <p>Subcategory: {product.sub_category_name}</p>
                       <div className="d-flex justify-content-between mt-3">
                         <Button variant="warning" size="sm" onClick={() => openEditProductModal(product)}>
                           <FaPen />
                         </Button>
-                        <Button variant="danger" size="sm" onClick={() => deleteProduct(product.id)}><FaTimes /></Button>
+                        <Button variant="danger" size="sm" onClick={() => handleDeleteClick(product.product_id)}>
+                          <FaTimes />
+                        </Button>
+
                       </div>
                     </Card>
                   </Col>
@@ -345,6 +408,20 @@ function AddProduct() {
             <Button variant="primary" type="submit">Save Changes</Button>
           </Modal.Footer>
         </Modal>
+        <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Deletion</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Are you sure you want to delete this product?</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseDeleteModal}>No</Button>
+            <Button variant="danger" onClick={handleDeleteProduct}>Yes, Delete</Button>
+          </Modal.Footer>
+        </Modal>
+
+        <ToastContainer />
       </div>
     </div>
   );

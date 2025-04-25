@@ -42,7 +42,7 @@ Route::post('/vendor/addproduct',[VendorController::class,'addproduct']);
 Route::post('/vendor/productlist/', [VendorController::class, 'productlist']);
 Route::post('/vendor/orderlist/', [VendorController::class, 'orderlist']);//done
 Route::post('/vendor/updatepassword/', [VendorController::class, 'updatepassword']);//done
-
+Route::delete('/vendor/delete-product', [VendorController::class, 'deleteProduct']);
 Route::post('/vendor/update-order-status', [VendorController::class, 'updateorderstatus']);//done
 
 Route::post('vendor/personalinfo',[VendorController::class,'personalinfo']);

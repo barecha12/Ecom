@@ -301,14 +301,14 @@ if($request->password_confirmation !== $request->new_password){
 
 
 
-
 public function productlist(Request $request)
 {
-    // Get the vendor_id from the authenticated user
- //   $vendor_id = auth()->user()->vendor_id;
+    // Get the vendor_id from the request
     $vendor_id = $request->input('vendor_id');
-    // Fetch products for the authenticated vendor
+
+    // Fetch products for the authenticated vendor with eager loading of category and sub-category
     $products = Product::where('vendor_id', $vendor_id)
+        ->with(['category', 'subCategory']) // Eager load category and subCategory relationships
         ->select(
             'product_id',
             'product_name',
@@ -327,9 +327,43 @@ public function productlist(Request $request)
         )
         ->get();
 
+    // Transform the product data to include category and subcategory names
+    $products = $products->map(function ($product) {
+        // Add category and sub-category names to the product
+        return [
+            'product_id' => $product->product_id,
+            'product_name' => $product->product_name,
+            'total_product' => $product->total_product,
+            'product_price' => $product->product_price,
+            'product_img1' => $product->product_img1,
+            'product_img2' => $product->product_img2,
+            'product_img3' => $product->product_img3,
+            'product_img4' => $product->product_img4,
+            'product_img5' => $product->product_img5,
+            'product_desc' => $product->product_desc,
+            'product_status' => $product->product_status,
+            'category_name' => $product->category->category_name, // Get category name from relationship
+            'sub_category_name' => $product->subCategory->sub_category_name, // Get sub-category name from relationship
+            'vendor_id' => $product->vendor_id,
+        ];
+    });
+
+    // Return the transformed product data with category and subcategory names
     return response()->json($products);
 }
 
+public function deleteProduct(Request $request)
+{
+    $productId = $request->input('product_id');
+    $product = Product::find($productId);
+
+    if ($product) {
+        $product->delete();
+        return response()->json(['message' => 'Product deleted successfully']);
+    }
+
+    return response()->json(['message' => 'Product not found'], 404);
+}
 
 
 public function orderlist(Request $request)

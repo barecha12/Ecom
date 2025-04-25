@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  FaBars,
-  FaChartLine,
-  FaBox,
-  FaShoppingCart,
-  FaComments,
-  FaUser,
-  FaPen,
-} from "react-icons/fa";
+import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, FaPen, } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import "../style/new-orders.css";
@@ -231,7 +223,7 @@ function CompletedOrders() {
               <p><strong>Total Paid:</strong> {selectedProduct.total_paid}</p>
               <p><strong>Ordered Quantity:</strong> {selectedProduct.ordered_quantity}</p>
               <div className="popup-buttons">
-              
+
                 <button onClick={() => setPopupVisible(false)}>Close</button>
                 <button onClick={handlePrint}>🖨️ Print</button>
               </div>
@@ -267,7 +259,7 @@ function CompletedOrders() {
               </select>
 
               <div className="popup-buttons mt-3">
-              <button onClick={() => setEditPopupVisible(false)}>Cancel</button>
+                <button onClick={() => setEditPopupVisible(false)}>Cancel</button>
                 <button
                   onClick={async () => {
                     try {
@@ -299,7 +291,7 @@ function CompletedOrders() {
                 >
                   Save
                 </button>
-              
+
               </div>
             </div>
           </div>
