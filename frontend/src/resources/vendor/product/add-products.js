@@ -70,6 +70,7 @@ function AddProduct() {
       .catch((err) => console.error("Error loading categories:", err));
   }, []);
 
+  const [selectedImages, setSelectedImages] = useState([]);
   // Load subcategories when a category selected
   useEffect(() => {
     if (selectedCategory) {
@@ -93,6 +94,24 @@ function AddProduct() {
     const { name, files } = e.target;
     setProductData((prev) => ({ ...prev, [name]: files[0] }));
   };
+  
+  const handleFileChangeEdit = (e) => {
+    const { name, files } = e.target;
+    const file = files[0]; // Get the first file
+  
+    setSelectedImages((prev) => {
+      const newImages = [...prev];
+      if (name === 'product_img1') newImages[0] = file;
+      if (name === 'product_img2') newImages[1] = file;
+      if (name === 'product_img3') newImages[2] = file;
+      if (name === 'product_img4') newImages[3] = file;
+      if (name === 'product_img5') newImages[4] = file;
+      return newImages;
+    });
+  
+  
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -163,12 +182,22 @@ function AddProduct() {
   };
 
 
-
-
   const openEditProductModal = (product) => {
-    setSelectedProduct(product);
+    setSelectedProduct({
+      id: product.product_id,
+      name: product.product_name,
+      totalProduct: product.total_product,
+      price: product.product_price,
+      description: product.product_desc,
+    });
+    setSelectedCategory(product.category_id); // Set the selected category
+    setSelectedSubCategory(product.sub_category_id); // Set the selected subcategory
     setShowEditProductModal(true);
+  
+    // Optionally fetch subcategories if needed
+    fetchSubcategories(product.category_id);
   };
+
   const handleDeleteClick = (productId) => {
     setProductToDelete(productId); // Set the product ID to be deleted
     setShowDeleteModal(true); // Show the confirmation modal
@@ -265,6 +294,87 @@ function AddProduct() {
       }
     } catch (error) {
       toast.error("Error while deleting product:", error);
+    }
+  };
+
+
+ 
+  
+  
+  const handleEditProduct = async (e) => {
+    e.preventDefault();
+  
+    const vendorInfo = JSON.parse(localStorage.getItem("user-info"));
+    const vendor_id = vendorInfo?.vendor_id;
+  
+    if (!vendor_id) {
+      alert("Vendor ID not found. Please login again.");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("product_id", selectedProduct.id);
+    formData.append("product_name", selectedProduct.name);
+    formData.append("total_product", selectedProduct.totalProduct);
+    formData.append("product_price", selectedProduct.price);
+    formData.append("product_desc", selectedProduct.description);
+    formData.append("vendor_id", vendor_id);
+    formData.append("category_id", selectedCategory);
+    formData.append("sub_category_id", selectedSubCategory);
+  
+    // Log the selected images
+    selectedImages.forEach((image, index) => {
+      if (image) {
+        console.log(`Image ${index + 1}:`, image.name);
+        formData.append(`product_img${index + 1}`, image);
+      }
+    });
+  
+    // Log FormData contents for debugging
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+  
+    try {
+      const res = await fetch("http://localhost:8000/api/vendor/editproduct", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await res.json();
+  
+      if (result.status === "success") {
+        toast.success("Product updated successfully!");
+  
+        // Update local product list
+        setProductList((prev) =>
+          prev.map((product) =>
+            product.product_id === selectedProduct.id ? { ...product, ...selectedProduct } : product
+          )
+        );
+  
+        handleCloseEditProductModal();
+      } else {
+        toast.error("Failed to update product.");
+      }
+    } catch (err) {
+      console.error("Error while updating product:", err);
+      toast.error("An error occurred. Please try again.");
+    }
+  };
+
+
+
+
+  const fetchSubcategories = (categoryId) => {
+    if (categoryId) {
+      fetch(`http://localhost:8000/api/get-subcategories-by-category/${categoryId}`, {
+        method: "POST",
+      })
+      .then((res) => res.json())
+      .then((data) => setSubcategories(data))
+      .catch((err) => console.error("Error loading subcategories:", err));
+    } else {
+      setSubcategories([]);
     }
   };
 
@@ -497,62 +607,115 @@ function AddProduct() {
 
 
 
-        {/* Main Content Ends Here */}
-        <Modal show={showEditProductModal} onHide={() => setShowEditProductModal(false)} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Edit Product</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form onSubmit={(e) => {
-              e.preventDefault();
-              // Handle product update logic here
-              handleCloseEditProductModal();
-            }}>
-              <Form.Group controlId="productName">
-                <Form.Label>Product Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={selectedProduct?.name || ""}
-                  onChange={(e) => setSelectedProduct({ ...selectedProduct, name: e.target.value })}
-                  placeholder="Enter product name"
-                />
-              </Form.Group>
-              <Form.Group controlId="totalProduct">
-                <Form.Label>Total Product</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={selectedProduct?.totalProduct || ""}
-                  onChange={(e) => setSelectedProduct({ ...selectedProduct, totalProduct: e.target.value })}
-                  placeholder="Enter total product"
-                />
-              </Form.Group>
-              <Form.Group controlId="productPrice">
-                <Form.Label>Product Price</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={selectedProduct?.price || ""}
-                  onChange={(e) => setSelectedProduct({ ...selectedProduct, price: e.target.value })}
-                  placeholder="Enter product price"
-                />
-              </Form.Group>
-              <Form.Group controlId="productDescription">
-                <Form.Label>Product Description</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  value={selectedProduct?.description || ""}
-                  onChange={(e) => setSelectedProduct({ ...selectedProduct, description: e.target.value })}
-                  rows={3}
-                  placeholder="Enter product description"
-                />
-              </Form.Group>
-              {/* Add more fields as necessary */}
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowEditProductModal(false)}>Close</Button>
-            <Button variant="primary" type="submit">Save Changes</Button>
-          </Modal.Footer>
-        </Modal>
+        <Modal show={showEditProductModal} onHide={handleCloseEditProductModal} centered>
+  <Modal.Header closeButton>
+    <Modal.Title>Edit Product</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form >
+      <Form.Group controlId="category">
+        <Form.Label>Select Category</Form.Label>
+        <Form.Select
+          value={selectedCategory}
+          onChange={(e) => {
+            setSelectedCategory(e.target.value);
+            // Optional: Fetch subcategories based on the selected category
+          }}
+          required
+        >
+          <option value="">Select a Category</option>
+          {categories.map((cat) => (
+            <option key={cat.category_id} value={cat.category_id}>
+              {cat.category_name}
+            </option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+
+      <Form.Group controlId="subCategory">
+        <Form.Label>Select Subcategory</Form.Label>
+        <Form.Select
+          value={selectedSubCategory}
+          onChange={(e) => setSelectedSubCategory(e.target.value)}
+          required
+        >
+          <option value="">Select a Subcategory</option>
+          {subcategories.map((sub) => (
+            <option key={sub.sub_category_id} value={sub.sub_category_id}>
+              {sub.sub_category_name}
+            </option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+
+      <Form.Group controlId="productName">
+        <Form.Label>Product Name</Form.Label>
+        <Form.Control
+          type="text"
+          value={selectedProduct?.name || ""}
+          onChange={(e) => setSelectedProduct({ ...selectedProduct, name: e.target.value })}
+          placeholder="Enter product name"
+          required
+        />
+      </Form.Group>
+
+      <Form.Group controlId="totalProduct">
+        <Form.Label>Total Product</Form.Label>
+        <Form.Control
+          type="number"
+          value={selectedProduct?.totalProduct || ""}
+          onChange={(e) => setSelectedProduct({ ...selectedProduct, totalProduct: e.target.value })}
+          placeholder="Enter total product"
+          required
+        />
+      </Form.Group>
+
+      <Form.Group controlId="productPrice">
+        <Form.Label>Product Price</Form.Label>
+        <Form.Control
+          type="number"
+          value={selectedProduct?.price || ""}
+          onChange={(e) => setSelectedProduct({ ...selectedProduct, price: e.target.value })}
+          placeholder="Enter product price"
+          required
+        />
+      </Form.Group>
+
+      <Form.Group controlId="productDescription">
+        <Form.Label>Product Description</Form.Label>
+        <Form.Control
+          as="textarea"
+          value={selectedProduct?.description || ""}
+          onChange={(e) => setSelectedProduct({ ...selectedProduct, description: e.target.value })}
+          rows={3}
+          placeholder="Enter product description"
+          required
+        />
+      </Form.Group>
+
+      {/* Optionally add file upload fields for images */}
+      <Form.Group controlId="selectedproductImages">
+  <Form.Label>Product Images (Max 5)</Form.Label>
+  {[1, 2, 3, 4, 5].map((i) => (
+    <input
+      key={i}
+      type="file"
+      name={`product_img${i}`}
+      onChange={handleFileChangeEdit} // Use the edit handler
+      accept="image/*"
+      // You can make these optional or required based on your needs
+    />
+  ))}
+</Form.Group>
+    </Form>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={handleCloseEditProductModal}>Close</Button>
+    <Button variant="primary" onClick={handleEditProduct} >Save Changes</Button>
+  </Modal.Footer>
+</Modal>
+
+        {/* Delete Confirmation Modal */}
         <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirm Deletion</Modal.Title>

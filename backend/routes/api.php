@@ -47,7 +47,7 @@ Route::post('/vendor/update-order-status', [VendorController::class, 'updateorde
 
 Route::post('/get-subcategories-by-category/{category_id}', [VendorController::class, 'categoryandsubcategory']);//done
 
-Route::put('/products/{id}', [ProductController::class, 'update']);
+Route::post('/vendor/editproduct', [VendorController::class, 'editproduct']);
 
 
 Route::get('/get-categories', [VendorController::class, 'getCategories']);//done

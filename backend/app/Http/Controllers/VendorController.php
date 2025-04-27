@@ -471,31 +471,63 @@ public function updateorderstatus(Request $request)
     }
     
 
-    public function update(Request $request, $id)
+    public function editproduct(Request $request)
     {
-        // Validate the incoming data
+        // ✅ Step 1: Validate the incoming data
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
+            'product_id' => 'required|integer',
+            'product_name' => 'required|string|max:255',
+            'product_price' => 'required|numeric',
+            'total_product' => 'required|integer',
+            'product_desc' => 'nullable|string',
+            'product_status' => 'nullable|string|in:Active,Inactive',
+            'category_id' => 'required|integer',
+            'sub_category_id' => 'required|integer',
+            'product_img1' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'product_img2' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'product_img3' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'product_img4' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'product_img5' => 'nullable|image|mimes:jpeg,png,jpg,gif',
         ]);
     
-        // Find the product by its ID
-        $product = Product::find($id);
+        // ✅ Step 2: Find the product by ID
+        $product = Product::find($validated['product_id']);
     
         if (!$product) {
             return response()->json(['error' => 'Product not found'], 404);
         }
     
-        // Update the product with the new data
-        $product->name = $validated['name'];
-        $product->price = $validated['price'];
+        // ✅ Step 3: Update text fields
+        $product->product_name = $validated['product_name'];
+        $product->product_price = $validated['product_price'];
+        $product->total_product = $validated['total_product'];
+        $product->product_desc = $request->input('product_desc', $product->product_desc); // Optional
+        $product->product_status = $request->input('product_status', $product->product_status); // Optional
+        $product->category_id = $validated['category_id'];
+        $product->sub_category_id = $validated['sub_category_id'];
+    
+        // ✅ Step 4: Handle image uploads
+        $imageFields = ['product_img1', 'product_img2', 'product_img3', 'product_img4', 'product_img5'];
+    
+        foreach ($imageFields as $field) {
+            if ($request->hasFile($field)) {
+                $imageName = \Illuminate\Support\Str::uuid() . '.' . $request->file($field)->getClientOriginalExtension();
+                $path = 'products/' . $imageName;
+                $request->file($field)->storeAs('public/products', $imageName);
+                $product->$field = $path;
+            }
+        }
+    
         $product->save();
     
-        // Return the updated product
-        return response()->json($product);
+        // ✅ Step 5: Return updated product
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product updated successfully!',
+            'product' => $product
+        ], 200);
     }
     
-
 
 
 }

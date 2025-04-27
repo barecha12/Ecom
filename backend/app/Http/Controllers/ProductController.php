@@ -142,7 +142,7 @@ public function productdetails($product_id)
         $user_id = $request->input('user_id');
 
         // Fetch orders with product details
-        $orders = Orders::where('user_id', $user_id)->where('order_status', "pending")
+        $orders = Orders::where('user_id', $user_id)->where('order_status', "Pending")
             ->join('product', 'orders.product_id', '=', 'product.product_id')
             ->select(
                 'product.product_name',
@@ -169,7 +169,7 @@ public function productdetails($product_id)
        $user_id = $request->input('user_id');
 
        // Fetch orders with product details
-       $orders = Orders::where('user_id', $user_id)->where('order_status', "shipped")
+       $orders = Orders::where('user_id', $user_id)->where('order_status', "Shipped")
            ->join('product', 'orders.product_id', '=', 'product.product_id')
            ->select(
                'product.product_name',
@@ -198,7 +198,7 @@ public function productdetails($product_id)
           $user_id = $request->input('user_id');
 
           // Fetch orders with product details
-          $orders = Orders::where('user_id', $user_id)->where('order_status', "completed")
+          $orders = Orders::where('user_id', $user_id)->where('order_status', "Completed")
               ->join('product', 'orders.product_id', '=', 'product.product_id')
               ->select(
                   'product.product_name',
@@ -225,7 +225,7 @@ public function productdetails($product_id)
          $user_id = $request->input('user_id');
 
          // Fetch orders with product details
-         $orders = Orders::where('user_id', $user_id)->where('order_status', "refunded")
+         $orders = Orders::where('user_id', $user_id)->where('order_status', "Refunded")
              ->join('product', 'orders.product_id', '=', 'product.product_id')
              ->select(
                  'product.product_name',
