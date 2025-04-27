@@ -1,15 +1,7 @@
-import React, { useState } from "react";
-import {
-  FaBars,
-  FaChartLine,
-  FaBox,
-  FaShoppingCart,
-  FaComments,
-  FaUser,
-  FaPen,
-  FaTimes,
-} from "react-icons/fa";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, FaPen, } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
 import "../style/new-orders.css";
 
 function ShippedItems() {
@@ -19,32 +11,56 @@ function ShippedItems() {
   const [currentPage, setCurrentPage] = useState(1);
   const [popupVisible, setPopupVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [orderDetail, setOrderDetail] = useState([]);
+  const [editPopupVisible, setEditPopupVisible] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [newStatus, setNewStatus] = useState("");
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const totalProducts = 100; // Example total product count
+  useEffect(() => {
+    async function listProductDetail() {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem("user-info"));
+        const vendorId = storedUser?.vendor_id;
+
+        let response = await fetch(`http://localhost:8000/api/vendor/orderlist`, {
+          method: 'POST',
+          body: JSON.stringify({
+            vendor_id: vendorId,
+            order_status: "Shipped"
+          }),
+          headers: {
+            "Content-Type": 'application/json',
+            "Accept": 'application/json'
+          }
+        });
+
+        let result = await response.json();
+        setOrderDetail(result);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    }
+
+    listProductDetail();
+  }, []);
+
+  const totalProducts = orderDetail.length;
   const totalPages = Math.ceil(totalProducts / entries);
 
-  const products = Array.from({ length: totalProducts }, (_, i) => ({
-    id: i + 1,
-    name: `Product ${i + 1}`,
-    paymentMethod: `Chappa`,
-    orderTime: "2025-04-18 14:32:10",
-    image: "https://www.beyiddondolo.com/media/5679-84.jpg",
-    status: "Shipped",
-    address: "123 Vendor St, City, Country",
-    phone:"0923746149",
-    totalPaid: `$${(i + 1) * 10}`,
-    orderedQuantity: i + 1,
-  }));
+  const filteredProducts = orderDetail.filter(product =>
+    product.product_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.order_status.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const displayedProducts = products.slice((currentPage - 1) * entries, currentPage * entries);
+  const displayedProducts = filteredProducts.slice(
+    (currentPage - 1) * entries,
+    currentPage * entries
+  );
 
-  const toggleSidebar = () => {
-    setSidebarVisible(!sidebarVisible);
-  };
-
-  const handleDropdown = (menu) => {
-    setOpenDropdown(openDropdown === menu ? null : menu);
-  };
+  const toggleSidebar = () => setSidebarVisible(!sidebarVisible);
+  const handleDropdown = (menu) => setOpenDropdown(openDropdown === menu ? null : menu);
 
   const handleDetailClick = (product) => {
     setSelectedProduct(product);
@@ -56,8 +72,8 @@ function ShippedItems() {
       <h1>Order Details</h1>
       <p><strong>Address:</strong> ${selectedProduct.address}</p>
       <p><strong>Phone:</strong> ${selectedProduct.phone}</p>
-      <p><strong>Total Paid:</strong> ${selectedProduct.totalPaid}</p>
-      <p><strong>Ordered Quantity:</strong> ${selectedProduct.orderedQuantity}</p>
+      <p><strong>Total Paid:</strong> ${selectedProduct.total_paid}</p>
+      <p><strong>Ordered Quantity:</strong> ${selectedProduct.ordered_quantity}</p>
     `;
     const printWindow = window.open("", "_blank");
     printWindow.document.write(printContent);
@@ -65,16 +81,19 @@ function ShippedItems() {
     printWindow.print();
   };
 
+  const handleEditClick = (product) => {
+    setEditingProduct(product);
+    setNewStatus(product.order_status);
+    setEditPopupVisible(true);
+  };
+
+
   return (
     <div className="dashboard-wrapper">
-      <button className="hamburger-btn" onClick={toggleSidebar}>
-        <FaBars />
-      </button>
+      <button className="hamburger-btn" onClick={toggleSidebar}><FaBars /></button>
 
       <div className={`custom-sidebar ${sidebarVisible ? "show" : "hide"}`}>
-        <div className="d-flex align-items-center mb-3">
-          <h2 className="text-center custom-css flex-grow-1 mt-2 ms-4">Vendor Dashboard</h2>
-        </div>
+        <h2 className="text-center custom-css mt-2 ms-4">Vendor Dashboard</h2>
 
         <a href="/vendor" className="custom-link">
           <FaChartLine className="me-2" /> Analytics
@@ -114,7 +133,7 @@ function ShippedItems() {
             <ul className="dropdown-menu custom-dropdown-menu">
               <li><a href="/vendor/user-messages" className="dropdown-item-vendor">User Message</a></li>
               <li><a href="/vendor/admin-messages" className="dropdown-item-vendor">Admin Message</a></li>
-              <li><a href="/vendor/review-messages " className="dropdown-item-vendor">Review Message</a></li>
+              <li><a href="/vendor/review-messages" className="dropdown-item-vendor">Review Message</a></li>
               <li><a href="/vendor/notifications" className="dropdown-item-vendor">Notification</a></li>
             </ul>
           )}
@@ -135,7 +154,16 @@ function ShippedItems() {
 
       <div className={`main-content ${sidebarVisible ? "with-sidebar" : "full-width"}`}>
         <div className="custom-header text-center">
-          <h1 className="h4 mb-0">Shipped Items</h1>
+          <h1 className="h4 mb-0">Completed Items</h1>
+        </div>
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search by product name or status..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
         </div>
 
         <div className="custom-table-responsive">
@@ -153,27 +181,31 @@ function ShippedItems() {
               </tr>
             </thead>
             <tbody>
-              {displayedProducts.map((product) => (
-                <tr key={product.id}>
-                  <td>{product.id}</td>
-                  <td>{product.name}</td>
+              {displayedProducts.map((product, index) => (
+                <tr key={product.order_id}>
+                  <td>{(currentPage - 1) * entries + index + 1}</td>
+
+                  <td>{product.product_name}</td>
                   <td>
-                    <img src={product.image} alt={product.name} className="product-image" />
+                    <img
+                      src={`http://localhost:8000/storage/${product.product_image}`}
+                      className="product-image"
+                      alt={product.product_name}
+                    />
                   </td>
-                  <td>{product.paymentMethod}</td>
-                  <td>{product.orderTime}</td>
-                  <td>{product.status}</td>
+                  <td>{product.payment_method}</td>
+                  <td>{product.order_time}</td>
+                  <td>{product.order_status}</td>
                   <td>
                     <button className="see-detail" onClick={() => handleDetailClick(product)}>
                       See Detail
                     </button>
                   </td>
                   <td>
-                    <div className="actions">
-                      <button className="edit-button">
-                        <FaPen />
-                      </button>
-                    </div>
+                    <button className="edit-button" onClick={() => handleEditClick(product)}>
+                      <FaPen />
+                    </button>
+
                   </td>
                 </tr>
               ))}
@@ -182,37 +214,91 @@ function ShippedItems() {
         </div>
 
         {popupVisible && selectedProduct && (
-          <div className="popup">
+          <div className="popup-overlay">
             <div className="popup-content">
+
               <h2>Order Details</h2>
               <p><strong>Address:</strong> {selectedProduct.address}</p>
               <p><strong>Phone:</strong> {selectedProduct.phone}</p>
-              <p><strong>Total Paid:</strong> {selectedProduct.totalPaid}</p>
-              <p><strong>Ordered Quantity:</strong> {selectedProduct.orderedQuantity}</p>
-              <button onClick={handlePrint}>Print as PDF</button>
-              <button onClick={() => setPopupVisible(false)}>Close</button>
+              <p><strong>Total Paid:</strong> {selectedProduct.total_paid}</p>
+              <p><strong>Ordered Quantity:</strong> {selectedProduct.ordered_quantity}</p>
+              <div className="popup-buttons">
+
+                <button onClick={() => setPopupVisible(false)}>Close</button>
+                <button onClick={handlePrint}>🖨️ Print</button>
+              </div>
             </div>
           </div>
         )}
 
-{totalPages > 1 && (
-  <div className="pagination">
-    <button
-      disabled={currentPage === 1}
-      onClick={() => setCurrentPage(currentPage - 1)}
-    >
-      Previous
-    </button>
-    <span>Page {currentPage} of {totalPages}</span>
-    <button
-      disabled={currentPage === totalPages}
-      onClick={() => setCurrentPage(currentPage + 1)}
-    >
-      Next
-    </button>
-  </div>
-)}
 
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+            <span>Page {currentPage} of {totalPages}</span>
+            <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+          </div>
+        )}
+        {editPopupVisible && editingProduct && (
+          <div className="popup-overlay">
+            <div className="popup-content">
+
+              <h2>Edit Order Status</h2>
+              <p><strong>Product:</strong> {editingProduct.product_name}</p>
+
+              <label>Status:</label>
+              <select
+                value={newStatus}
+                onChange={(e) => setNewStatus(e.target.value)}
+                className="custom-dropdown"
+              >
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+                <option value="Shipped">Shipped</option>
+              </select>
+
+              <div className="popup-buttons mt-3">
+                <button onClick={() => setEditPopupVisible(false)}>Cancel</button>
+                <button
+                  onClick={async () => {
+                    try {
+                      const response = await fetch("http://localhost:8000/api/vendor/update-order-status", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Accept: "application/json"
+                        },
+                        body: JSON.stringify({
+                          order_id: editingProduct.order_id,
+                          new_status: newStatus
+                        }),
+                      });
+
+                      if (response.ok) {
+                        toast.success("Status updated successfully!", {
+                          position: "top-right",
+                          autoClose: 3000,
+                        });
+                        setTimeout(() => window.location.reload(), 1000);
+                      } else {
+                        toast.error("Error updating status.");
+                      }
+                    } catch (error) {
+                      toast.error("Failed to update status.");
+                    }
+                  }}
+                >
+                  Save
+                </button>
+
+              </div>
+            </div>
+          </div>
+        )}
+
+
+        <ToastContainer />
       </div>
     </div>
   );

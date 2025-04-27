@@ -38,12 +38,21 @@ Route::post('login',[UserController::class,'login']);//done
 
 Route::post('vendor/register',[VendorController::class,'register']);//done
 Route::post('/vendor/login',[VendorController::class,'login']);//done
-Route::post('/vendor/addproduct',[VendorController::class,'addproduct']);
-Route::post('/vendor/productlist/', [VendorController::class, 'productlist']);
+Route::post('/vendor/addproduct',[VendorController::class,'addproduct']);//done
+Route::post('/vendor/productlist/', [VendorController::class, 'productlist']);//done
 Route::post('/vendor/orderlist/', [VendorController::class, 'orderlist']);//done
 Route::post('/vendor/updatepassword/', [VendorController::class, 'updatepassword']);//done
-Route::delete('/vendor/delete-product', [VendorController::class, 'deleteProduct']);
+Route::delete('/vendor/delete-product', [VendorController::class, 'deleteProduct']);//done
 Route::post('/vendor/update-order-status', [VendorController::class, 'updateorderstatus']);//done
+
+Route::post('/get-subcategories-by-category/{category_id}', [VendorController::class, 'categoryandsubcategory']);//done
+
+Route::put('/products/{id}', [ProductController::class, 'update']);
+
+
+Route::get('/get-categories', [VendorController::class, 'getCategories']);//done
+
+
 
 Route::post('vendor/personalinfo',[VendorController::class,'personalinfo']);
 Route::post('vendor/businessinfo',[VendorController::class,'businessinfo']);

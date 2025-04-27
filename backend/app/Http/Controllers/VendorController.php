@@ -14,6 +14,8 @@ use App\Models\BusinessInfo;
 use App\Models\BankInfo;
 use App\Models\Product;
 use App\Models\Cart;
+use App\Models\Category;
+use App\Models\SubCategory; 
 use App\Models\Orders;
 
 class VendorController extends Controller
@@ -455,6 +457,44 @@ public function updateorderstatus(Request $request)
         // Return error if save failed
         return response()->json(['message' => 'Failed to update order statussss'], 500);
     }
+
+    public function getCategories()
+    {
+        $categories = Category::all();  // Fetch all categories
+        return response()->json($categories);
+    }
+    
+    public function categoryandsubcategory($category_id)
+    {
+        $subcategories = SubCategory::where('category_id', $category_id)->get();
+        return response()->json($subcategories);
+    }
+    
+
+    public function update(Request $request, $id)
+    {
+        // Validate the incoming data
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric',
+        ]);
+    
+        // Find the product by its ID
+        $product = Product::find($id);
+    
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+    
+        // Update the product with the new data
+        $product->name = $validated['name'];
+        $product->price = $validated['price'];
+        $product->save();
+    
+        // Return the updated product
+        return response()->json($product);
+    }
+    
 
 
 

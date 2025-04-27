@@ -20,7 +20,6 @@ import {
   Form,
   Image,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import "../style/add-products.css";
 
@@ -45,6 +44,126 @@ function AddProduct() {
   const [productlist, setProductList] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showEditProductModal, setShowEditProductModal] = useState(false);
+
+
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
+  const [productData, setProductData] = useState({
+    product_name: "",
+    total_product: "",
+    product_price: "",
+    product_desc: "",
+    product_img1: null,
+    product_img2: null,
+    product_img3: null,
+    product_img4: null,
+    product_img5: null,
+  });
+
+  // Load categories
+  useEffect(() => {
+    fetch("http://localhost:8000/api/get-categories")
+      .then((res) => res.json())
+      .then((data) => setCategories(data))
+      .catch((err) => console.error("Error loading categories:", err));
+  }, []);
+
+  // Load subcategories when a category selected
+  useEffect(() => {
+    if (selectedCategory) {
+      fetch(`http://localhost:8000/api/get-subcategories-by-category/${selectedCategory}`, {
+        method: "POST",
+      })
+        .then((res) => res.json())
+        .then((data) => setSubcategories(data))
+        .catch((err) => console.error("Error loading subcategories:", err));
+    } else {
+      setSubcategories([]);
+    }
+  }, [selectedCategory]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProductData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setProductData((prev) => ({ ...prev, [name]: files[0] }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const vendorInfo = JSON.parse(localStorage.getItem("user-info")); //  get vendor info
+    const vendor_id = vendorInfo?.vendor_id;
+
+    if (!vendor_id) {
+      alert("Vendor ID not found. Please login again.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("product_name", productData.product_name);
+    formData.append("total_product", productData.total_product);
+    formData.append("product_price", productData.product_price);
+    formData.append("product_desc", productData.product_desc);
+    formData.append("vendor_id", vendor_id); // important
+    formData.append("category_id", selectedCategory);
+    formData.append("sub_category_id", selectedSubCategory);
+    formData.append("product_img1", productData.product_img1);
+
+    // Optional images (can be null)
+    if (productData.product_img2) formData.append("product_img2", productData.product_img2);
+    if (productData.product_img3) formData.append("product_img3", productData.product_img3);
+    if (productData.product_img4) formData.append("product_img4", productData.product_img4);
+    if (productData.product_img5) formData.append("product_img5", productData.product_img5);
+
+    try {
+      console.log("Submitting product data:", productData);
+      console.log("Submitting formData:", formData);
+
+      const res = await fetch("http://localhost:8000/api/vendor/addproduct", {
+        method: "POST",
+        body: formData,
+      });
+      console.log("Response status:");
+      const result = await res.json();
+      console.log("Response from server:", result);
+
+
+
+      if (result.status === "success") {
+        toast.success("Product added successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+
+        setProductData({
+          product_name: "",
+          total_product: "",
+          product_price: "",
+          product_desc: "",
+          product_img1: null,
+          product_img2: null,
+          product_img3: null,
+          product_img4: null,
+          product_img5: null,
+        });
+        setSelectedCategory("");
+        setSelectedSubCategory("");
+      } else {
+        toast.error("Failed to add product!");
+      }
+    } catch (err) {
+      toast.error("An error occurred. Try again.");
+    }
+  };
+
+
+
 
   const openEditProductModal = (product) => {
     setSelectedProduct(product);
@@ -71,17 +190,6 @@ function AddProduct() {
     setOpenDropdown(openDropdown === menu ? null : menu);
   };
 
-  const handleImageChange = (e) => {
-    const { name, files } = e.target;
-    if (name === "selectedproductImages") {
-      const slicedFiles = Array.from(files).slice(0, 5); // Limit to 5 files
-      setProductImages({
-        ...productImages,
-        selectedproductImages: slicedFiles
-      });
-      setSelectedFilesCount(slicedFiles.length); // Update the count of selected files
-    }
-  };
 
   const addProduct = (e) => {
     e.preventDefault();
@@ -90,7 +198,7 @@ function AddProduct() {
     handleCloseAddProductModal();
   };
 
-  
+
   const handleCloseAddProductModal = () => {
     setShowAddProductModal(false);
     setCategory("");
@@ -295,63 +403,100 @@ function AddProduct() {
               <Form onSubmit={addProduct}>
                 <Form.Group controlId="category">
                   <Form.Label>Select Category</Form.Label>
-                  <Form.Select onChange={(e) => setCategory(e.target.value)} value={category}>
+                  <Form.Select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} required>
                     <option value="">Select a Category</option>
-                    <option value="Electronics">Electronics</option>
-                    <option value="Cloth">Cloth</option>
+                    {categories.map((cat) => (
+                      <option key={cat.category_id} value={cat.category_id}>
+                        {cat.category_name}
+                      </option>
+                    ))}
                   </Form.Select>
                 </Form.Group>
 
                 {/* Subcategory based on Category selection */}
-                {category && (
-                  <Form.Group controlId="subCategory">
-                    <Form.Label>Select Subcategory</Form.Label>
-                    <Form.Select onChange={(e) => setSubCategory(e.target.value)} value={subCategory}>
-                      <option value="">Select a Subcategory</option>
-                      {category === 'Electronics' && (
-                        <>
-                          <option value="Electronics-Phone">Phone</option>
-                          <option value="Electronics-Computer">Computer</option>
-                        </>
-                      )}
-                      {category === 'Cloth' && (
-                        <>
-                          <option value="Cloth-Men">Men</option>
-                          <option value="Cloth-Women">Women</option>
-                        </>
-                      )}
-                    </Form.Select>
-                  </Form.Group>
-                )}
+                <Form.Group controlId="subCategory">
+                  <Form.Label>Select Subcategory</Form.Label>
+                  <Form.Select value={selectedSubCategory} onChange={(e) => setSelectedSubCategory(e.target.value)} required>
+                    <option value="">Select a Subcategory</option>
+                    {subcategories.map((sub) => (
+                      <option key={sub.sub_category_id} value={sub.sub_category_id}>
+                        {sub.sub_category_name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+
 
                 <Form.Group controlId="productName">
                   <Form.Label>Product Name</Form.Label>
-                  <Form.Control type="text" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Enter product name" />
+                  <Form.Control type="text"
+                    name="product_name"
+                    value={productData.product_name}
+                    onChange={handleInputChange}
+                    required placeholder="Enter product name" />
                 </Form.Group>
+
+
                 <Form.Group controlId="totalProduct">
                   <Form.Label>Total Product</Form.Label>
-                  <Form.Control type="text" value={totalProduct} onChange={(e) => setTotalProduct(e.target.value)} placeholder="Enter total product" />
+                  <Form.Control type="number"
+                    name="total_product"
+                    value={productData.total_product}
+                    onChange={handleInputChange}
+                    required placeholder="Enter total product" />
                 </Form.Group>
+
+
+
+
+
                 <Form.Group controlId="productPrice">
                   <Form.Label>Product Price</Form.Label>
-                  <Form.Control type="text" value={productPrice} onChange={(e) => setProductPrice(e.target.value)} placeholder="Enter product price" />
+                  <Form.Control type="number"
+                    name="product_price"
+                    value={productData.product_price}
+                    onChange={handleInputChange}
+                    required placeholder="Enter product price" />
                 </Form.Group>
+
+
                 <Form.Group controlId="productDescription">
                   <Form.Label>Product Description</Form.Label>
-                  <Form.Control as="textarea" value={productDescription} onChange={(e) => setProductDescription(e.target.value)} rows={3} placeholder="Enter product description" />
+                  <Form.Control as="textarea" name="product_desc"
+                    value={productData.product_desc}
+                    onChange={handleInputChange}
+                    required rows={3} placeholder="Enter product description" />
                 </Form.Group>
+
+
                 <Form.Group controlId="selectedproductImages">
                   <Form.Label>Product Images (Max 5)</Form.Label>
-                  <Form.Control type="file" name="selectedproductImages" multiple onChange={handleImageChange} />
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <input
+                      key={i}
+                      type="file"
+                      name={`product_img${i}`}
+                      onChange={handleFileChange}
+                      accept="image/*"
+                      required={i === 1}
+                    />
+                  ))}
                 </Form.Group>
               </Form>
+
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleCloseAddProductModal}>Close</Button>
-              <Button variant="primary" onClick={addProduct}>Save Product</Button>
+              <Button variant="primary" onClick={handleSubmit}>Save Product</Button>
             </Modal.Footer>
           </Modal>
         </Container>
+
+
+
+
+
+
         {/* Main Content Ends Here */}
         <Modal show={showEditProductModal} onHide={() => setShowEditProductModal(false)} centered>
           <Modal.Header closeButton>
@@ -428,3 +573,5 @@ function AddProduct() {
 }
 
 export default AddProduct;
+
+

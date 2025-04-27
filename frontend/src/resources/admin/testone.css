@@ -1,402 +1,319 @@
 /* Dashboard Wrapper */
 .admin-dashboard-wrapper {
-    display: flex;
-    min-height: 100vh;
-    background-color: #f3f5f9;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-  }
-  
-  /* Header */
-  .admin-custom-header {
-    background-color: #28a745;
-    color: white;
-    padding: 15px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-  }
-  
-  /* Sidebar */
-  .admin-custom-sidebar {
-    width: 280px;
-    background-color: #343a40;
-    color: #f3f5f9;
-    padding: 15px;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    transform: translateX(0);
-    transition: transform 0.4s ease-in-out;
-    z-index: 2000;
-  }
-  
-  .admin-custom-sidebar.hide {
-    transform: translateX(-100%);
-  }
-  
-  .admin-custom-sidebar.show {
-    transform: translateX(0);
-  }
-  
-  /* Main Content */
-  .admin-main-content {
-    transition: margin-left 0.4s ease-in-out;
-    margin-top: 70px;
-    padding: 20px;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    text-align: center;
-  }
-  
-  .admin-main-content.with-sidebar {
-    margin-left: 280px;
-  }
-  
-  .admin-main-content.full-width {
-    margin-left: 0;
-  }
-  
-  /* Sidebar Links */
-  .admin-custom-link {
-    color: #f3f5f9;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-    cursor: pointer;
-  }
-  
-  .admin-custom-link:hover {
-    background-color: #007bff ;
-  }
-  
-  /* Dropdown Menus */
-  .admin-custom-dropdown-menu {
-    background-color: #444;
-    padding: 0;
-    list-style: none;
-    position: absolute;
-    top: 0;
-    left: 100%;
-    width: 250px;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: none;
-    z-index: 2001;
-  }
-  
-  .admin-custom-sidebar .dropdown:hover .admin-custom-dropdown-menu,
-  .admin-custom-sidebar .dropdown .admin-custom-dropdown-menu:hover {
-    display: block;
-  }
-  
-  /* Dropdown Items */
-  .dropdown-item-admin {
-    color: #f3f5f9;
-    padding: 12px 15px;
-    text-decoration: none;
-    display: block;
-    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
-    border-bottom: 1px solid #555;
-  }
-  
-  .dropdown-item-admin:hover {
-    background-color: #007bff ;
-    border-color: #007bff ;
-    border-radius: 7px;
-    transform: translateX(5px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  }
-  
-  .dropdown-item-admin:last-child {
-    border-bottom: none;
-  }
-  
-  /* Hamburger Button */
-  .admin-hamburger-btn {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 24px;
-    z-index: 3000;
-  }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .admin-main-content.with-sidebar {
-      margin-left: 0;
-      z-index: 1000;
-    }
-  
-    .admin-custom-sidebar {
-      width: 250px;
-      z-index: 2000;
-    }
-  
-    .admin-hamburger-btn {
-      left: 10px;
-      top: 10px;
-    }
-  
-    .admin-custom-sidebar.show {
-      position: fixed;
-      z-index: 2000;
-    }
-  
-    .admin-custom-sidebar.hide {
-      display: none;
-    }
-  }
-  
-  .admin-custom-css {
-    font-weight: bold;
-    font-size: 22px;
-    color: white;
-  }
-  
-  
+  display: flex;
+  min-height: 100vh;
+  background-color: #f3f5f9;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
 
-/* CSS styles in testone.css */
-.dashboard-wrapper {
-    display: flex;
-    min-height: 100vh;
-    background-color: #f3f5f9;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-  }
-  
-  .custom-header {
-    background-color: #28a745;
-    color: white;
-    padding: 15px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+/* Header */
+.admin-custom-header {
+  background-color: #28a745;
+  color: white;
+  padding: 15px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* Sidebar */
+.admin-custom-sidebar {
+  width: 280px;
+  background-color: #343a40;
+  color: #f3f5f9;
+  padding: 15px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translateX(0);
+  transition: transform 0.4s ease-in-out;
+  z-index: 2000;
+}
+
+.admin-custom-sidebar.hide {
+  transform: translateX(-100%);
+}
+
+.admin-custom-sidebar.show {
+  transform: translateX(0);
+}
+
+/* Main Content */
+.admin-main-content {
+  transition: margin-left 0.4s ease-in-out;
+  margin-top: 70px;
+  padding: 20px;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+}
+
+.admin-main-content.with-sidebar {
+  margin-left: 280px;
+}
+
+.admin-main-content.full-width {
+  margin-left: 0;
+}
+
+/* Sidebar Links */
+.admin-custom-link {
+  color: #f3f5f9;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.admin-custom-link:hover {
+  background-color: #007bff ;
+}
+
+/* Dropdown Menus */
+.admin-custom-dropdown-menu {
+  background-color: #444;
+  padding: 0;
+  list-style: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 250px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: none;
+  z-index: 2001;
+}
+
+.admin-custom-sidebar .dropdown:hover .admin-custom-dropdown-menu,
+.admin-custom-sidebar .dropdown .admin-custom-dropdown-menu:hover {
+  display: block;
+}
+
+/* Dropdown Items */
+.dropdown-item-admin {
+  color: #f3f5f9;
+  padding: 12px 15px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  border-bottom: 1px solid #555;
+}
+
+.dropdown-item-admin:hover {
+  background-color: #007bff ;
+  border-color: #007bff ;
+  border-radius: 7px;
+  transform: translateX(5px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-item-admin:last-child {
+  border-bottom: none;
+}
+
+/* Hamburger Button */
+.admin-hamburger-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  z-index: 3000;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-main-content.with-sidebar {
+    margin-left: 0;
     z-index: 1000;
   }
-  
-  .custom-sidebar {
-    width: 280px;
-    background-color: #343a40;
-    color: #f3f5f9;
-    padding: 15px;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    transform: translateX(0);
-    transition: transform 0.4s ease-in-out;
+
+  .admin-custom-sidebar {
+    width: 250px;
     z-index: 2000;
   }
-  
-  .custom-sidebar.hide {
-    transform: translateX(-100%);
+
+  .admin-hamburger-btn {
+    left: 10px;
+    top: 10px;
   }
-  
-  .custom-sidebar.show {
-    transform: translateX(0);
-  }
-  
-  .main-content {
-    transition: margin-left 0.4s ease-in-out;
-    margin-top: 70px;
-    padding: 20px;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    text-align: center;
-  }
-  
-  .main-content.with-sidebar {
-    margin-left: 280px;
-  }
-  
-  .main-content.full-width {
-    margin-left: 0;
-  }
-  
-  .custom-link {
-    color: #f3f5f9;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-    cursor: pointer;
-  }
-  
-  .custom-link:hover {
-    background-color: #007bff !important;
-  }
-  
-  .custom-dropdown-menu {
-    background-color: #444;
-    padding: 0;
-    list-style: none;
-    position: absolute;
-    top: 0;
-    left: 100%;
-    width: 250px;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: none;
-    z-index: 2001;
-  }
-  
-  .custom-sidebar .dropdown:hover .custom-dropdown-menu,
-  .custom-sidebar .dropdown .custom-dropdown-menu:hover {
-    display: block;
-  }
-  
-  .dropdown-item-admin {
-    color: #f3f5f9;
-    padding: 12px 15px;
-    text-decoration: none;
-    display: block;
-    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
-    border-bottom: 1px solid #555;
-  }
-  
-  .dropdown-item-admin:hover {
-    background-color: #007bff;
-    border-color: #007bff;
-    border-radius: 7px;
-    transform: translateX(5px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  }
-  
-  .dropdown-item-admin:last-child {
-    border-bottom: none;
-  }
-  
-  .hamburger-btn {
+
+  .admin-custom-sidebar.show {
     position: fixed;
-    top: 15px;
-    left: 15px;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 24px;
-    z-index: 3000;
+    z-index: 2000;
   }
-  
-  @media (max-width: 768px) {
-    .main-content.with-sidebar {
-      margin-left: 0;
-      z-index: 1000;
-    }
-  
-    .custom-sidebar {
-      width: 250px;
-      z-index: 2000;
-    }
-  
-    .hamburger-btn {
-      left: 10px;
-      top: 10px;
-    }
-  
-    .custom-sidebar.show {
-      position: fixed;
-      z-index: 2000;
-    }
-  
-    .custom-sidebar.hide {
-      display: none;
-    }
+
+  .admin-custom-sidebar.hide {
+    display: none;
   }
-  
-  .custom-css {
-    font-weight: bold;
-    font-size: 22px;
-    color: white;
+}
+
+.admin-custom-css {
+  font-weight: bold;
+  font-size: 22px;
+  color: white;
+}
+
+
+
+/* Modal Overlay */
+.modal-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Dark background with transparency */
+  animation: fadeIn 0.3s; /* Fade-in effect */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+  animation: slideIn 0.3s; /* Slide-in effect */
+}
+
+/* Close Button */
+.modal-close {
+  cursor: pointer;
+  float: right;
+  font-size: 24px;
+  color: #28a745; /* Green color for close button */
+}
+
+/* Modal Title */
+.modal-title {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+/* Form Styles */
+.category-form {
+  max-width: 400px; /* Set a maximum width for the form */
+  margin: 0 auto; /* Center the form */
+}
+
+/* Input Fields */
+.form-control-superadmin {
+  width: 100%; /* Full width of the container */
+  border: 1px solid #28a745; /* Green border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px; /* Padding */
+  font-size: 16px; /* Font size */
+  margin: 10px 0; /* Margin above and below */
+  transition: border-color 0.3s; /* Transition for border */
+}
+
+.form-control-superadmin:focus {
+  border-color: #218838; /* Darker green on focus */
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.5); /* Subtle shadow */
+}
+
+/* Button Styles */
+.btn-superadmin {
+  background-color: #28a745; /* Green background */
+  color: white; /* White text */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 20px; /* Padding */
+  font-size: 16px; /* Font size */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s, transform 0.2s; /* Transition effects */
+  width: 100%; /* Full width */
+}
+
+.btn-superadmin:hover {
+  background-color: #218838; /* Darker green on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Alert Styles */
+.alert-superadmin {
+  background-color: #f8d7da; /* Light red background */
+  color: #721c24; /* Dark red text */
+  border: 1px solid #f5c6cb; /* Light red border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px; /* Padding */
+  margin-bottom: 20px; /* Margin below */
+}
+
+/* Modal Header Styles */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Close Button */
+.modal-close {
+  cursor: pointer;
+  font-size: 24px;
+  color: #28a745; /* Green color for close button */
+  padding: 0 10px; /* Padding for spacing */
+}
+/* Centering Labels */
+.form-group {
+  text-align: center; /* Center align the label text */
+}
+
+/* Input Fields */
+.form-control-superadmin {
+  width: 100%; /* Full width of the container */
+  border: 1px solid #28a745; /* Green border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px; /* Padding */
+  font-size: 16px; /* Font size */
+  margin: 10px 0; /* Margin above and below */
+  transition: border-color 0.3s; /* Transition for border */
+}
+
+/* Centering Text in Textarea */
+.form-control-superadmin::placeholder {
+  text-align: center; /* Center align placeholder text */
+}
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .user-list {
-    margin-top: 20px;
-    padding: 20px;
-    width: 100%;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .table {
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  
-  .table thead th {
-    background-color: #007bff;
-    color: #ffffff;
-  }
-  
-  .table tbody tr:hover {
-    background-color: #f1f1f1;
-    transition: background-color 0.3s;
-  }
-  
-  .table td, .table th {
-    border: 1px solid #dee2e6;
-  }
-  
-  .search-container {
-    display: flex;
-    justify-content: center; /* Center the search bar */
-    margin-bottom: 20px; /* Space below the search bar */
-  }
-  
-  .search-input {
-    padding: 8px 12px;
-    border: 1px solid #ced4da;
-    border-radius: 5px 0 0 5px;
-    outline: none;
-    transition: border-color 0.3s;
-    width: 200px; /* Set a fixed width for the input field */
-  }
-  
-  .search-button {
-    padding: 8px 12px;
-    border: 1px solid #007bff;
-    background-color: #007bff;
-    color: white;
-    border-radius: 0 5px 5px 0;
-    cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s;
-  }
-  
-  .search-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .search-input::placeholder {
-    color: #6c757d;
+  to {
     opacity: 1;
-    font-style: italic;
   }
-  
-  .search-input:focus {
-    border-color: #007bff;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
   }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
