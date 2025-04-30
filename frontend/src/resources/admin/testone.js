@@ -3,27 +3,35 @@ import {
   FaBars,
   FaChartLine,
   FaStore,
-  FaThList,
   FaUsers,
   FaUser,
-  FaUserShield,
-  FaTools,
 } from "react-icons/fa";
+
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./testone.css";
+
 
 function TestOne() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
-  const [showAddSubCategoryModal, setShowAddSubCategoryModal] = useState(false);
-  
-  const [categoryName, setCategoryName] = useState("");
-  const [subCategoryName, setSubCategoryName] = useState("");
-  const [description, setDescription] = useState("");
-  const [error, setError] = useState("");
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [category, setCategory] = useState("");
+  const [productName, setProductName] = useState("");
+  const [totalProduct, setTotalProduct] = useState("");
+  const [productPrice, setProductPrice] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [productImages, setProductImages] = useState({ selectedproductImages: [] });
+  const [entries, setEntries] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalProducts = 100;
+  const totalPages = Math.ceil(totalProducts / entries);
 
-  const categories = ["Electronics", "Furniture", "Clothing"]; // Sample categories
-
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };
@@ -32,43 +40,118 @@ function TestOne() {
     setOpenDropdown(openDropdown === menu ? null : menu);
   };
 
-  const handleAddCategory = (e) => {
-    e.preventDefault();
-    if (categoryName === "" || description === "") {
-      setError("Please fill in all fields.");
-    } else {
-      const newCategory = { categoryName, description };
-      console.log("Category Added:", newCategory);
-      handleCloseAddCategoryModal();
+  const handleImageChange = (e) => {
+    const { name, files } = e.target;
+    if (name === "selectedproductImages") {
+      setProductImages({
+        ...productImages,
+        selectedproductImages: Array.from(files).slice(0, 5)
+      });
     }
   };
 
-  const handleAddSubCategory = (e) => {
+  const addProduct = (e) => {
     e.preventDefault();
-    if (subCategoryName === "" || description === "" || categoryName === "") {
-      setError("Please fill in all fields.");
-    } else {
-      const newSubCategory = { categoryName, subCategoryName, description };
-      console.log("Sub Category Added:", newSubCategory);
-      handleCloseAddSubCategoryModal();
+    const newProduct = { category, productName, totalProduct, productPrice, productDescription, productImages };
+    console.log("Product Added:", newProduct);
+    handleCloseAddProductModal();
+  };
+
+  const handleCloseAddProductModal = () => {
+    setShowAddProductModal(false);
+    setCategory("");
+    setProductName("");
+    setTotalProduct("");
+    setProductPrice("");
+    setProductDescription("");
+    setProductImages({ selectedproductImages: [] });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+
+      toast.error("Please fill in all fields.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
+
+    const payload = {
+      currentPassword,
+      newPassword,
+    };
+
+    try {
+
+      console.warn("Sending password update request:", payload);
+      let response = await fetch("http://localhost:8000/api/updatepassword", {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": 'application/json',
+          "Accept": 'application/json',
+        },
+      });
+
+      let result = await response.json();
+      if (result.success) {
+        toast.success("Password updated successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        // Optionally, redirect or clear fields
+      } else {
+        toast.error(result.message || "Failed to update password. Please try again.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    } catch (error) {
+      toast.error('An error occurred. Please try again later.');
     }
   };
 
-  const handleCloseAddCategoryModal = () => {
-    setShowAddCategoryModal(false);
-    setCategoryName("");
-    setDescription("");
-    setError("");
-  };
-
-  const handleCloseAddSubCategoryModal = () => {
-    setShowAddSubCategoryModal(false);
-    setSubCategoryName("");
-    setDescription("");
-    setError("");
-    setCategoryName(""); // Reset selected category
-  };
-
+function logout() {
+  localStorage.clear();
+  toast.success("Logout Successful!", {
+    position: "top-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+  });
+  setTimeout(() => {
+    navigate("/admin/login");
+  }, 1000); // Delay the navigation for 3 seconds
+}
   return (
     <div className="admin-dashboard-wrapper">
       <button className="admin-hamburger-btn" onClick={toggleSidebar}>
@@ -80,26 +163,45 @@ function TestOne() {
           <h2 className="text-center admin-custom-css flex-grow-1 mt-2 ms-4">Admin Dashboard</h2>
         </div>
 
-        <a href="/superadmin/dashboard" className="admin-custom-link">
+        <a href="#analytics" className="admin-custom-link">
           <FaChartLine className="me-2" /> Dashboard
         </a>
 
         <div className="dropdown">
-          <div className="admin-custom-link" onClick={() => handleDropdown("catalog management")}>
-            <FaThList className="me-2" /> Catalog Management
+          <div className="admin-custom-link" onClick={() => handleDropdown("products")}>
+            <FaUsers className="me-2" /> User Management
           </div>
-          {openDropdown === "catalog management" && (
+          {openDropdown === "products" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
-              <li>
-                <a href="#" className="dropdown-item-admin" onClick={() => setShowAddCategoryModal(true)}>
-                  Add Categories
-                </a>
-              </li>
-              <li>
-                <a href="#" className="dropdown-item-admin" onClick={() => setShowAddSubCategoryModal(true)}>
-                  Add Sub Categories
-                </a>
-              </li>
+              <li><a href="#add-products" className="dropdown-item-admin">List Users</a></li>
+              <li><a href="#add-coupons" className="dropdown-item-admin">User Messages</a></li>
+            </ul>
+          )}
+        </div>
+
+        <div className="dropdown">
+          <div className="admin-custom-link" onClick={() => handleDropdown("orders")}>
+            <FaStore className="me-2" /> Vendor Management
+          </div>
+          {openDropdown === "orders" && (
+            <ul className="dropdown-menu admin-custom-dropdown-menu">
+              <li><a href="#new-order" className="dropdown-item-admin">List of Vendors</a></li>
+              <li><a href="#shipped" className="dropdown-item-admin">Manage Products</a></li>
+              <li><a href="#refund" className="dropdown-item-admin">Manage Orders</a></li>
+              <li><a href="#completed" className="dropdown-item-admin">Approve Payout</a></li>
+              <li><a href="#completed" className="dropdown-item-admin">Vendor Messages</a></li>
+            </ul>
+          )}
+        </div>
+
+        <div className="dropdown">
+          <div className="admin-custom-link" onClick={() => handleDropdown("profile")}>
+            <FaUser className="me-2" /> Profile
+          </div>
+          {openDropdown === "profile" && (
+            <ul className="dropdown-menu admin-custom-dropdown-menu">
+              <li><a href="#updated-password" className="dropdown-item-admin">Update Password</a></li>
+              <li><a href="#logout" onClick={logout} className="dropdown-item-admin">Logout</a></li>
             </ul>
           )}
         </div>
@@ -107,83 +209,53 @@ function TestOne() {
 
       <div className={`admin-main-content ${sidebarVisible ? "with-sidebar" : "full-width"}`}>
         <div className="admin-custom-header text-center">
-          <h1 className="h4 mb-0">Welcome to Super Admin Dashboard</h1>
+          <h1 className="h4 mb-0">Update Password</h1>
         </div>
 
-        {/* Add Category Modal */}
-        {showAddCategoryModal && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h2 className="modal-title">Add Category</h2>
-                <span className="modal-close" onClick={handleCloseAddCategoryModal}>&times;</span>
-              </div>
-              {error && <div className="alert-superadmin">{error}</div>}
-              <form onSubmit={handleAddCategory} className="category-form">
-                <div className="form-group">
-                  <label>Category Name</label>
-                  <input
-                    type="text"
-                    className="form-control-superadmin"
-                    placeholder="Enter category name"
-                    value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
-                  />
-                </div>
+        {/* Main content for updating password */}
+        <div className="update-password-container">
+          <h2>Update Password</h2>
 
-                <button className="btn-superadmin" type="submit">
-                  Add Category
-                </button>
-              </form>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Current Password</label>
+              <input
+                type="password"
+                placeholder="Enter current password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                required
+              />
             </div>
-          </div>
-        )}
 
-        {/* Add Sub Category Modal */}
-        {showAddSubCategoryModal && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h2 className="modal-title">Add Sub Category</h2>
-                <span className="modal-close" onClick={handleCloseAddSubCategoryModal}>&times;</span>
-              </div>
-              {error && <div className="alert-superadmin">{error}</div>}
-              <form onSubmit={handleAddSubCategory} className="category-form">
-                <div className="form-group">
-                  <label>Select Category</label>
-                  <select
-                    className="form-control-superadmin"
-                    value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
-                  >
-                    <option value="">-- Select a Category --</option>
-                    {categories.map((category, index) => (
-                      <option key={index} value={category}>{category}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Sub Category Name</label>
-                  <input
-                    type="text"
-                    className="form-control-superadmin"
-                    placeholder="Enter sub category name"
-                    value={subCategoryName}
-                    onChange={(e) => setSubCategoryName(e.target.value)}
-                  />
-                </div>
-
-
-
-                <button className="btn-superadmin" type="submit">
-                  Add Sub Category
-                </button>
-              </form>
+            <div className="form-group">
+              <label>New Password</label>
+              <input
+                type="password"
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
             </div>
-          </div>
-        )}
+
+            <div className="form-group">
+              <label>Confirm New Password</label>
+              <input
+                type="password"
+                placeholder="Confirm new password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <button type="submit">Update Password</button>
+          </form>
+        </div>
+
       </div>
+      <ToastContainer />
     </div>
   );
 }
