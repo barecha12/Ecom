@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify"; // Import toast for notifications
-import "./loginadmin.css"; // Import the custom CSS
+import "./style/login.css"; // Import the custom CSS
 
 function LoginAdmin() {
   const [email, setEmail] = useState("");

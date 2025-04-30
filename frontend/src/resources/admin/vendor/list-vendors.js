@@ -1,242 +1,185 @@
 import React, { useState } from "react";
 import {
-  Container,
+  FaBars,
+  FaChartLine,
+  FaStore,
+  FaUsers,
+  FaUser,
+} from "react-icons/fa";
+import {
   Row,
   Col,
-  ListGroup,
   Button,
-  Navbar,
-  Nav,
-  Dropdown,
-  Form
+  Form,
+  Modal,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import {
-  FaTachometerAlt,
-  FaUsersCog,
-  FaUsers,
-  FaShoppingCart,
-  FaStar,
-  FaUser,
-  FaList,
-  FaSignOutAlt,
-  FaBars,
-  FaCog,
-  FaFlag,
-  FaAd,
-  FaTruck,
-  FaLock,
-  FaDollarSign,
-  FaComment,
-  FaBox,
-  FaUserCog,
-  FaClipboardList,
-  FaClock,
-  FaCheckCircle,
-  FaStore
-} from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "../style/list-vendors.css";
 
 function ListVendor() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [productManagementOpen, setProductManagementOpen] = useState(false);
-  const [orderManagementOpen, setOrderManagementOpen] = useState(false);
-  const [messageManagementOpen, setMessageManagementOpen] = useState(false);
-  const [accountSettingOpen, setAccountSettingOpen] = useState(false);
-
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [openDropdown, setOpenDropdown] = useState(null);
   const [entries, setEntries] = useState(10);
-  const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [userStatus, setUserStatus] = useState("Active");
+  const navigate = useNavigate();
 
-  const toggleProductManagement = () => {
-    setProductManagementOpen(!productManagementOpen);
+
+  const toggleSidebar = () => setSidebarVisible(!sidebarVisible);
+  const handleDropdown = (menu) => setOpenDropdown(openDropdown === menu ? null : menu);
+  const handleEntriesChange = (newEntries) => {
+    setEntries(newEntries);
+    setCurrentPage(1);
   };
-
-  const toggleOrderManagement = () => {
-    setOrderManagementOpen(!orderManagementOpen);
+  const handlePrevious = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
-
-  const toggleMessageManagement = () => {
-    setMessageManagementOpen(!messageManagementOpen);
-  };
-
-  const toggleAccountSetting = () => {
-    setAccountSettingOpen(!accountSettingOpen);
-  };
-
-  // Generate 100 sample users
-  const users = Array.from({ length: 100 }, (_, index) => {
-    const username = `user${index + 1}`;
-    const email = `${username}@example.com`;
-    const status = index % 2 === 0 ? 'Active' : 'Inactive';
-    return { username, email, status };
-  });
-
-  // Filter users based on search query
-  const filteredUsers = users.filter(user => {
-    const query = searchQuery.toLowerCase();
-    return (
-      user.username.toLowerCase().includes(query) ||
-      user.email.toLowerCase().includes(query)
-    );
-  });
-
-  // Pagination logic
-  const indexOfLastUser = currentPage * entries;
-  const indexOfFirstUser = indexOfLastUser - entries;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(filteredUsers.length / entries);
-
   const handleNext = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
-  const handlePrevious = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  const users = [
+    { id: 1, name: "John Doe", email: "john@example.com", status: "Active" },
+    { id: 2, name: "Jane Smith", email: "jane@example.com", status: "Inactive" },
+    { id: 3, name: "Alice Johnson", email: "alice@example.com", status: "Active" },
+    { id: 4, name: "Bob Brown", email: "bob@example.com", status: "Inactive" },
+    // Add more users as needed
+  ];
+
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const totalPages = Math.ceil(filteredUsers.length / entries);
+  const indexOfLastUser = currentPage * entries;
+  const indexOfFirstUser = indexOfLastUser - entries;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+  const changeUserStatus = async () => {
+    const payload = {
+      userId: selectedUserId,
+      status: userStatus,
+    };
+
+    try {
+      console.warn("Payload:", payload); // Log the payload for debugging
+      let response = await fetch("http://localhost:8000/api/userstatuschange", {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": 'application/json',
+          "Accept": 'application/json',
+        },
+      });
+
+      let result = await response.json();
+      if (result.success) {
+        toast.success("User status updated successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        setShowEditModal(false); // Close the modal after successful update
+      } else {
+        toast.error("Failed to update status. Please try again.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    } catch (error) {
+      toast.error('An error occurred. Please try again later.');
+    }
   };
 
-  const handleEntriesChange = (value) => {
-    setEntries(value);
-    setCurrentPage(1); // Reset to first page when entries change
-  };
+  
+      function logout() {
+        localStorage.clear();
+        toast.success("Logout Successful!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        setTimeout(() => {
+          navigate("/admin/login");
+        }, 1000); // Delay the navigation for 3 seconds
+      }
 
   return (
-    <Container fluid>
-      {/* Top Navbar */}
-      <Navbar bg="dark" variant="dark" expand="lg" className="px-3 w-100 fixed-top" style={{ marginBottom: '56px' }}>
-        <Button variant="dark" className="me-3 d-block" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          <FaBars />
-        </Button>
-        <Navbar.Brand>WALIYA MARKET</Navbar.Brand>
-        <Nav className="ms-auto">
-          <Dropdown align="end">
-            <Dropdown.Toggle variant="link" className="text-white dropdown-toggle-no-arrow">
-              <FaUser className="me-2" size={30} />
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item as={Link} to="/admin/manage-profile">
-                <FaCog className="me-2" /> Settings
-              </Dropdown.Item>
-              <Dropdown.Item as={Link} to="/vendorlogout">
-                <FaSignOutAlt className="me-2" /> Logout
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </Nav>
-      </Navbar>
+    <div className="dashboard-wrapper">
+      <button className="admin-hamburger-btn" onClick={toggleSidebar}>
+        <FaBars />
+      </button>
 
-      <Row>
-        {/* Sidebar */}
-        <Col
-          lg={2}
-          className={`sidebar bg-dark text-white p-3 d-lg-block ${sidebarOpen ? 'sidebar-open' : ''}`}
-          style={{
-            minHeight: "100vh",
-            position: 'fixed',
-            zIndex: 999,
-            top: '56px',
-            left: sidebarOpen ? 0 : '-250px',
-            transition: 'left 0.3s ease',
-          }}
-        >
-          <ListGroup variant="flush">
-            <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-              <FaTachometerAlt className="me-2" />
-              <Link to="/admin/dashboard" style={{ textDecoration: 'none', color: 'white' }}>Dashboard</Link>
-            </ListGroup.Item>
-            {/* Product Management Section with Expandable Content */}
-            <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center" onClick={toggleProductManagement}>
-              <FaUsers className="me-2" />
-              User Management
-            </ListGroup.Item>
-
-            {/* Expanded content for Product Management */}
-            <div className={`product-management-dropdown ${productManagementOpen ? 'open' : ''}`}>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaUsersCog className="me-2" />
-                <Link to="/admin/list-users" style={{ textDecoration: 'none', color: 'white' }}>List Users</Link>
-              </ListGroup.Item>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaComment className="me-2" />
-                <Link to="/admin/user-messages" style={{ textDecoration: 'none', color: 'white' }}>User Messages</Link>
-              </ListGroup.Item>
+      <div className={`admin-custom-sidebar ${sidebarVisible ? "show" : "hide"}`}>
+              <div className="d-flex align-items-center mb-3">
+                <h2 className="text-center admin-custom-css flex-grow-1 mt-2 ms-4">Admin Dashboard</h2>
+              </div>
+      
+              <a href="#analytics" className="admin-custom-link">
+                <FaChartLine className="me-2" /> Dashboard
+              </a>
+      
+              <div className="dropdown">
+                <div className="admin-custom-link" onClick={() => handleDropdown("products")}>
+                  <FaUsers className="me-2" /> User Management
+                </div>
+                {openDropdown === "products" && (
+                  <ul className="dropdown-menu admin-custom-dropdown-menu">
+                    <li><a href="/admin/list-users" className="dropdown-item-admin">List Users</a></li>
+                    <li><a href="/admin/user-messages" className="dropdown-item-admin">User Messages</a></li>
+                  </ul>
+                )}
+              </div>
+      
+              <div className="dropdown">
+                <div className="admin-custom-link" onClick={() => handleDropdown("orders")}>
+                  <FaStore className="me-2" /> Vendor Management
+                </div>
+                {openDropdown === "orders" && (
+                  <ul className="dropdown-menu admin-custom-dropdown-menu">
+                     <li><a href="/admin/new-vendors" className="dropdown-item-admin">New Vendors</a></li>
+                    <li><a href="/admin/list-vendors" className="dropdown-item-admin">List of Vendors</a></li>
+                    <li><a href="/admin/manage-products" className="dropdown-item-admin">Manage Products</a></li>
+                    <li><a href="/admin/manage-orders" className="dropdown-item-admin">Manage Orders</a></li>
+                    <li><a href="/admin/approve-payout" className="dropdown-item-admin">Approve Payout</a></li>
+                    <li><a href="/admin/vendor-messages" className="dropdown-item-admin">Vendor Messages</a></li>
+                  </ul>
+                )}
+              </div>
+      
+              <div className="dropdown">
+                <div className="admin-custom-link" onClick={() => handleDropdown("profile")}>
+                  <FaUser className="me-2" /> Profile
+                </div>
+                {openDropdown === "profile" && (
+                  <ul className="dropdown-menu admin-custom-dropdown-menu">
+                    <li><a href="/admin/manage-password" className="dropdown-item-admin">Update Password</a></li>
+                    <li><a onClick={logout} className="dropdown-item-admin">Logout</a></li>
+                  </ul>
+                )}
+              </div>
             </div>
 
-            {/* Order Management Section with Expandable Content */}
-            <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center" onClick={toggleOrderManagement}>
-              <FaStore className="me-2" />
-              Vendor Management
-            </ListGroup.Item>
-            <div className={`product-management-dropdown ${orderManagementOpen ? 'open' : ''}`}>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaList className="me-2" />
-                <Link to="/admin/list-vendors" style={{ textDecoration: 'none', color: 'white' }}>List Vendors</Link>
-              </ListGroup.Item>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaBox className="me-2" />
-                <Link to="/admin/manage-products" style={{ textDecoration: 'none', color: 'white' }}>Manage Product</Link>
-              </ListGroup.Item>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaShoppingCart className="me-2" />
-                <Link to="/admin/manage-orders" style={{ textDecoration: 'none', color: 'white' }}>Manage Order</Link>
-              </ListGroup.Item>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaDollarSign className="me-2" />
-                <Link to="/admin/approve-payout" style={{ textDecoration: 'none', color: 'white' }}>Approve Payouts</Link>
-              </ListGroup.Item>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaComment className="me-2" />
-                <Link to="/admin/vendor-messages" style={{ textDecoration: 'none', color: 'white' }}>Vendor Messages</Link>
-              </ListGroup.Item>
-            </div>
+      <div className={`main-content ${sidebarVisible ? "with-sidebar" : "full-width"}`}>
+        <div className="custom-header text-center">
+          <h1 className="h4 mb-0">Vendor List</h1>
+        </div>
 
-            {/* Message Management Section with Expandable Content */}
-            <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center" onClick={toggleMessageManagement}>
-              <FaFlag className="me-2" />
-              Banner Management
-            </ListGroup.Item>
-            <div className={`product-management-dropdown ${messageManagementOpen ? 'open' : ''}`}>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaAd className="me-2" />
-                <Link to="/admin/banners" style={{ textDecoration: 'none', color: 'white' }}>List Banner</Link>
-              </ListGroup.Item>
-            </div>
-
-            {/* Account Management Section with Expandable Content */}
-            <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center" onClick={toggleAccountSetting}>
-              <FaCog className="me-2" />
-              Account Settings
-            </ListGroup.Item>
-            <div className={`product-management-dropdown ${accountSettingOpen ? 'open' : ''}`}>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaUserCog className="me-2" />
-                <Link to="/admin/manage-profile" style={{ textDecoration: 'none', color: 'white' }}>Manage Profile</Link>
-              </ListGroup.Item>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaLock className="me-2" />
-                <Link to="/admin/manage-password" style={{ textDecoration: 'none', color: 'white' }}>Update Password</Link>
-              </ListGroup.Item>
-            </div>
-          </ListGroup>
-        </Col>
-
-        {/* Main Content */}
-        <Col
-          lg={sidebarOpen ? 10 : 12}
-          className="p-4"
-          style={{
-            marginLeft: sidebarOpen ? '250px' : '0',
-            transition: 'margin-left 0.3s ease',
-            paddingTop: '56px'
-          }}
-        >
-        
-        <Col xs="auto" className="mb-5 d-flex d-flex align-items-center">
-             
-              </Col>
-              <h1>Vendors List</h1>
-          {/* Show entries and search */}
+        <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
           <Row className="mb-3 d-flex justify-content-between align-items-center">
-          
             <Col xs="auto" className="d-flex align-items-center">
               <label className="me-2">Show</label>
               <Form.Select
@@ -260,20 +203,21 @@ function ListVendor() {
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  setCurrentPage(1); // Reset to first page on search
+                  setCurrentPage(1);
                 }}
                 style={{ width: '150px' }}
               />
             </Col>
           </Row>
-          {/* Scrollable User List with Sticky Pagination */}
-          <div style={{ position: 'relative', height: '440px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden', backgroundColor: '#f9f9f9' }}>
-            {/* Scrollable area */}
+        </div>
+
+        <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto', position: 'relative' }}>
+          <div style={{ height: '440px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden', backgroundColor: '#f9f9f9' }}>
             <div style={{ overflowY: 'auto', height: 'calc(100% - 60px)', padding: '1rem' }}>
               {currentUsers.length > 0 ? (
-                currentUsers.map((user, index) => (
+                currentUsers.map((user) => (
                   <div
-                    key={index}
+                    key={user.id}
                     style={{
                       display: 'flex',
                       justifyContent: 'space-between',
@@ -286,7 +230,7 @@ function ListVendor() {
                     }}
                   >
                     <div>
-                      <h5 style={{ margin: 0 }}>{user.username}</h5>
+                      <h5 style={{ margin: 0 }}>{user.name}</h5>
                       <p style={{ margin: 0, color: '#666' }}>{user.email}</p>
                     </div>
                     <div>
@@ -301,9 +245,11 @@ function ListVendor() {
                       >
                         {user.status}
                       </span>
-                      <Button variant="primary" size="sm">
-                        Edit
-                      </Button>
+                      <Button variant="primary" size="sm" onClick={() => {
+                        setSelectedUserId(user.id);
+                        setUserStatus(user.status);
+                        setShowEditModal(true);
+                      }}>Edit</Button>
                     </div>
                   </div>
                 ))
@@ -312,7 +258,7 @@ function ListVendor() {
               )}
             </div>
 
-            {/* Sticky Pagination */}
+            {/* Pagination Controls */}
             <div
               style={{
                 position: 'absolute',
@@ -328,29 +274,46 @@ function ListVendor() {
                 padding: '0 1rem'
               }}
             >
-              <Button
-                variant="secondary"
-                onClick={handlePrevious}
-                disabled={currentPage === 1}
-              >
+              <Button variant="secondary" onClick={handlePrevious} disabled={currentPage === 1}>
                 Previous
               </Button>
               <div>
                 Page {currentPage} of {totalPages}
               </div>
-              <Button
-                variant="secondary"
-                onClick={handleNext}
-                disabled={currentPage === totalPages || totalPages === 0}
-              >
+              <Button variant="secondary" onClick={handleNext} disabled={currentPage === totalPages || totalPages === 0}>
                 Next
               </Button>
             </div>
           </div>
+        </div>
+      </div>
 
-        </Col>
-      </Row>
-    </Container>
+      {/* Edit User Status Modal */}
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit User Status</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="userStatus">
+              <Form.Label>Select Status</Form.Label>
+              <Form.Control as="select" value={userStatus} onChange={(e) => setUserStatus(e.target.value)}>
+                <option value="Active">Active</option>
+                <option value="Suspended">Suspended</option>
+              </Form.Control>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={changeUserStatus}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 }
 
