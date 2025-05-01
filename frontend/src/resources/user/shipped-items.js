@@ -82,7 +82,7 @@ function ShippedItems() {
                 <a className="nav-link" href="/cart">Cart</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/orderditems">Orderd</a>
+                <a className="nav-link" href="/ordereditems">Ordered</a>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="/refunditems">Refunded</a>
