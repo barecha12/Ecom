@@ -32,10 +32,10 @@ function Settings() {
           <Form.Label>Language:</Form.Label>
           <Form.Control as="select">
             <option value="english">English</option>
-            <option value="spanish">Spanish</option>
-            <option value="french">French</option>
-            <option value="german">German</option>
-            <option value="chinese">Chinese</option>
+            <option value="spanish">አማርኛ</option>
+            <option value="french">Afaan Oromoo</option>
+            <option value="german">Soomaali</option>
+            <option value="chinese">ትግሪኛ</option>
           </Form.Control>
         </Form.Group>
 

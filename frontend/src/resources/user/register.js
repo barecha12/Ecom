@@ -56,7 +56,7 @@ function Register() {
       newErrors.name = "Name is required";
     } else if (formData.name.length < 2) {
       newErrors.name = "Name must be at least 2 characters";
-    } else if (!/^[A-Za-z\s\-]+$/.test(formData.name)) {
+    } else if (!/^[A-Za-z\s-]+$/.test(formData.name)) {
       newErrors.name = "Name can only contain letters and spaces";
     }
     

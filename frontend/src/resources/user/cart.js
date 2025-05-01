@@ -107,7 +107,7 @@ function Cart() {
             </ul>
             <ul className="navbar-nav">
               <li className="nav-item"><a className="nav-link" href="/">Home</a></li>
-              <li className="nav-item"><a className="nav-link" href="/orderditems">Ordered</a></li>
+              <li className="nav-item"><a className="nav-link" href="/ordereditems">Ordered</a></li>
               <li className="nav-item"><a className="nav-link" href="/shippeditems">Shipped</a></li>
               <li className="nav-item"><a className="nav-link" href="/refunditems">Refunded</a></li>
               <li className="nav-item"><a className="nav-link" href="/completeditems">Completed</a></li>
