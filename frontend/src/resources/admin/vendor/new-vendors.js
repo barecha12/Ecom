@@ -13,11 +13,11 @@ import {
   Form,
   Modal,
 } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "../style/list-user.css";
+import "../style/new-vendors.css";
 
-function ListUsers() {
+function NewVendors() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [entries, setEntries] = useState(10);
@@ -25,8 +25,137 @@ function ListUsers() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const [userStatus, setUserStatus] = useState("Active");
+  const [userStatus, setUserStatus] = useState("Pending");
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
   const navigate = useNavigate();
+
+  // User details for the modal (example data)
+  const userDetails = {
+    personalInfo: {
+      name: "John Doe",
+      address: "123 Main St",
+      city: "Springfield",
+      region: "IL",
+      mobile: "123-456-7890",
+      idNumber: "987654321",
+      idPhotos: ["https://cdn.pixabay.com/photo/2017/10/15/16/21/iphone-2854322_960_720.png", "https://cdn.pixabay.com/photo/2017/10/15/16/21/iphone-2854322_960_720.png"],
+    },
+    businessInfo: {
+      shopName: "John's Groceries",
+      shopAddress: "456 Market St",
+      shopCity: "Springfield",
+      state: "IL",
+      shopMobile: "123-456-7890",
+      businessLicenseNumber: "BL123456",
+      addressProof: "https://cdn.pixabay.com/photo/2017/10/15/16/21/iphone-2854322_960_720.png",
+      otherProofImages: ["https://cdn.pixabay.com/photo/2017/10/15/16/21/iphone-2854322_960_720.png", "https://cdn.pixabay.com/photo/2017/10/15/16/21/iphone-2854322_960_720.png", "https://cdn.pixabay.com/photo/2017/10/15/16/21/iphone-2854322_960_720.png"],
+    },
+    bankInfo: {
+      bankName: "Bank of Springfield",
+      accountHolderName: "John Doe",
+      accountNumber: "123456789",
+    },
+  };
+
+
+  const slides = [
+    {
+      title: "Personal Info",
+      content: (
+        <ul>
+          <li>Name: {userDetails.personalInfo.name}</li>
+          <li>Address: {userDetails.personalInfo.address}</li>
+          <li>City: {userDetails.personalInfo.city}</li>
+          <li>Region: {userDetails.personalInfo.region}</li>
+          <li>Mobile: {userDetails.personalInfo.mobile}</li>
+          <li>ID Number: {userDetails.personalInfo.idNumber}</li>
+          <li>
+            ID Photo (Front): 
+            <img 
+              src={userDetails.personalInfo.idPhotos[0]} 
+              alt="ID Front" 
+              onClick={() => {
+                setSelectedImage(userDetails.personalInfo.idPhotos[0]);
+                setShowImageModal(true);
+              }} 
+            />
+          </li>
+          <li>
+            ID Photo (Back): 
+            <img 
+              src={userDetails.personalInfo.idPhotos[1]} 
+              alt="ID Back" 
+              onClick={() => {
+                setSelectedImage(userDetails.personalInfo.idPhotos[1]);
+                setShowImageModal(true);
+              }} 
+            />
+          </li>
+        </ul>
+      ),
+    },
+    {
+      title: "Business Information",
+      content: (
+        <ul>
+          <li>Shop Name: {userDetails.businessInfo.shopName}</li>
+          <li>Shop Address: {userDetails.businessInfo.shopAddress}</li>
+          <li>Shop City: {userDetails.businessInfo.shopCity}</li>
+          <li>State: {userDetails.businessInfo.state}</li>
+          <li>Shop Mobile: {userDetails.businessInfo.shopMobile}</li>
+          <li>Business License Number: {userDetails.businessInfo.businessLicenseNumber}</li>
+          <li>
+            Address Proof: 
+            <img 
+              src={userDetails.businessInfo.addressProof} 
+              alt="Address Proof" 
+              onClick={() => {
+                setSelectedImage(userDetails.businessInfo.addressProof);
+                setShowImageModal(true);
+              }} 
+            />
+          </li>
+          <li>
+            Other Proof Images: {userDetails.businessInfo.otherProofImages.map((img, index) => (
+              <img key={index} 
+                src={img} 
+                alt={`Proof ${index + 1}`} 
+                onClick={() => {
+                  setSelectedImage(img);
+                  setShowImageModal(true);
+                }} 
+              />
+            ))}
+          </li>
+        </ul>
+      ),
+    },
+    {
+      title: "Bank Info",
+      content: (
+        <ul>
+          <li>Bank Name: {userDetails.bankInfo.bankName}</li>
+          <li>Account Holder Name: {userDetails.bankInfo.accountHolderName}</li>
+          <li>Account Number: {userDetails.bankInfo.accountNumber}</li>
+        </ul>
+      ),
+    },
+  ];
+
+  const handleNextSlide = () => {
+    if (currentSlide < slides.length - 1) {
+      setCurrentSlide(currentSlide + 1);
+    }
+  };
+
+  const handlePreviousSlide = () => {
+    if (currentSlide > 0) {
+      setCurrentSlide(currentSlide - 1);
+    }
+  };
 
   const toggleSidebar = () => setSidebarVisible(!sidebarVisible);
   const handleDropdown = (menu) => setOpenDropdown(openDropdown === menu ? null : menu);
@@ -42,11 +171,10 @@ function ListUsers() {
   };
 
   const users = [
-    { id: 1, name: "John Doe", email: "john@example.com", status: "Active" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", status: "Inactive" },
-    { id: 3, name: "Alice Johnson", email: "alice@example.com", status: "Active" },
-    { id: 4, name: "Bob Brown", email: "bob@example.com", status: "Inactive" },
-    // Add more users as needed
+    { id: 1, name: "John Doe", email: "john@example.com", status: "Pending" },
+    { id: 2, name: "Jane Smith", email: "jane@example.com", status: "Pending" },
+    { id: 3, name: "Alice Johnson", email: "alice@example.com", status: "Pending" },
+    { id: 4, name: "Bob Brown", email: "bob@example.com", status: "Pending" },
   ];
 
   const filteredUsers = users.filter(user =>
@@ -64,8 +192,8 @@ function ListUsers() {
     };
 
     try {
-      console.warn("Payload:", payload); // Log the payload for debugging
-      let response = await fetch("http://localhost:8000/api/userstatuschange", {
+      console.warn("Payload:", payload);
+      let response = await fetch("http://localhost:8000/api/newvendor", {
         method: 'POST',
         body: JSON.stringify(payload),
         headers: {
@@ -84,7 +212,7 @@ function ListUsers() {
           pauseOnHover: true,
           draggable: true,
         });
-        setShowEditModal(false); // Close the modal after successful update
+        setShowEditModal(false);
       } else {
         toast.error("Failed to update status. Please try again.", {
           position: "top-right",
@@ -100,22 +228,20 @@ function ListUsers() {
     }
   };
 
-
-    function logout() {
-      localStorage.clear();
-      toast.success("Logout Successful!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      setTimeout(() => {
-        navigate("/admin/login");
-      }, 1000); // Delay the navigation for 3 seconds
-    }
-
+  function logout() {
+    localStorage.clear();
+    toast.success("Logout Successful!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    setTimeout(() => {
+      navigate("/admin/login");
+    }, 1000);
+  }
 
   return (
     <div className="dashboard-wrapper">
@@ -150,7 +276,7 @@ function ListUsers() {
           </div>
           {openDropdown === "orders" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
-               <li><a href="/admin/new-vendors" className="dropdown-item-admin">New Vendors</a></li>
+              <li><a href="/admin/new-vendors" className="dropdown-item-admin">New Vendors</a></li>
               <li><a href="/admin/list-vendors" className="dropdown-item-admin">List of Vendors</a></li>
               <li><a href="/admin/manage-products" className="dropdown-item-admin">Manage Products</a></li>
               <li><a href="/admin/manage-orders" className="dropdown-item-admin">Manage Orders</a></li>
@@ -175,7 +301,7 @@ function ListUsers() {
 
       <div className={`main-content ${sidebarVisible ? "with-sidebar" : "full-width"}`}>
         <div className="custom-header text-center">
-          <h1 className="h4 mb-0">User List</h1>
+          <h1 className="h4 mb-0">Vendor List</h1>
         </div>
 
         <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
@@ -234,17 +360,15 @@ function ListUsers() {
                       <p style={{ margin: 0, color: '#666' }}>{user.email}</p>
                     </div>
                     <div>
-                      <span
-                        style={{
-                          padding: '0.5rem 1rem',
-                          borderRadius: '20px',
-                          backgroundColor: user.status === 'Active' ? '#d4edda' : '#f8d7da',
-                          color: user.status === 'Active' ? '#155724' : '#721c24',
-                          marginRight: '1rem'
-                        }}
-                      >
-                        {user.status}
-                      </span>
+                    <span
+  className="see-details-button"
+  onClick={() => {
+    setShowDetailModal(true);
+    setCurrentSlide(0); // Reset to first slide
+  }}
+>
+  see details
+</span>
                       <Button variant="primary" size="sm" onClick={() => {
                         setSelectedUserId(user.id);
                         setUserStatus(user.status);
@@ -298,7 +422,9 @@ function ListUsers() {
             <Form.Group controlId="userStatus">
               <Form.Label>Select Status</Form.Label>
               <Form.Control as="select" value={userStatus} onChange={(e) => setUserStatus(e.target.value)}>
-                <option value="Active">Active</option>
+              <option value="Pending">Pending</option>
+                <option value="Verified">Verified</option>
+                <option value="Rejected">Rejected</option>
                 <option value="Suspended">Suspended</option>
               </Form.Control>
             </Form.Group>
@@ -313,8 +439,44 @@ function ListUsers() {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {/* Detail Modal */}
+      <Modal show={showDetailModal} onHide={() => setShowDetailModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>{slides[currentSlide].title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {slides[currentSlide].content}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handlePreviousSlide} disabled={currentSlide === 0}>
+            Previous
+          </Button>
+          <Button variant="secondary" onClick={handleNextSlide} disabled={currentSlide === slides.length - 1}>
+            Next
+          </Button>
+          <Button variant="primary" onClick={() => setShowDetailModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Image Modal */}
+      <Modal show={showImageModal} onHide={() => setShowImageModal(false)} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Image Preview</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <img src={selectedImage} alt="Large View" style={{ width: '100%', height: 'auto' }} />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowImageModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
 
-export default ListUsers;
+export default NewVendors;

@@ -1,0 +1,77 @@
+/* Login Page Container */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f5f9;
+}
+
+/* Login Box */
+.login-box {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 400px; /* Set a fixed width for the login box */
+}
+
+/* Heading */
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Alert Styles */
+.alert-superadmin {
+  background-color: #f8d7da; /* Light red background */
+  color: #721c24; /* Dark red text */
+  border: 1px solid #f5c6cb; /* Light red border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px; /* Padding */
+  margin-bottom: 20px; /* Margin below */
+}
+
+/* Input Fields */
+.form-control-superadmin {
+  width: 97%; /* Set width to 80% of the container */
+  border: 1px solid #28a745; /* Green border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px; /* Padding */
+  font-size: 16px; /* Font size */
+  margin: 10px 0; /* Margin above and below */
+  transition: border-color 0.3s; /* Transition for border */
+}
+
+.form-control-superadmin:focus {
+  border-color: #218838; /* Darker green on focus */
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.5); /* Subtle shadow */
+}
+
+/* Button Styles */
+.btn-superadmin {
+  background-color: #28a745; /* Green background */
+  color: white; /* White text */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 20px; /* Padding */
+  font-size: 16px; /* Font size */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s, transform 0.2s; /* Transition effects */
+  width: 97%; /* Set width to 80% */
+}
+
+.btn-superadmin:hover {
+  background-color: #218838; /* Darker green on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Link Styles */
+a.superadmin-link {
+  color: #28a745; /* Green color for links */
+  text-decoration: none; /* No underline */
+}
+
+a.superadmin-link:hover {
+  text-decoration: underline; /* Underline on hover */
+}

@@ -1,236 +1,266 @@
 import React, { useState } from "react";
-import { Container, Row ,Col, Modal, Card, Form, ListGroup, Button, Navbar, Nav, Dropdown } from "react-bootstrap";
-import { Link,useNavigate  } from "react-router-dom";
-import { FaTachometerAlt, FaEnvelope, FaClipboardList, FaShoppingCart, FaStar, FaUser, FaAddressBook, FaSignOutAlt, FaBars, FaCog, FaPlus, FaTag, FaTruck, FaUndo, FaCheck, FaComment, FaBell, FaUserCog } from "react-icons/fa"; // Added FaPlus and FaTag
-import './styles.css';
+import {
+  FaBars,
+  FaChartLine,
+  FaStore,
+  FaUsers,
+  FaUser,
+} from "react-icons/fa";
+
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import "../style/update-password.css";
+
 
 function UpdatePassword() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [productManagementOpen, setProductManagementOpen] = useState(false);
-  const [showChangePasswordModal, setShowChangePasswordModal] = useState(true);
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [category, setCategory] = useState("");
+  const [productName, setProductName] = useState("");
+  const [totalProduct, setTotalProduct] = useState("");
+  const [productPrice, setProductPrice] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [productImages, setProductImages] = useState({ selectedproductImages: [] });
+  const [entries, setEntries] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalProducts = 100;
+  const totalPages = Math.ceil(totalProducts / entries);
 
-  const [orderManagementOpen, setOrderManagementOpen] = useState(false);
-  const [messageManagementOpen, setMessageManagementOpen] = useState(false);
-  const [accountSettingOpen, setAccountSettingOpen] = useState(false);
-  const navigate = useNavigate();  // Hook to navigate programmatically
-
-  const handleClose = () => {
-    // Navigate to /vendor/dashboard when the close button is clicked
-    navigate('/admin/dashboard');
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
+  const toggleSidebar = () => {
+    setSidebarVisible(!sidebarVisible);
   };
 
-  
-  const toggleProductManagement = () => {
-    setProductManagementOpen(!productManagementOpen);
+  const handleDropdown = (menu) => {
+    setOpenDropdown(openDropdown === menu ? null : menu);
   };
 
-  const toggleOrderManagement = () => {
-    setOrderManagementOpen(!orderManagementOpen);
+  const handleImageChange = (e) => {
+    const { name, files } = e.target;
+    if (name === "selectedproductImages") {
+      setProductImages({
+        ...productImages,
+        selectedproductImages: Array.from(files).slice(0, 5)
+      });
+    }
   };
-  const toggleMessageManagement = () => {
-    setMessageManagementOpen(!messageManagementOpen);
+
+  const addProduct = (e) => {
+    e.preventDefault();
+    const newProduct = { category, productName, totalProduct, productPrice, productDescription, productImages };
+    console.log("Product Added:", newProduct);
+    handleCloseAddProductModal();
   };
-  const toggleAccountSetting = () => {
-    setAccountSettingOpen(!accountSettingOpen);
+
+  const handleCloseAddProductModal = () => {
+    setShowAddProductModal(false);
+    setCategory("");
+    setProductName("");
+    setTotalProduct("");
+    setProductPrice("");
+    setProductDescription("");
+    setProductImages({ selectedproductImages: [] });
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+
+      toast.error("Please fill in all fields.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
+
+    const payload = {
+      currentPassword,
+      newPassword,
+    };
+
+    try {
+
+      console.warn("Sending password update request:", payload);
+      let response = await fetch("http://localhost:8000/api/updatepassword", {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": 'application/json',
+          "Accept": 'application/json',
+        },
+      });
+
+      let result = await response.json();
+      if (result.success) {
+        toast.success("Password updated successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        // Optionally, redirect or clear fields
+      } else {
+        toast.error(result.message || "Failed to update password. Please try again.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    } catch (error) {
+      toast.error('An error occurred. Please try again later.');
+    }
+  };
+
+  function logout() {
+    localStorage.clear();
+    toast.success("Logout Successful!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    setTimeout(() => {
+      navigate("/admin/login");
+    }, 1000); // Delay the navigation for 3 seconds
+  }
   return (
-    <Container fluid>
-      {/* Top Navbar */}
-      <Navbar bg="dark" variant="dark" expand="lg" className="px-3 w-100 fixed-top" style={{ marginBottom: '56px' }}>
-        <Button variant="dark" className="me-3 d-block" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          <FaBars />
-        </Button>
-        <Navbar.Brand>WALIYA MARKET      VENDRO manageprofile</Navbar.Brand>
-        <Nav className="ms-auto">
-          <Dropdown align="end">
-            <Dropdown.Toggle variant="link" className="text-white dropdown-toggle-no-arrow">
-              <FaUser className="me-2" size={30} />
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item as={Link} to="/vendor/manage-profile">
-                <FaCog className="me-2" /> Settings
-              </Dropdown.Item>
-              <Dropdown.Item as={Link} to="/vendorlogout">
-                <FaSignOutAlt className="me-2" /> Logout
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </Nav>
-      </Navbar>
+    <div className="admin-dashboard-wrapper">
+      <button className="admin-hamburger-btn" onClick={toggleSidebar}>
+        <FaBars />
+      </button>
 
-      <Row>
-        {/* Sidebar */}
-        <Col
-          lg={2}
-          className={`sidebar bg-dark text-white p-3 d-lg-block ${sidebarOpen ? 'sidebar-open' : ''}`}
-          style={{
-            minHeight: "100vh",
-            position: 'fixed',
-            zIndex: 999,
-            top: '56px',
-            left: sidebarOpen ? 0 : '-250px',
-            transition: 'left 0.3s ease',
-          }}
-        >
-          <ListGroup variant="flush">
-            <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-              <FaTachometerAlt className="me-2" />
-              <Link to="/vendor/dashboard" style={{ textDecoration: 'none', color: 'white' }}>Dashboard</Link>
-            </ListGroup.Item>
-            {/* Product Management Section with Expandable Content */}
-            <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center" onClick={toggleProductManagement}>
-              <FaClipboardList className="me-2" />
-              Product Management
-            </ListGroup.Item>
+      <div className={`admin-custom-sidebar ${sidebarVisible ? "show" : "hide"}`}>
+        <div className="d-flex align-items-center mb-3">
+          <h2 className="text-center admin-custom-css flex-grow-1 mt-2 ms-4">Admin Dashboard</h2>
+        </div>
 
-            {/* Expanded content for Product Management */}
-            <div className={`product-management-dropdown ${productManagementOpen ? 'open' : ''}`}>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaPlus className="me-2" />
-                <Link to="/vendor/add-product" style={{ textDecoration: 'none', color: 'white' }}>Add Product</Link>
-              </ListGroup.Item>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaTag className="me-2" />
-                <Link to="/vendor/coupons" style={{ textDecoration: 'none', color: 'white' }}>Coupons</Link>
-              </ListGroup.Item>
-            </div>
+        <a href="#analytics" className="admin-custom-link">
+          <FaChartLine className="me-2" /> Dashboard
+        </a>
 
-            {/* Order Management Section with Expandable Content */}
-            <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center" onClick={toggleOrderManagement}>
-              <FaShoppingCart className="me-2" />
-              Order Management
-            </ListGroup.Item>
-            <div className={`product-management-dropdown ${orderManagementOpen ? 'open' : ''}`}>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaShoppingCart className="me-2" />
-                <Link to="/vendor/orders" style={{ textDecoration: 'none', color: 'white' }}>Orders</Link>
-              </ListGroup.Item>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaTruck className="me-2" />
-                <Link to="/vendor/shipped" style={{ textDecoration: 'none', color: 'white' }}>Shipped</Link>
-              </ListGroup.Item>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaUndo className="me-2" />
-                <Link to="/vendor/refunds" style={{ textDecoration: 'none', color: 'white' }}>Refunds</Link>
-              </ListGroup.Item>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaCheck className="me-2" />
-                <Link to="/vendor/completed" style={{ textDecoration: 'none', color: 'white' }}>Completed Orders</Link>
-              </ListGroup.Item>
-            </div>
+        <div className="dropdown">
+          <div className="admin-custom-link" onClick={() => handleDropdown("products")}>
+            <FaUsers className="me-2" /> User Management
+          </div>
+          {openDropdown === "products" && (
+            <ul className="dropdown-menu admin-custom-dropdown-menu">
+              <li><a href="/admin/list-users" className="dropdown-item-admin">List Users</a></li>
+              <li><a href="/admin/user-messages" className="dropdown-item-admin">User Messages</a></li>
+            </ul>
+          )}
+        </div>
 
-            {/* Message Management Section with Expandable Content */}
-            <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center" onClick={toggleMessageManagement}>
-              <FaEnvelope className="me-2" />
-              Message Management
-            </ListGroup.Item>
-            <div className={`product-management-dropdown ${messageManagementOpen ? 'open' : ''}`}>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaComment className="me-2" />
-                <Link to="/vendor/user-messages" style={{ textDecoration: 'none', color: 'white' }}>User Messages</Link>
-              </ListGroup.Item>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaUser className="me-2" />
-                <Link to="/vendor/admin-messages" style={{ textDecoration: 'none', color: 'white' }}>Admin Messages</Link>
-              </ListGroup.Item>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaStar className="me-2" />
-                <Link to="/vendor/review-messages" style={{ textDecoration: 'none', color: 'white' }}>Review Messages</Link>
-              </ListGroup.Item>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaBell className="me-2" />
-                <Link to="/vendor/notifications" style={{ textDecoration: 'none', color: 'white' }}>Notifications</Link>
-              </ListGroup.Item>
-            </div>
+        <div className="dropdown">
+          <div className="admin-custom-link" onClick={() => handleDropdown("orders")}>
+            <FaStore className="me-2" /> Vendor Management
+          </div>
+          {openDropdown === "orders" && (
+            <ul className="dropdown-menu admin-custom-dropdown-menu">
+               <li><a href="/admin/new-vendors" className="dropdown-item-admin">New Vendors</a></li>
+              <li><a href="/admin/list-vendors" className="dropdown-item-admin">List of Vendors</a></li>
+              <li><a href="/admin/manage-products" className="dropdown-item-admin">Manage Products</a></li>
+              <li><a href="/admin/manage-orders" className="dropdown-item-admin">Manage Orders</a></li>
+              <li><a href="/admin/approve-payout" className="dropdown-item-admin">Approve Payout</a></li>
+              <li><a href="/admin/vendor-messages" className="dropdown-item-admin">Vendor Messages</a></li>
+            </ul>
+          )}
+        </div>
 
-            {/* Account Management Section with Expandable Content */}
-            <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center" onClick={toggleAccountSetting}>
-              <FaAddressBook className="me-2" />
-              Account Settings
-            </ListGroup.Item>
-            <div className={`product-management-dropdown ${accountSettingOpen ? 'open' : ''}`}>
-              <ListGroup.Item action className="bg-dark text-white border-0 d-flex align-items-center">
-                <FaUserCog className="me-2" />
-                <Link to="/vendor/manage-profile" style={{ textDecoration: 'none', color: 'white' }}>Manage Profile</Link>
-              </ListGroup.Item>
-            </div>
-          </ListGroup>
-        </Col>
+        <div className="dropdown">
+          <div className="admin-custom-link" onClick={() => handleDropdown("profile")}>
+            <FaUser className="me-2" /> Profile
+          </div>
+          {openDropdown === "profile" && (
+            <ul className="dropdown-menu admin-custom-dropdown-menu">
+              <li><a href="/admin/manage-password" className="dropdown-item-admin">Update Password</a></li>
+              <li><a onClick={logout} className="dropdown-item-admin">Logout</a></li>
+            </ul>
+          )}
+        </div>
+      </div>
 
-        {/* Main Content */}
-        <Col
-          lg={sidebarOpen ? 10 : 12}
-          className="p-4"
-          style={{
-            marginLeft: sidebarOpen ? '250px' : '0',
-            transition: 'margin-left 0.3s ease',
-            paddingTop: '56px'
-          }}
-        >
+      <div className={`admin-main-content ${sidebarVisible ? "with-sidebar" : "full-width"}`}>
+        <div className="admin-custom-header text-center">
+          <h1 className="h4 mb-0">Update Password</h1>
+        </div>
 
-<Modal
-  show={showChangePasswordModal}
-  onHide={() => setShowChangePasswordModal(false)}
-  centered
-  backdrop="static"  // This disables closing the modal when clicking outside
-  keyboard={false}   // This disables closing when pressing the Escape key
->
-<Modal.Header closeButton onClick={handleClose}>
-        <Modal.Title>Change Password</Modal.Title>
-      </Modal.Header>
+        {/* Main content for updating password */}
+        <div className="outer-container" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <div className="update-password-container" style={{ width: '1000px' }}> {/* Adjust the width as needed */}
+            <h2>Update Password</h2>
 
-  <Modal.Body>
-    <Form>
-      <Form.Group className="mb-3" controlId="currentPassword">
-        <Form.Label>Current Password</Form.Label>
-        <Form.Control
-          type="password"
-          placeholder="Enter current password"
-        />
-      </Form.Group>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Current Password</label>
+                <input
+                  type="password"
+                  placeholder="Enter current password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
+                />
+              </div>
 
-      <Form.Group className="mb-3" controlId="newPassword">
-        <Form.Label>New Password</Form.Label>
-        <Form.Control
-          type="password"
-          placeholder="Enter new password"
-        />
-      </Form.Group>
+              <div className="form-group">
+                <label>New Password</label>
+                <input
+                  type="password"
+                  placeholder="Enter new password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+              </div>
 
-      <Form.Group className="mb-3" controlId="confirmNewPassword">
-        <Form.Label>Confirm New Password</Form.Label>
-        <Form.Control
-          type="password"
-          placeholder="Confirm new password"
-        />
-      </Form.Group>
-    </Form>
-  </Modal.Body>
+              <div className="form-group">
+                <label>Confirm New Password</label>
+                <input
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
 
-  <Modal.Footer>
-    <Button variant="secondary" onClick={() => setShowChangePasswordModal(false)}>
-      Clear
-    </Button>
-    <Button
-      variant="primary"
-      onClick={() => {
-        // Password change logic goes here!
-        setShowChangePasswordModal(false);
-        alert("Password updated successfully!");
-      }}
-    >
-      Update Password
-    </Button>
-  </Modal.Footer>
-</Modal>
+              <button type="submit">Update Password</button>
+            </form>
+          </div>
+        </div>
 
-
-
-        </Col>
-      </Row>
-    </Container>
+      </div>
+      <ToastContainer />
+    </div>
   );
 }
 
 export default UpdatePassword;
-//hi

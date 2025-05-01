@@ -119,7 +119,7 @@ return (
     {/* Navigation Bar */}
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
       <div className="container-fluid">
-        <a className="navbar-brand text-warning" href="/">Dashboard</a>
+        <a className="navbar-brand text-warning" href="/">Habesha Mart</a>
         <button
           className="navbar-toggler"
           type="button"

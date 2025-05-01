@@ -53,6 +53,7 @@ import TestOne  from "./resources/admin/testone"
 import ListUsers from "./resources/admin/user/list-users"
 import UserMessagesAdmin from "./resources/admin/user/user-messages"
 
+import NewVendors from "./resources/admin/vendor/new-vendors"
 import ListVendor from "./resources/admin/vendor/list-vendors"
 import ManageProducts from "./resources/admin/vendor/manage-products"
 import ManageOrders from "./resources/admin/vendor/manage-orders"
@@ -60,7 +61,7 @@ import VendorMessages from "./resources/admin/vendor/vendor-messages"
 import ApprovePayouts from "./resources/admin/vendor/approve-payout"
 
 import AddBanner from "./resources/admin/banner/add-banner"
-import ManageProfileAdmin from "./resources/admin/setting/manage-profile"
+
 import UpdatePassword from "./resources/admin/setting/update-password"
 
 
@@ -91,8 +92,10 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/login" element={<LoginAdmin />} />
 
+         
           <Route path="/admin/list-users" element={<ListUsers />} />
           <Route path="/admin/user-messages" element={<UserMessagesAdmin />} />
+          <Route path="/admin/new-Vendors" element={<NewVendors />} />
           <Route path="/admin/list-vendors" element={<ListVendor />} />
           <Route path="/admin/manage-products" element={<ManageProducts />} />
           <Route path="/admin/manage-orders" element={<ManageOrders />} />
@@ -100,7 +103,6 @@ function App() {
           <Route path="/admin/vendor-messages" element={<VendorMessages />} />
 
           <Route path="/admin/banners" element={<AddBanner />} />
-          <Route path="/admin/manage-profile" element={<ManageProfileAdmin />} />
           <Route path="/admin/manage-password" element={<UpdatePassword />} />
 
           <Route path="/admin/testone" element={<TestOne  />} />
