@@ -82,7 +82,7 @@ class UserController extends Controller
             'success' => true,
             'message' => 'Logged in successfully',
             'storeData' => [
-                "user_id" => $user->id,
+                "user_id" => $user->user_id,
                 "name" => $user->name,
                 'email' => $user->email,
                 "user_role_id" => $user->user_role_id,
