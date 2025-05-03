@@ -92,8 +92,8 @@ function App() {
 
 
 
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/dashboard" element={<ProtectPathAdmin Cmp={AdminDashboard} />}  />
+          <Route path="/admin" element={<ProtectPathAdmin Cmp={AdminDashboard} />}  />
           <Route path="/admin/login" element={<LoginAdmin />} />
 
          
