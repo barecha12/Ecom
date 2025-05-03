@@ -93,7 +93,7 @@ public function productdetails($product_id)
     $cart_id = $request->input('cart_id');
     $user_id = $request->input('user_id');
 
-    $cartItem = \App\Models\Cart::where('cart_id', $cart_id)
+    $cartItem = Cart::where('cart_id', $cart_id)
                 ->where('user_id', $user_id)
                 ->first();
 
