@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./style/vendor-info.css";
 
 const VendorInfo = () => {
     const [activeForm, setActiveForm] = useState('personal');
-
+    const [vendorId, setVendorId] = useState(null);
+    const navigate = useNavigate();
     const [personalData, setPersonalData] = useState({
-        name: '',
-        address: '',
-        city: '',
-        region: '',
-        mobile: '',
-        idNumber: '',
+        personal_name: '',
+        personal_address: '',
+        personal_city: '',
+        personal_state: '',
+        personal_phone: '',
+        personal_unique_id: '',
         idPhotoFront: null,
         idPhotoBack: null
     });
@@ -23,12 +25,12 @@ const VendorInfo = () => {
     };
 
     const [businessData, setBusinessData] = useState({
-        shopName: '',
-        shopAddress: '',
-        shopCity: '',
-        state: '',
-        shopMobile: '',
-        businessLicenseNumber: '',
+        business_name: '',
+        business_address: '',
+        business_city: '',
+        business_state: '',
+        business_phone: '',
+        blicense_number: '',
         addressProofImage: null,
         otherProofImages: []
     });
@@ -44,10 +46,17 @@ const VendorInfo = () => {
     };
 
     const [bankData, setBankData] = useState({
-        bankName: '',
-        accountHolder: '',
-        accountNumber: ''
+        bank_name: '',
+        account_name: '',
+        account_number: ''
     });
+
+    useEffect(() => {
+        const vendorInfo = JSON.parse(localStorage.getItem('vendor-info'));
+        if (vendorInfo) {
+            setVendorId(vendorInfo.vendor_id);
+        }
+    }, []);
 
     const isPersonalComplete = Object.entries(personalData).every(([key, val]) => {
         if (typeof val === 'string') return val.trim() !== '';
@@ -56,12 +65,12 @@ const VendorInfo = () => {
     });
 
     const isBusinessComplete = (
-        businessData.shopName.trim() !== '' &&
-        businessData.shopAddress.trim() !== '' &&
-        businessData.shopCity.trim() !== '' &&
-        businessData.state.trim() !== '' &&
-        businessData.shopMobile.trim() !== '' &&
-        businessData.businessLicenseNumber.trim() !== '' &&
+        businessData.business_name.trim() !== '' &&
+        businessData.business_address.trim() !== '' &&
+        businessData.business_city.trim() !== '' &&
+        businessData.business_state.trim() !== '' &&
+        businessData.business_phone.trim() !== '' &&
+        businessData.blicense_number.trim() !== '' &&
         businessData.addressProofImage !== null
     );
 
@@ -88,8 +97,8 @@ const VendorInfo = () => {
 
         Object.entries(businessData).forEach(([key, value]) => {
             if (key === 'otherProofImages' && Array.isArray(value)) {
-                value.forEach((file, index) => {
-                    formData.append(`otherProofImages[${index}]`, file);
+                value.forEach((file) => {
+                    formData.append('otherProofImages[]', file);
                 });
             } else {
                 formData.append(key, value);
@@ -100,8 +109,9 @@ const VendorInfo = () => {
             formData.append(key, value);
         });
 
+        formData.append('vendor_id', vendorId);
+
         try {
-            console.warn('📦 Sending vendor info:', formData);
             const response = await fetch("http://localhost:8000/api/vendor/vendorinfo", {
                 method: "POST",
                 body: formData,
@@ -114,6 +124,7 @@ const VendorInfo = () => {
                     position: "top-right",
                     autoClose: 3000,
                 });
+              
             } else {
                 toast.error("Submission failed. Check your info.", {
                     position: "top-right",
@@ -135,29 +146,28 @@ const VendorInfo = () => {
             <h3>Vendor Personal Information</h3>
             <form>
                 <label>Name</label>
-                <input type="text" name="name" value={personalData.name} onChange={handlePersonalChange} />
+                <input type="text" name="personal_name" value={personalData.personal_name} onChange={handlePersonalChange} />
 
                 <label>Address</label>
-                <input type="text" name="address" value={personalData.address} onChange={handlePersonalChange} />
+                <input type="text" name="personal_address" value={personalData.personal_address} onChange={handlePersonalChange} />
 
                 <label>City</label>
-                <input type="text" name="city" value={personalData.city} onChange={handlePersonalChange} />
+                <input type="text" name="personal_city" value={personalData.personal_city} onChange={handlePersonalChange} />
 
-                <label>Region</label>
-                <input type="text" name="region" value={personalData.region} onChange={handlePersonalChange} />
+                <label>State</label>
+                <input type="text" name="personal_state" value={personalData.personal_state} onChange={handlePersonalChange} />
 
                 <label>Mobile</label>
-                <input type="text" name="mobile" value={personalData.mobile} onChange={handlePersonalChange} />
+                <input type="text" name="personal_phone" value={personalData.personal_phone} onChange={handlePersonalChange} />
 
-                <label>ID Number</label>
-                <input type="text" name="idNumber" value={personalData.idNumber} onChange={handlePersonalChange} />
+                <label>Unique ID Number</label>
+                <input type="text" name="personal_unique_id" value={personalData.personal_unique_id} onChange={handlePersonalChange} />
 
                 <label>ID Photo (Front)</label>
                 <input type="file" name="idPhotoFront" accept="image/*" onChange={handlePersonalFileChange} />
 
                 <label>ID Photo (Back)</label>
                 <input type="file" name="idPhotoBack" accept="image/*" onChange={handlePersonalFileChange} />
-
             </form>
         </div>
     );
@@ -166,30 +176,29 @@ const VendorInfo = () => {
         <div className="form-card fade-in">
             <h3>Vendor Business Information</h3>
             <form>
-                <label>Shop Name</label>
-                <input type="text" name="shopName" value={businessData.shopName} onChange={handleBusinessChange} />
+                <label>Business Name</label>
+                <input type="text" name="business_name" value={businessData.business_name} onChange={handleBusinessChange} />
 
-                <label>Shop Address</label>
-                <input type="text" name="shopAddress" value={businessData.shopAddress} onChange={handleBusinessChange} />
+                <label>Business Address</label>
+                <input type="text" name="business_address" value={businessData.business_address} onChange={handleBusinessChange} />
 
-                <label>Shop City</label>
-                <input type="text" name="shopCity" value={businessData.shopCity} onChange={handleBusinessChange} />
+                <label>Business City</label>
+                <input type="text" name="business_city" value={businessData.business_city} onChange={handleBusinessChange} />
 
-                <label>State</label>
-                <input type="text" name="state" value={businessData.state} onChange={handleBusinessChange} />
+                <label>Business State</label>
+                <input type="text" name="business_state" value={businessData.business_state} onChange={handleBusinessChange} />
 
-                <label>Shop Mobile</label>
-                <input type="text" name="shopMobile" value={businessData.shopMobile} onChange={handleBusinessChange} />
+                <label>Business Phone</label>
+                <input type="text" name="business_phone" value={businessData.business_phone} onChange={handleBusinessChange} />
 
                 <label>Business License Number</label>
-                <input type="text" name="businessLicenseNumber" value={businessData.businessLicenseNumber} onChange={handleBusinessChange} />
+                <input type="text" name="blicense_number" value={businessData.blicense_number} onChange={handleBusinessChange} />
 
-                <label>Address Proof (Image)</label>
+                <label>Address Proof Image</label>
                 <input type="file" name="addressProofImage" accept="image/*" onChange={handleBusinessFileChange} />
 
                 <label>Other Proof Images (Max 5)</label>
                 <input type="file" name="otherProofImages" accept="image/*" multiple onChange={handleBusinessFileChange} />
-
             </form>
         </div>
     );
@@ -199,13 +208,13 @@ const VendorInfo = () => {
             <h3>Vendor Bank Information</h3>
             <form onSubmit={handleVendorSubmit}>
                 <label>Bank Name</label>
-                <input type="text" name="bankName" value={bankData.bankName} onChange={handleBankChange} />
+                <input type="text" name="bank_name" value={bankData.bank_name} onChange={handleBankChange} />
 
                 <label>Account Holder Name</label>
-                <input type="text" name="accountHolder" value={bankData.accountHolder} onChange={handleBankChange} />
+                <input type="text" name="account_name" value={bankData.account_name} onChange={handleBankChange} />
 
                 <label>Account Number</label>
-                <input type="text" name="accountNumber" value={bankData.accountNumber} onChange={handleBankChange} />
+                <input type="text" name="account_number" value={bankData.account_number} onChange={handleBankChange} />
 
                 <button type="submit" className="submit-btn">Submit</button>
             </form>
@@ -256,6 +265,3 @@ const VendorInfo = () => {
 };
 
 export default VendorInfo;
-
-
-

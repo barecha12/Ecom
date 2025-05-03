@@ -1,22 +1,8 @@
 import React, { useState } from "react";
-import {
-  FaBars,
-  FaChartLine,
-  FaStore,
-  FaThList,
-  FaUsers,
-  FaUser,
-  FaUserShield,
-  FaTools,
-  FaEdit,
-  FaTrash,
-} from "react-icons/fa";
-import {
-  Button,
-  Modal,
-  Form,
-  ListGroup,
-} from "react-bootstrap";
+import { FaBars, FaChartLine, FaStore, FaThList, FaUsers, FaUser, FaUserShield, FaTools, FaEdit, FaTrash, } from "react-icons/fa";
+import { Button, Modal, Form, ListGroup, } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import "../style/add-subcategory.css";
 
 function AddSubCategory() {
@@ -29,6 +15,7 @@ function AddSubCategory() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [subcategoryToEdit, setSubcategoryToEdit] = useState(null);
   const [subcategoryToDelete, setSubcategoryToDelete] = useState(null);
+  const navigate = useNavigate();
 
   const categories = ["Electronics", "Furniture", "Clothing"];
   const [subcategories, setSubcategories] = useState([]);
@@ -63,6 +50,23 @@ function AddSubCategory() {
     }
   };
 
+
+
+  function logout() {
+    localStorage.clear();
+    toast.success("Logout Successful!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    setTimeout(() => {
+      navigate("/admin/login");
+    }, 1000);
+  }
+
   return (
     <div className="admin-dashboard-wrapper">
       <button className="admin-hamburger-btn" onClick={toggleSidebar}>
@@ -96,7 +100,8 @@ function AddSubCategory() {
           </div>
           {openDropdown === "orders" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
-              <li><a href="/superadmin/list-users" className="dropdown-item-admin">List of Vendors</a></li>
+              <li><a href="/superadmin/new-Vendors" className="dropdown-item-admin">New Vendors</a></li>
+              <li><a href="/superadmin/list-vendors" className="dropdown-item-admin">List of Vendors</a></li>
               <li><a href="/superadmin/manage-products" className="dropdown-item-admin">Manage Products</a></li>
               <li><a href="/superadmin/manage-orders" className="dropdown-item-admin">Manage Orders</a></li>
               <li><a href="/superadmin/approve-payout" className="dropdown-item-admin">Approve Payout</a></li>
@@ -147,14 +152,14 @@ function AddSubCategory() {
           {openDropdown === "profile" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
               <li><a href="/superadmin/manage-profile" className="dropdown-item-admin">Manage Profile</a></li>
-              <li><a href="/superadmin/login" className="dropdown-item-admin">Logout</a></li>
+              <li><a onClick={logout} className="dropdown-item-admin">Logout</a></li>
             </ul>
           )}
         </div>
       </div>
 
       <div className={`admin-main-content ${sidebarVisible ? "with-sidebar" : "full-width"}`}>
-      <div className="admin-custom-header text-center">
+        <div className="admin-custom-header text-center">
           <h1 className="h4 mb-0">Welcome to Super Admin Dashboard</h1>
         </div>
 
@@ -291,6 +296,7 @@ function AddSubCategory() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }

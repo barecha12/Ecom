@@ -3,9 +3,9 @@ import { FaBars, FaChartLine, FaStore, FaThList, FaUsers, FaUser, FaUserShield, 
 import { Row, Col, Button, Form, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { toast,ToastContainer } from "react-toastify";
-import "../style/list-vendors.css";
+import "../style/list-admin.css";
 
-function SAdminListVendor() {
+function SAdminListAdmins() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [entries, setEntries] = useState(10);
@@ -40,7 +40,7 @@ function SAdminListVendor() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/admin/listvendors");
+      const response = await fetch("http://localhost:8000/api/admin/listusers");
       const data = await response.json();
       setUsers(data.users);
     } catch {
@@ -54,15 +54,15 @@ function SAdminListVendor() {
 
   const changeUserStatus = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/admin/changevendorstatus", {
+      const response = await fetch("http://localhost:8000/api/admin/changeuserstatus", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vendor_id: selectedUserId, status: userStatus }),
+        body: JSON.stringify({ user_id: selectedUserId, status: userStatus }),
       });
-      
+
       const result = await response.json();
       if (result.success) {
-        toast.success("Vendor status updated successfully!");
+        toast.success("User status updated successfully!");
         setShowEditModal(false);
         fetchUsers();
       } else {
@@ -176,7 +176,7 @@ function SAdminListVendor() {
 
       <div className={`main-content ${sidebarVisible ? "with-sidebar" : "full-width"}`}>
         <div className="custom-header text-center">
-          <h1 className="h4 mb-0">Vendor List</h1>
+          <h1 className="h4 mb-0">Admin List</h1>
         </div>
 
         <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
@@ -217,7 +217,7 @@ function SAdminListVendor() {
               {currentUsers.length > 0 ? (
                 currentUsers.map((user) => (
                   <div
-                    key={user.vendor_id}
+                    key={user.user_id}
                     style={{
                       display: 'flex',
                       justifyContent: 'space-between',
@@ -238,8 +238,8 @@ function SAdminListVendor() {
                         style={{
                           padding: '0.5rem 1rem',
                           borderRadius: '20px',
-                          backgroundColor: user.status === 'Verified' ? '#d4edda' : '#f8d7da',
-                          color: user.status === 'Verified' ? '#155724' : '#721c24',
+                          backgroundColor: user.status === 'Active' ? '#d4edda' : '#f8d7da',
+                          color: user.status === 'Active' ? '#155724' : '#721c24',
                           marginRight: '1rem'
                         }}
                       >
@@ -249,7 +249,7 @@ function SAdminListVendor() {
                         variant="primary"
                         size="sm"
                         onClick={() => {
-                          setSelectedUserId(user.vendor_id);
+                          setSelectedUserId(user.user_id);
                           setUserStatus(user.status);
                           setShowEditModal(true);
                         }}
@@ -307,9 +307,7 @@ function SAdminListVendor() {
               value={userStatus}
               onChange={(e) => setUserStatus(e.target.value)}
             >
-              <option value="Pending">Pending</option>
-              <option value="Verified">Verified</option>
-              <option value="Rejected">Rejected</option>
+              <option value="Active">Active</option>
               <option value="Suspended">Suspended</option>
             </Form.Control>
           </Form.Group>
@@ -328,4 +326,4 @@ function SAdminListVendor() {
   );
 }
 
-export default SAdminListVendor;
+export default SAdminListAdmins;

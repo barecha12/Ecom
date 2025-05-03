@@ -78,3 +78,7 @@ Route::post('/admin/changeuserstatus', [AdminController::class, 'changeuserstatu
 Route::get('/admin/listvendors', [AdminController::class, 'listvendors']);
 Route::post('/admin/changevendorstatus', [AdminController::class, 'changevendorstatus']);
 Route::post('/admin/updatepassword', [AdminController::class, 'updatepassword']);
+Route::post('/admin/newvendorrequest', [AdminController::class, 'newvendorrequest']);
+Route::post('/admin/listnewvendors', [AdminController::class, 'listnewvendors']);
+
+

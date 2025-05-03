@@ -19,7 +19,7 @@ import {
 } from "react-bootstrap";
 import "./testone.css";
 
-function SubCategoryManager() {
+function TestOne() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [showAddSubcategoryModal, setShowAddSubcategoryModal] = useState(false);
@@ -213,4 +213,4 @@ function SubCategoryManager() {
   );
 }
 
-export default SubCategoryManager;
+export default TestOne;

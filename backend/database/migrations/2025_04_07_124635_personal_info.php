@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->string('personal_city', 100);
             $table->string('personal_state', 100);
             $table->string('personal_phone', 100); // Changed to string to handle different phone formats
-            $table->unsignedInteger('personal_unique_id'); // Assuming unique_id is a number
+            $table->string('personal_unique_id',100); // Assuming unique_id is a number
             $table->string('id_front_side', 100);
             $table->string('id_back_side', 100);
             $table->unsignedInteger('vendor_id'); // Foreign key reference to vendors

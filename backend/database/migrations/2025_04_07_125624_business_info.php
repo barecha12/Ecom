@@ -9,13 +9,12 @@ return new class extends Migration {
     {
         Schema::create('business_info', function (Blueprint $table) {
             $table->increments('business_id'); // Auto-increment primary key
-            $table->string('business_email', 100);
             $table->string('business_name', 100);
             $table->string('business_address', 100);
             $table->string('business_city', 100);
             $table->string('business_state', 100);
             $table->string('business_phone', 100); // Changed to string for handling phone formats
-            $table->unsignedInteger('blicense_number'); // Assuming business number is a numeric field
+            $table->string('blicense_number',100); // Assuming business number is a numeric field
             $table->string('address_proof_img', 255); // Storing image link/path for address proof
             $table->string('other_img_one', 255)->nullable(); // Optional image link/paths
             $table->string('other_img_two', 255)->nullable();

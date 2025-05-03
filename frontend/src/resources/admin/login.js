@@ -37,10 +37,16 @@ function LoginAdmin() {
             pauseOnHover: true,
             draggable: true,
           });
+          
           localStorage.clear();
-          localStorage.setItem("admin-info", JSON.stringify(result.admin));
+          localStorage.setItem("admin-info", JSON.stringify(result.admin)); // Store admin info
+        
           setTimeout(() => {
-            navigate("/admin/");
+            if (result.admin.admin_role_id === "SuperAdmin") {
+              navigate("/superadmin/");
+            } else {
+              navigate("/admin/");
+            }
           }, 1000);
         } else {
           toast.error("Login failed. Please try again.", {

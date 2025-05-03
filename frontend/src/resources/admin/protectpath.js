@@ -5,7 +5,7 @@ function ProtectPathAdmin(props) {
 let Cmp=props.Cmp
     const navigate = useNavigate();
     useEffect(() => {
-        if (!localStorage.getItem('admin-info')) {
+        if (!localStorage.getItem('admin-info') ) {
             navigate("/admin/login");
            
         }

@@ -143,24 +143,25 @@ class VendorController extends Controller
     {
         // Validate incoming request data
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:100',
-            'address' => 'required|string|max:100',
-            'city' => 'required|string|max:100',
-            'state' => 'required|string|max:100',
-            'mobile' => 'required|string|max:100',
-            'idNumber' => 'required|integer',
+            'personal_name' => 'required|string|max:100',
+            'personal_address' => 'required|string|max:100',
+            'personal_city' => 'required|string|max:100',
+            'personal_state' => 'required|string|max:100',
+            'personal_phone' => 'required|string|max:100',
+            'personal_unique_id' => 'required|integer',
             'idPhotoFront' => 'required|image|max:2048',
             'idPhotoBack' => 'required|image|max:2048',
-            'shopName' => 'required|string|max:100',
-            'shopAddress' => 'required|string|max:100',
-            'shopCity' => 'required|string|max:100',
-            'shopMobile' => 'required|string|max:100',
+            'business_name' => 'required|string|max:100',
+
+            'business_address' => 'required|string|max:100',
+            'business_city' => 'required|string|max:100',
+            'business_phone' => 'required|string|max:100',
             'blicense_number' => 'required|integer',
             'addressProofImage' => 'required|image|max:2048',
             'otherProofImages.*' => 'image|max:2048', // Up to 5 images
-            'bankName' => 'required|string|max:100',
-            'accountHolder' => 'required|string|max:100',
-            'accountNumber' => 'required|string|max:100',
+            'bank_name' => 'required|string|max:100',
+            'account_name' => 'required|string|max:100',
+            'account_number' => 'required|string|max:100',
             'vendor_id' => 'required|integer', // Accept vendor_id from user
             'verified_by' => 'nullable|integer', // Accept verified_by from user
         ]);
@@ -179,12 +180,12 @@ class VendorController extends Controller
     
         // Create personal info record
         $personalInfo = PersonalInfo::create([
-            'personal_name' => $request->name,
-            'personal_address' => $request->address,
-            'personal_city' => $request->city,
-            'personal_state' => $request->state,
-            'personal_phone' => $request->mobile,
-            'personal_unique_id' => $request->idNumber,
+            'personal_name' => $request->personal_name,
+            'personal_address' => $request->personal_address,
+            'personal_city' => $request->personal_city,
+            'personal_state' => $request->personal_state,
+            'personal_phone' => $request->personal_phone,
+            'personal_unique_id' => $request->personal_unique_id,
             'id_front_side' => $idPhotoFrontPath,
             'id_back_side' => $idPhotoBackPath,
             'vendor_id' => $request->vendor_id, // Use user-provided vendor_id
@@ -193,12 +194,11 @@ class VendorController extends Controller
     
         // Create business info record
         $businessInfo = BusinessInfo::create([
-            'business_email' => $request->input('businessEmail'), // Add this input to your frontend
-            'business_name' => $request->shopName,
-            'business_address' => $request->shopAddress,
-            'business_city' => $request->shopCity,
-            'business_state' => $request->state,
-            'business_phone' => $request->shopMobile,
+            'business_name' => $request->business_name,
+            'business_address' => $request->business_address,
+            'business_city' => $request->business_city,
+            'business_state' => $request->business_state,
+            'business_phone' => $request->business_phone,
             'blicense_number' => $request->blicense_number,
             'address_proof_img' => $addressProofPath,
             'other_img_one' => $request->file('otherProofImages.0') ? $request->file('otherProofImages.0')->store('other_proofs', 'public') : null,
@@ -211,9 +211,9 @@ class VendorController extends Controller
         ]);
         // Create bank info record
         $bankInfo = BankInfo::create([
-            'bank_name' => $request->bankName,
-            'account_name' => $request->accountHolder,
-            'account_number' => $request->accountNumber,
+            'bank_name' => $request->bank_name,
+            'account_name' => $request->account_name,
+            'account_number' => $request->account_number,
             'vendor_id' => $request->vendor_id, // Use user-provided vendor_id
             'verified_by' => $request->verified_by, // Use user-provided verified_by
         ]);

@@ -8,7 +8,11 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
 use App\Models\User;
 use App\Models\Vendor;
+use App\Models\PersonalInfo;
+use App\Models\businessInfo;
+use App\Models\bankInfo;
 use Illuminate\Support\Facades\Validator;
+
 class AdminController extends Controller
 {
     //
@@ -134,6 +138,106 @@ class AdminController extends Controller
             return response()->json(['success' => false, 'message' => 'Old password is incorrect.'], 401);
         }
     }
+
+
+
+
+
+
+
+
+    public function newvendorrequest(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'vendor_id' => 'required|integer|exists:vendors,vendor_id',
+        ]);
+    
+        // Retrieve the vendor_id from the request
+        $vendorId = $request->input('vendor_id');
+    
+        // Fetch personal info
+        $personalInfo = PersonalInfo::where('vendor_id', $vendorId)->first();
+    
+        // Fetch business info
+        $businessInfo = businessInfo::where('vendor_id', $vendorId)->first();
+    
+        // Fetch bank info
+        $bankInfo = bankInfo::where('vendor_id', $vendorId)->first();
+    
+        // Prepare the response data
+        $responseData = [
+            'Personal Info' => [
+                'personal_name' => $personalInfo->personal_name ?? null,
+                'personal_address' => $personalInfo->personal_address ?? null,
+                'personal_city' => $personalInfo->personal_city ?? null,
+                'personal_state' => $personalInfo->personal_state ?? null,
+                'personal_phone' => $personalInfo->personal_phone ?? null,
+                'personal_unique_id' => $personalInfo->personal_unique_id ?? null,
+                'id_front_side' => $personalInfo->id_front_side ?? null,
+                'id_back_side' => $personalInfo->id_back_side ?? null,
+            ],
+            'Business Information' => [
+                'business_name' => $businessInfo->business_name ?? null,
+                'business_address' => $businessInfo->business_address ?? null,
+                'business_city' => $businessInfo->business_city ?? null,
+                'business_state' => $businessInfo->business_state ?? null,
+                'business_phone' => $businessInfo->business_phone ?? null,
+                'blicense_number' => $businessInfo->blicense_number ?? null,
+                'address_proof_img' => $businessInfo->address_proof_img ?? null,
+                'other_proof_images' => [
+                    $businessInfo->other_img_one ?? null,
+                    $businessInfo->other_img_two ?? null,
+                    $businessInfo->other_img_three ?? null,
+                    $businessInfo->other_img_four ?? null,
+                    $businessInfo->other_img_five ?? null,
+                ],
+            ],
+            'Bank Info' => [
+                'bank_name' => $bankInfo->bank_name ?? null,
+                'account_name' => $bankInfo->account_name ?? null,
+                'account_number' => $bankInfo->account_number ?? null,
+            ],
+        ];
+    
+        // Return the response as JSON
+        return response()->json($responseData);
+    }
+
+
+
+
+
+
+    public function listnewvendors(Request $request)
+    {
+        // Fetch all vendors with their personal info
+           $vendors = Vendor::with('personalInfo')
+           ->where('status', 'Pending') // Filter by status
+           ->get();
+    
+        // Prepare response data
+        $responseData = [];
+        foreach ($vendors as $vendor) {
+            $responseData[] = [
+                'email' => $vendor->email,
+                'personal_name' => $vendor->personalInfo->personal_name ?? "N/A",
+                'vendor_id' => $vendor->vendor_id,
+            ];
+        }
+    
+        // Return the response as JSON
+        return response()->json(['success' => true, 'data' => $responseData]);
+    }
+
+
+
+
+
+
+
+
+
 
 
 

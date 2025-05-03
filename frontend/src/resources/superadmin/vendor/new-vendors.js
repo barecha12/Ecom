@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { FaBars, FaChartLine, FaStore, FaUsers, FaUser } from "react-icons/fa";
+import { FaBars, FaChartLine, FaStore, FaThList, FaUsers, FaUser, FaUserShield, FaTools, FaEdit, FaTrash, } from "react-icons/fa";
 import { Row, Col, Button, Form, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "../style/new-vendors.css";
 
-function NewVendors() {
+function SAdminNewVendors() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [entries, setEntries] = useState(10);
@@ -42,7 +42,7 @@ function NewVendors() {
     }
   }
 
-  
+
   useEffect(() => {
     fetchVendors();
   }, []);
@@ -237,10 +237,10 @@ function NewVendors() {
 
       <div className={`admin-custom-sidebar ${sidebarVisible ? "show" : "hide"}`}>
         <div className="d-flex align-items-center mb-3">
-          <h2 className="text-center admin-custom-css flex-grow-1 mt-2 ms-4">Admin Dashboard</h2>
+          <h2 className="text-center admin-custom-css flex-grow-1 mt-2 ms-4">SAdmin Dashboard</h2>
         </div>
 
-        <a href="/admin/" className="admin-custom-link">
+        <a href="/superadmin/dashboard" className="admin-custom-link">
           <FaChartLine className="me-2" /> Dashboard
         </a>
 
@@ -250,8 +250,8 @@ function NewVendors() {
           </div>
           {openDropdown === "products" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
-              <li><a href="/admin/list-users" className="dropdown-item-admin">List Users</a></li>
-              <li><a href="/admin/user-messages" className="dropdown-item-admin">User Messages</a></li>
+              <li><a href="/superadmin/list-users" className="dropdown-item-admin">List Users</a></li>
+              <li><a href="/superadmin/user-messages" className="dropdown-item-admin">User Messages</a></li>
             </ul>
           )}
         </div>
@@ -262,12 +262,47 @@ function NewVendors() {
           </div>
           {openDropdown === "orders" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
-              <li><a href="/admin/new-vendors" className="dropdown-item-admin">New Vendor Requests</a></li>
-              <li><a href="/admin/list-vendors" className="dropdown-item-admin">List of Vendors</a></li>
-              <li><a href="/admin/manage-products" className="dropdown-item-admin">Manage Products</a></li>
-              <li><a href="/admin/manage-orders" className="dropdown-item-admin">Manage Orders</a></li>
-              <li><a href="/admin/approve-payout" className="dropdown-item-admin">Approve Payout</a></li>
-              <li><a href="/admin/vendor-messages" className="dropdown-item-admin">Vendor Messages</a></li>
+              <li><a href="/superadmin/new-Vendors" className="dropdown-item-admin">New Vendors</a></li>
+              <li><a href="/superadmin/list-vendors" className="dropdown-item-admin">List of Vendors</a></li>
+              <li><a href="/superadmin/manage-products" className="dropdown-item-admin">Manage Products</a></li>
+              <li><a href="/superadmin/manage-orders" className="dropdown-item-admin">Manage Orders</a></li>
+              <li><a href="/superadmin/approve-payout" className="dropdown-item-admin">Approve Payout</a></li>
+              <li><a href="/superadmin/vendor-messages" className="dropdown-item-admin">Vendor Messages</a></li>
+            </ul>
+          )}
+        </div>
+
+        <div className="dropdown">
+          <div className="admin-custom-link" onClick={() => handleDropdown("admin management")}>
+            <FaUserShield className="me-2" /> Admin Management
+          </div>
+          {openDropdown === "admin management" && (
+            <ul className="dropdown-menu admin-custom-dropdown-menu">
+              <li><a href="/superadmin/list-admins" className="dropdown-item-admin">List of Admins</a></li>
+            </ul>
+          )}
+        </div>
+
+        <div className="dropdown">
+          <div className="admin-custom-link" onClick={() => handleDropdown("catalog management")}>
+            <FaThList className="me-2" /> Catalog Management
+          </div>
+          {openDropdown === "catalog management" && (
+            <ul className="dropdown-menu admin-custom-dropdown-menu">
+              <li><a href="/superadmin/add-category" className="dropdown-item-admin">Add Categories</a></li>
+              <li><a href="/superadmin/add-subcategory" className="dropdown-item-admin">Sub Categories</a></li>
+            </ul>
+          )}
+        </div>
+
+        <div className="dropdown">
+          <div className="admin-custom-link" onClick={() => handleDropdown("platform management")}>
+            <FaTools className="me-2" /> Platform Management
+          </div>
+          {openDropdown === "platform management" && (
+            <ul className="dropdown-menu admin-custom-dropdown-menu">
+              <li><a href="/superadmin/add-banner" className="dropdown-item-admin">List Banner</a></li>
+              <li><a href="/superadmin/add-payment" className="dropdown-item-admin">Payment Method</a></li>
             </ul>
           )}
         </div>
@@ -278,7 +313,7 @@ function NewVendors() {
           </div>
           {openDropdown === "profile" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
-              <li><a href="/admin/manage-password" className="dropdown-item-admin">Update Password</a></li>
+              <li><a href="/superadmin/manage-profile" className="dropdown-item-admin">Manage Profile</a></li>
               <li><a onClick={logout} className="dropdown-item-admin">Logout</a></li>
             </ul>
           )}
@@ -464,8 +499,9 @@ function NewVendors() {
           </Button>
         </Modal.Footer>
       </Modal>
+      <ToastContainer />
     </div>
   );
 }
 
-export default NewVendors;
+export default SAdminNewVendors;

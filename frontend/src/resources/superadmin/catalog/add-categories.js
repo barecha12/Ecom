@@ -1,23 +1,8 @@
 import React, { useState } from "react";
-import {
-  FaBars,
-  FaChartLine,
-  FaStore,
-  FaThList,
-  FaUsers,
-  FaUser,
-  FaUserShield,
-  FaTools,
-  FaEdit,
-  FaTrash,
-} from "react-icons/fa";
-import {
-  Button,
-  Modal,
-  Form,
-  ListGroup,
-} from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { FaBars, FaChartLine, FaStore, FaThList, FaUsers, FaUser, FaUserShield, FaTools, FaEdit, FaTrash, } from "react-icons/fa";
+import { Button, Modal, Form, ListGroup, } from "react-bootstrap";
+import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import "../style/add-category.css";
 
 function AddCategory() {
@@ -30,6 +15,7 @@ function AddCategory() {
   const [categories, setCategories] = useState(["Electronics", "Furniture", "Clothing", "Books", "Toys"]);
   const [categoryToEdit, setCategoryToEdit] = useState(null);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -80,6 +66,21 @@ function AddCategory() {
     setCategoryToEdit(null);
   };
 
+  function logout() {
+    localStorage.clear();
+    toast.success("Logout Successful!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    setTimeout(() => {
+      navigate("/admin/login");
+    }, 1000);
+  }
+
   return (
     <div className="admin-dashboard-wrapper">
       <button className="admin-hamburger-btn" onClick={toggleSidebar}>
@@ -113,7 +114,8 @@ function AddCategory() {
           </div>
           {openDropdown === "orders" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
-              <li><a href="/superadmin/list-users" className="dropdown-item-admin">List of Vendors</a></li>
+              <li><a href="/superadmin/new-Vendors" className="dropdown-item-admin">New Vendors</a></li>
+              <li><a href="/superadmin/list-vendors" className="dropdown-item-admin">List of Vendors</a></li>
               <li><a href="/superadmin/manage-products" className="dropdown-item-admin">Manage Products</a></li>
               <li><a href="/superadmin/manage-orders" className="dropdown-item-admin">Manage Orders</a></li>
               <li><a href="/superadmin/approve-payout" className="dropdown-item-admin">Approve Payout</a></li>
@@ -164,7 +166,7 @@ function AddCategory() {
           {openDropdown === "profile" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
               <li><a href="/superadmin/manage-profile" className="dropdown-item-admin">Manage Profile</a></li>
-              <li><a href="/superadmin/login" className="dropdown-item-admin">Logout</a></li>
+              <li><a onClick={logout} className="dropdown-item-admin">Logout</a></li>
             </ul>
           )}
         </div>
@@ -287,7 +289,7 @@ function AddCategory() {
             </ListGroup>
           </div>
         </div>
-
+        <ToastContainer />
       </div>
     </div>
   );
