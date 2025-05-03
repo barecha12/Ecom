@@ -109,20 +109,12 @@ function Login() {
           pauseOnHover: true,
           draggable: true,
         });
-        
+        localStorage.clear();
         localStorage.setItem("user-info", JSON.stringify(result.storeData));
         
         // Redirect based on user role
         setTimeout(() => {
-          if (result.storeData.admin_role_id === "SuperAdmin") {
-            navigate("/superadmin/");
-          } else if (result.storeData.vendor_role_id === "Vendor") {
-            navigate("/vendor/");
-          } else if (result.storeData.admin_role_id === "Admin") {
-            navigate("/admin/");
-          } else {
             navigate("/");
-          }
         }, 1000);
       } else {
         toast.error(result.message || "Login Failed. Please check your credentials.", {

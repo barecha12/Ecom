@@ -101,7 +101,8 @@ const VendorInfo = () => {
         });
 
         try {
-            const response = await fetch("http://localhost:8000/api/vendorinfo", {
+            console.warn('📦 Sending vendor info:', formData);
+            const response = await fetch("http://localhost:8000/api/vendor/vendorinfo", {
                 method: "POST",
                 body: formData,
             });

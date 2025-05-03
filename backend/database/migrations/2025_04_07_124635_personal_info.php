@@ -17,14 +17,12 @@ return new class extends Migration {
             $table->unsignedInteger('personal_unique_id'); // Assuming unique_id is a number
             $table->string('id_front_side', 100);
             $table->string('id_back_side', 100);
-            $table->enum('status', ['Active', 'Inactive', 'Pending'])->default('Pending'); // Enum for status
             $table->unsignedInteger('vendor_id'); // Foreign key reference to vendors
-            $table->unsignedInteger('admin_id'); // Foreign key reference to admins
+            $table->integer('verified_by')->nullable();
             $table->timestamps(); // Adding created_at and updated_at timestamps
             
             // Foreign key constraints
             $table->foreign('vendor_id')->references('vendor_id')->on('vendors')->onDelete('cascade');
-            $table->foreign('admin_id')->references('admin_id')->on('admin')->onDelete('cascade');
         });
     }
 

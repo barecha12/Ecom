@@ -19,9 +19,9 @@ class bankInfo extends Model
         'bank_name',
         'account_name',
         'account_number',
-        'status',
         'business_id',
-        'admin_id'
+        'vendor_id',
+        'verified_by'
     ];
 
     public $timestamps = false;

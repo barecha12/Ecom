@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AdminController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -47,16 +48,14 @@ Route::post('/vendor/update-order-status', [VendorController::class, 'updateorde
 
 Route::post('/get-subcategories-by-category/{category_id}', [VendorController::class, 'categoryandsubcategory']);//done
 
-Route::post('/vendor/editproduct', [VendorController::class, 'editproduct']);
+Route::post('/vendor/editproduct', [VendorController::class, 'editproduct']);//one
 
 
 Route::get('/get-categories', [VendorController::class, 'getCategories']);//done
 
 
 
-Route::post('vendor/personalinfo',[VendorController::class,'personalinfo']);
-Route::post('vendor/businessinfo',[VendorController::class,'businessinfo']);
-Route::post('vendor/bankinfo',[VendorController::class,'bankinfo']);
+Route::post('/vendor/vendorinfo',[VendorController::class,'vendorinfo']);
 
 
 Route::post('/search', [ProductController::class, 'search']);//done
@@ -70,3 +69,12 @@ Route::post('/addtocart', [ProductController::class, 'addtocart']);//done
 Route::post('/removecartitems', [ProductController::class, 'removecartitems']);//done
 Route::post('/listcartitems', [ProductController::class, 'listcartitems']);//done
 
+Route::post('/admin/login', [AdminController::class, 'loginadmin']);//done
+
+
+Route::get('/admin/listusers', [AdminController::class, 'listusers']);//done
+Route::post('/admin/changeuserstatus', [AdminController::class, 'changeuserstatus']);//done
+
+Route::get('/admin/listvendors', [AdminController::class, 'listvendors']);
+Route::post('/admin/changevendorstatus', [AdminController::class, 'changevendorstatus']);
+Route::post('/admin/updatepassword', [AdminController::class, 'updatepassword']);

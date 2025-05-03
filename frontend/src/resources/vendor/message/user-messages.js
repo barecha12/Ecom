@@ -8,7 +8,8 @@ import {
   FaUser,
 } from "react-icons/fa";
 import { Container, Row, Col, Card, ListGroup, Button, Navbar, Nav, Dropdown, Modal, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
 import "../style/user-messages.css";
 
 function UserMessages() {
@@ -18,6 +19,7 @@ function UserMessages() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -60,6 +62,22 @@ function UserMessages() {
     { id: 4, name: "Bob Brown", email: "bob@example.com", lastMessage: "I need a refund." },
   ];
 
+  function logout() {
+    localStorage.clear();
+    toast.success("Logout Successful!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    setTimeout(() => {
+      navigate("/vendor/login");
+    }, 1000); // Delay the navigation for 3 seconds
+  }
+  
+  
   return (
     <div className="dashboard-wrapper">
       <button className="hamburger-btn" onClick={toggleSidebar}>
@@ -122,7 +140,7 @@ function UserMessages() {
           {openDropdown === "profile" && (
             <ul className="dropdown-menu custom-dropdown-menu">
               <li><a href="/vendor/manage-profile" className="dropdown-item-vendor">Updated Password</a></li>
-              <li><a href="#logout" className="dropdown-item-vendor">Logout</a></li>
+              <li><a onClick={logout} className="dropdown-item-vendor">Logout</a></li>
             </ul>
           )}
         </div>

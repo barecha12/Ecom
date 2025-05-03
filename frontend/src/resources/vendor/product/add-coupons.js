@@ -20,7 +20,8 @@ import {
     Form,
     Image,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import { Link, useNavigate } from "react-router-dom";
 import "../style/add-coupons.css";
 
 function AddCoupons() {
@@ -38,7 +39,7 @@ function AddCoupons() {
     const couponCodes = 100; // Example coupon code count
     const totalPages = Math.ceil(couponCodes / entries);
     const [selectedFilesCount, setSelectedFilesCount] = useState(0);
-
+    const navigate = useNavigate();
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showEditProductModal, setShowEditProductModal] = useState(false);
 
@@ -176,6 +177,21 @@ function AddCoupons() {
         setShowEditProductModal(true); // Show the modal
     };
 
+    function logout() {
+        localStorage.clear();
+        toast.success("Logout Successful!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        setTimeout(() => {
+          navigate("/vendor/login");
+        }, 1000); // Delay the navigation for 3 seconds
+      }
+            
     return (
         <div className="dashboard-wrapper">
             <button className="hamburger-btn" onClick={toggleSidebar}>
@@ -238,7 +254,7 @@ function AddCoupons() {
                     {openDropdown === "profile" && (
                         <ul className="dropdown-menu custom-dropdown-menu">
                             <li><a href="/vendor/manage-profile" className="dropdown-item-vendor">Updated Password</a></li>
-                            <li><a href="#logout" className="dropdown-item-vendor">Logout</a></li>
+                            <li><a onClick={logout} className="dropdown-item-vendor">Logout</a></li>
                         </ul>
                     )}
                 </div>

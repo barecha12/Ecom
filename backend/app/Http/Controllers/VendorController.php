@@ -108,7 +108,7 @@ class VendorController extends Controller
 
         // Find the vendor by vendor_id
         
-if($request->password_confirmation !== $request->new_password){ 
+       if($request->password_confirmation !== $request->new_password){ 
            return response()->json([
                 'success' => false,
                 'message' => 'Password confirmation does not match.',
@@ -135,108 +135,101 @@ if($request->password_confirmation !== $request->new_password){
     }
     
 
-    public function personalinfo(Request $request)
+
+
+
+
+    public function vendorinfo(Request $request)
     {
-        // Validate incoming data using the inline validation method
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:500',
+        // Validate incoming request data
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:100',
+            'address' => 'required|string|max:100',
             'city' => 'required|string|max:100',
-            'region' => 'required|string|max:100',
-            'mobile' => 'required|string|max:15',
-            'idnumber' => 'required|string|max:20',
-            'idPhotoFront' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'idPhotoBack' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            //'vendor_id' => 'required|exists:vendors,vendor_id',
+            'state' => 'required|string|max:100',
+            'mobile' => 'required|string|max:100',
+            'idNumber' => 'required|integer',
+            'idPhotoFront' => 'required|image|max:2048',
+            'idPhotoBack' => 'required|image|max:2048',
+            'shopName' => 'required|string|max:100',
+            'shopAddress' => 'required|string|max:100',
+            'shopCity' => 'required|string|max:100',
+            'shopMobile' => 'required|string|max:100',
+            'blicense_number' => 'required|integer',
+            'addressProofImage' => 'required|image|max:2048',
+            'otherProofImages.*' => 'image|max:2048', // Up to 5 images
+            'bankName' => 'required|string|max:100',
+            'accountHolder' => 'required|string|max:100',
+            'accountNumber' => 'required|string|max:100',
+            'vendor_id' => 'required|integer', // Accept vendor_id from user
+            'verified_by' => 'nullable|integer', // Accept verified_by from user
         ]);
-    
-        // Handle file uploads
-        $idPhotoFrontPath = null;
-        $idPhotoBackPath = null;
-    
-        if ($request->hasFile('idPhotoFront')) {
-            $idPhotoFrontPath = $request->file('idPhotoFront')->store('id_photos', 'public');
+ 
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 400);
         }
     
-        if ($request->hasFile('idPhotoBack')) {
-            $idPhotoBackPath = $request->file('idPhotoBack')->store('id_photos', 'public');
-        }
+        // Store uploaded files
+        $idPhotoFrontPath = $request->file('idPhotoFront')->store('id_photos', 'public');
+        $idPhotoBackPath = $request->file('idPhotoBack')->store('id_photos', 'public');
+        $addressProofPath = $request->file('addressProofImage')->store('address_proofs', 'public');
     
-        // Save personal information to the database
-        $personalInfo = new PersonalInfo([
-            'personal_name' => $validated['name'],
-            'personal_address' => $validated['address'],
-            'personal_city' => $validated['city'],
-            'personal_region' => $validated['region'],
-            'personal_phone' => $validated['mobile'],
-            'personal_unique_id' => $validated['idnumber'],
+        // Create personal info record
+        $personalInfo = PersonalInfo::create([
+            'personal_name' => $request->name,
+            'personal_address' => $request->address,
+            'personal_city' => $request->city,
+            'personal_state' => $request->state,
+            'personal_phone' => $request->mobile,
+            'personal_unique_id' => $request->idNumber,
             'id_front_side' => $idPhotoFrontPath,
             'id_back_side' => $idPhotoBackPath,
-            'status' => 'pending', 
-            // 'vendor_id' => $validated['vendor_id'], 
-            'vendor_id' => 2, 
+            'vendor_id' => $request->vendor_id, // Use user-provided vendor_id
+            'verified_by' => $request->verified_by, // Use user-provided verified_by
         ]);
-        
-        // Save the personal info record
-        $personalInfo->save();
     
-
-
-
-
-// // Assuming you have a Vendor ID (e.g., 2)
-// $vendor = Vendor::find(2); // Get the Vendor instance with ID 2
-
-// // Check if the vendor exists
-// if ($vendor) {
-//     // Save PersonalInfo using the Vendor's relationship
-//     $vendor->personalInfo()->create([
-//         'personal_name'      => $validated['name'],
-//         'personal_address'   => $validated['address'],
-//         'personal_city'      => $validated['city'],
-//         'personal_region'    => $validated['region'],
-//         'personal_phone'     => $validated['mobile'],
-//         'personal_unique_id' => $validated['idnumber'],
-//         'id_front_side'      => $idPhotoFrontPath,
-//         'id_back_side'       => $idPhotoBackPath,
-//         'status'             => 'pending', 
-//         // 'vendor_id' is automatically handled through the relationship
-//     ]);
-// } else {
-//     // If the vendor doesn't exist, handle the error
-//     return redirect()->back()->with('error', 'Vendor not found!');
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // Return a success response with the saved data
+        // Create business info record
+        $businessInfo = BusinessInfo::create([
+            'business_email' => $request->input('businessEmail'), // Add this input to your frontend
+            'business_name' => $request->shopName,
+            'business_address' => $request->shopAddress,
+            'business_city' => $request->shopCity,
+            'business_state' => $request->state,
+            'business_phone' => $request->shopMobile,
+            'blicense_number' => $request->blicense_number,
+            'address_proof_img' => $addressProofPath,
+            'other_img_one' => $request->file('otherProofImages.0') ? $request->file('otherProofImages.0')->store('other_proofs', 'public') : null,
+            'other_img_two' => $request->file('otherProofImages.1') ? $request->file('otherProofImages.1')->store('other_proofs', 'public') : null,
+            'other_img_three' => $request->file('otherProofImages.2') ? $request->file('otherProofImages.2')->store('other_proofs', 'public') : null,
+            'other_img_four' => $request->file('otherProofImages.3') ? $request->file('otherProofImages.3')->store('other_proofs', 'public') : null,
+            'other_img_five' => $request->file('otherProofImages.4') ? $request->file('otherProofImages.4')->store('other_proofs', 'public') : null,
+            'vendor_id' => $request->vendor_id, // Use user-provided vendor_id
+            'verified_by' => $request->verified_by, // Use user-provided verified_by
+        ]);
+        // Create bank info record
+        $bankInfo = BankInfo::create([
+            'bank_name' => $request->bankName,
+            'account_name' => $request->accountHolder,
+            'account_number' => $request->accountNumber,
+            'vendor_id' => $request->vendor_id, // Use user-provided vendor_id
+            'verified_by' => $request->verified_by, // Use user-provided verified_by
+        ]);
+    
         return response()->json([
             'success' => true,
-            'message' => 'Personal Information saved successfully.',
-            'storeData' => $personalInfo
-        ]);
+            'message' => 'Vendor information submitted successfully.',
+            'data' => [
+                'personalInfo' => $personalInfo,
+                'businessInfo' => $businessInfo,
+                'bankInfo' => $bankInfo,
+            ]
+        ], 201);
     }
-    
 
 
-
-
-    function businessinfo(){
-        return "bussiness info";
-    }
-    function bankinfo(){
-        return "bank info";
-    }
 
 
 

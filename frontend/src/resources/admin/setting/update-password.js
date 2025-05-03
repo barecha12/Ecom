@@ -6,32 +6,19 @@ import {
   FaUsers,
   FaUser,
 } from "react-icons/fa";
-
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "../style/update-password.css";
 
-
 function UpdatePassword() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [showAddProductModal, setShowAddProductModal] = useState(false);
-  const [category, setCategory] = useState("");
-  const [productName, setProductName] = useState("");
-  const [totalProduct, setTotalProduct] = useState("");
-  const [productPrice, setProductPrice] = useState("");
-  const [productDescription, setProductDescription] = useState("");
-  const [productImages, setProductImages] = useState({ selectedproductImages: [] });
-  const [entries, setEntries] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalProducts = 100;
-  const totalPages = Math.ceil(totalProducts / entries);
-
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
+
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };
@@ -40,45 +27,13 @@ function UpdatePassword() {
     setOpenDropdown(openDropdown === menu ? null : menu);
   };
 
-  const handleImageChange = (e) => {
-    const { name, files } = e.target;
-    if (name === "selectedproductImages") {
-      setProductImages({
-        ...productImages,
-        selectedproductImages: Array.from(files).slice(0, 5)
-      });
-    }
-  };
-
-  const addProduct = (e) => {
-    e.preventDefault();
-    const newProduct = { category, productName, totalProduct, productPrice, productDescription, productImages };
-    console.log("Product Added:", newProduct);
-    handleCloseAddProductModal();
-  };
-
-  const handleCloseAddProductModal = () => {
-    setShowAddProductModal(false);
-    setCategory("");
-    setProductName("");
-    setTotalProduct("");
-    setProductPrice("");
-    setProductDescription("");
-    setProductImages({ selectedproductImages: [] });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-
       toast.error("Please fill in all fields.", {
         position: "top-right",
         autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
       });
       return;
     }
@@ -87,23 +42,24 @@ function UpdatePassword() {
       toast.error("New passwords do not match.", {
         position: "top-right",
         autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
       });
       return;
     }
 
+    const userInfo = JSON.parse(localStorage.getItem("admin-info"));
+    const admin_id = userInfo?.admin_id;
+
     const payload = {
-      currentPassword,
-      newPassword,
+      admin_id: admin_id,
+      current_password: currentPassword,
+      new_password: newPassword,
+      password_confirmation: confirmPassword, // Laravel expects this key
     };
 
     try {
+      console.log("Payload:", payload); // Debug line
 
-      console.warn("Sending password update request:", payload);
-      let response = await fetch("http://localhost:8000/api/updatepassword", {
+      const response = await fetch("http://localhost:8000/api/admin/updatepassword", {
         method: 'POST',
         body: JSON.stringify(payload),
         headers: {
@@ -112,7 +68,8 @@ function UpdatePassword() {
         },
       });
 
-      let result = await response.json();
+      const result = await response.json();
+      console.log("Response:", result); // Debug line
       if (result.success) {
         toast.success("Password updated successfully!", {
           position: "top-right",
@@ -122,19 +79,22 @@ function UpdatePassword() {
           pauseOnHover: true,
           draggable: true,
         });
-        // Optionally, redirect or clear fields
+        setTimeout(() => {
+          navigate("/admin/");
+        }, 1000);
       } else {
         toast.error(result.message || "Failed to update password. Please try again.", {
           position: "top-right",
           autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
         });
       }
+
     } catch (error) {
-      toast.error('An error occurred. Please try again later.');
+      console.error("Error updating password:", error);
+      toast.error("An error occurred. Please try again later.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -150,8 +110,9 @@ function UpdatePassword() {
     });
     setTimeout(() => {
       navigate("/admin/login");
-    }, 1000); // Delay the navigation for 3 seconds
+    }, 1000);
   }
+
   return (
     <div className="admin-dashboard-wrapper">
       <button className="admin-hamburger-btn" onClick={toggleSidebar}>
@@ -163,7 +124,7 @@ function UpdatePassword() {
           <h2 className="text-center admin-custom-css flex-grow-1 mt-2 ms-4">Admin Dashboard</h2>
         </div>
 
-        <a href="#analytics" className="admin-custom-link">
+        <a href="/admin/" className="admin-custom-link">
           <FaChartLine className="me-2" /> Dashboard
         </a>
 
@@ -185,7 +146,7 @@ function UpdatePassword() {
           </div>
           {openDropdown === "orders" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
-               <li><a href="/admin/new-vendors" className="dropdown-item-admin">New Vendors</a></li>
+              <li><a href="/admin/new-vendors" className="dropdown-item-admin">New Vendors</a></li>
               <li><a href="/admin/list-vendors" className="dropdown-item-admin">List of Vendors</a></li>
               <li><a href="/admin/manage-products" className="dropdown-item-admin">Manage Products</a></li>
               <li><a href="/admin/manage-orders" className="dropdown-item-admin">Manage Orders</a></li>
@@ -213,9 +174,8 @@ function UpdatePassword() {
           <h1 className="h4 mb-0">Update Password</h1>
         </div>
 
-        {/* Main content for updating password */}
-        <div className="outer-container" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-          <div className="update-password-container" style={{ width: '1000px' }}> {/* Adjust the width as needed */}
+        <div className="outer-container" style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className="update-password-container" style={{ width: '1000px' }}>
             <h2>Update Password</h2>
 
             <form onSubmit={handleSubmit}>
@@ -256,7 +216,6 @@ function UpdatePassword() {
             </form>
           </div>
         </div>
-
       </div>
       <ToastContainer />
     </div>

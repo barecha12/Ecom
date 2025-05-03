@@ -254,7 +254,7 @@ function NewVendors() {
           <h2 className="text-center admin-custom-css flex-grow-1 mt-2 ms-4">Admin Dashboard</h2>
         </div>
 
-        <a href="#analytics" className="admin-custom-link">
+        <a href="/admin/" className="admin-custom-link">
           <FaChartLine className="me-2" /> Dashboard
         </a>
 
@@ -276,7 +276,7 @@ function NewVendors() {
           </div>
           {openDropdown === "orders" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
-              <li><a href="/admin/new-vendors" className="dropdown-item-admin">New Vendors</a></li>
+              <li><a href="/admin/new-vendors" className="dropdown-item-admin">New Vendor Requests</a></li>
               <li><a href="/admin/list-vendors" className="dropdown-item-admin">List of Vendors</a></li>
               <li><a href="/admin/manage-products" className="dropdown-item-admin">Manage Products</a></li>
               <li><a href="/admin/manage-orders" className="dropdown-item-admin">Manage Orders</a></li>

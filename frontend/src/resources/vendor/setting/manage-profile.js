@@ -7,6 +7,7 @@ import {
   FaComments,
   FaUser,
 } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../style/manage-profile.css";
@@ -14,7 +15,7 @@ import "../style/manage-profile.css";
 function ManageProfile() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
-
+  const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -46,7 +47,7 @@ function ManageProfile() {
     }
   
     // Get vendor_id from localStorage
-    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    const userInfo = JSON.parse(localStorage.getItem("vendor-info"));
     const vendor_id = userInfo?.vendor_id;
   
     if (!vendor_id) {
@@ -83,6 +84,21 @@ function ManageProfile() {
       toast.error("Something went wrong. Try again later.");
     }
   };
+  
+  function logout() {
+    localStorage.clear();
+    toast.success("Logout Successful!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    setTimeout(() => {
+      navigate("/vendor/login");
+    }, 1000); // Delay the navigation for 3 seconds
+  }
   
   
 
@@ -149,7 +165,7 @@ function ManageProfile() {
           {openDropdown === "profile" && (
             <ul className="dropdown-menu custom-dropdown-menu">
               <li><a href="/vendor/manage-profile" className="dropdown-item-vendor">Updated Password</a></li>
-              <li><a href="#logout" className="dropdown-item-vendor">Logout</a></li>
+              <li><a onClick={logout} className="dropdown-item-vendor">Logout</a></li>
             </ul>
           )}
         </div>

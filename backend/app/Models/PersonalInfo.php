@@ -20,14 +20,13 @@ class PersonalInfo extends Model
         'personal_name',
         'personal_address',
         'personal_city',
-        'personal_region',
+        'personal_state',
         'personal_phone',
         'personal_unique_id',
         'id_front_side',
         'id_back_side',
-        'time_stamp',
-        'status',
-        'vendor_id'
+        'vendor_id',
+        'verified_by'
     ];
 
     public $timestamps = false;

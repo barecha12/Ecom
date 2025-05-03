@@ -21,7 +21,7 @@ function ControlOrder() {
   useEffect(() => {
     async function listProductDetail() {
       try {
-        const storedUser = JSON.parse(localStorage.getItem("user-info"));
+        const storedUser = JSON.parse(localStorage.getItem("vendor-info"));
         const vendorId = storedUser?.vendor_id;
 
         let response = await fetch(`http://localhost:8000/api/vendor/orderlist`, {
@@ -87,7 +87,23 @@ function ControlOrder() {
     setEditPopupVisible(true);
   };
 
-
+  function logout() {
+    localStorage.clear();
+    toast.success("Logout Successful!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    setTimeout(() => {
+      navigate("/vendor/login");
+    }, 1000); // Delay the navigation for 3 seconds
+  }
+  
+  
+  
   return (
     <div className="dashboard-wrapper">
       <button className="hamburger-btn" onClick={toggleSidebar}><FaBars /></button>
@@ -146,7 +162,7 @@ function ControlOrder() {
           {openDropdown === "profile" && (
             <ul className="dropdown-menu custom-dropdown-menu">
               <li><a href="/vendor/manage-profile" className="dropdown-item-vendor">Updated Password</a></li>
-              <li><a href="#logout" className="dropdown-item-vendor">Logout</a></li>
+              <li><a onClick={logout} className="dropdown-item-vendor">Logout</a></li>
             </ul>
           )}
         </div>

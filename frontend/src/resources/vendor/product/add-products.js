@@ -20,6 +20,7 @@ import {
   Form,
   Image,
 } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import "../style/add-products.css";
 
@@ -37,7 +38,7 @@ function AddProduct() {
   const [entries, setEntries] = useState(10);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
-
+  const navigate = useNavigate();
   const totalProducts = 100; // Example total product count
   const totalPages = Math.ceil(totalProducts / entries);
   const [selectedFilesCount, setSelectedFilesCount] = useState(0);
@@ -116,7 +117,7 @@ function AddProduct() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const vendorInfo = JSON.parse(localStorage.getItem("user-info")); //  get vendor info
+    const vendorInfo = JSON.parse(localStorage.getItem("vendor-info")); //  get vendor info
     const vendor_id = vendorInfo?.vendor_id;
 
     if (!vendor_id) {
@@ -242,7 +243,7 @@ function AddProduct() {
   useEffect(() => {
     async function listProductDetail() {
       try {
-        const storedUser = JSON.parse(localStorage.getItem("user-info"));
+        const storedUser = JSON.parse(localStorage.getItem("vendor-info"));
         const vendorId = storedUser?.vendor_id;
 
         let response = await fetch(`http://localhost:8000/api/vendor/productlist`, {
@@ -304,7 +305,7 @@ function AddProduct() {
   const handleEditProduct = async (e) => {
     e.preventDefault();
   
-    const vendorInfo = JSON.parse(localStorage.getItem("user-info"));
+    const vendorInfo = JSON.parse(localStorage.getItem("vendor-info"));
     const vendor_id = vendorInfo?.vendor_id;
   
     if (!vendor_id) {
@@ -378,6 +379,22 @@ function AddProduct() {
     }
   };
 
+  function logout() {
+    localStorage.clear();
+    toast.success("Logout Successful!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    setTimeout(() => {
+      navigate("/vendor/login");
+    }, 1000); // Delay the navigation for 3 seconds
+  }
+  
+  
   return (
     <div className="dashboard-wrapper">
       <button className="hamburger-btn" onClick={toggleSidebar}>
@@ -440,7 +457,7 @@ function AddProduct() {
           {openDropdown === "profile" && (
             <ul className="dropdown-menu custom-dropdown-menu">
               <li><a href="/vendor/manage-profile" className="dropdown-item-vendor">Updated Password</a></li>
-              <li><a href="#logout" className="dropdown-item-vendor">Logout</a></li>
+              <li><a onClick={logout} className="dropdown-item-vendor">Logout</a></li>
             </ul>
           )}
         </div>

@@ -13,7 +13,7 @@ const LoginVendro = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userInfo = localStorage.getItem("user-info");
+    const userInfo = localStorage.getItem("vendor-info");
     if (userInfo) {
       const user = JSON.parse(userInfo);
       console.warn("User",user.vendro_role_id);
@@ -76,18 +76,18 @@ const LoginVendro = () => {
           pauseOnHover: true,
           draggable: true,
         });
-
-        localStorage.setItem("user-info", JSON.stringify(result.storeData));
+        localStorage.clear();
+        localStorage.setItem("vendor-info", JSON.stringify(result.storeData));
 
         setTimeout(() => {
           if(result.storeData.status === "Pending"){
-            navigate("/underreview/");
+            navigate("/vendor/underreview/");
           }else if(result.storeData.status === "Verified"){
             navigate("/vendor/");
           }else if(result.storeData.status === "Rejected"){
-            navigate("/vendor-info/");
+            navigate("/vendor/vendor-info/");
           }else if(result.storeData.status === "Suspended"){
-            navigate("/suspend/");
+            navigate("/vendor/suspend/");
           }    
         }, 1000);
       } else {

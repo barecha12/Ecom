@@ -22,8 +22,8 @@ import Notification from "./resources/user/notification"
 
 import AdminDashboard from "./resources/admin/dashboard"
 import SAdminDashboard from "./resources/superadmin/dashboard"
-import CategoryForm from "./resources/superadmin/catalog/add-categories"
-
+import AddCategory from "./resources/superadmin/catalog/add-categories"
+import AddSubCategory from "./resources/superadmin/catalog/add-subcategories"
 
 import VendorDashboard from "./resources/vendor/dashboard"
 import LoginVendor from "./resources/vendor/login"
@@ -36,7 +36,7 @@ import UserMessages from "./resources/vendor/message/user-messages"
 import AdminMessages from "./resources/vendor/message/admin-messages"
 import Notifications from "./resources/vendor/message/notifications"
 import ReviewMessages from "./resources/vendor/message/review-messages"
-
+import ProtectPathVendor from "./resources/vendor/protectpath"
 
 import VendorInfo from "./resources/vendor/vendor-info"
 
@@ -47,11 +47,15 @@ import VendorInfo from "./resources/vendor/vendor-info"
 
 
 
-import TestOne  from "./resources/admin/testone"
+import TestOne  from "./resources/superadmin/testone"
+
 
 
 import ListUsers from "./resources/admin/user/list-users"
 import UserMessagesAdmin from "./resources/admin/user/user-messages"
+import AddBanner from "./resources/admin/banner/add-banner"
+import UpdatePassword from "./resources/admin/setting/update-password"
+
 
 import NewVendors from "./resources/admin/vendor/new-vendors"
 import ListVendor from "./resources/admin/vendor/list-vendors"
@@ -59,10 +63,7 @@ import ManageProducts from "./resources/admin/vendor/manage-products"
 import ManageOrders from "./resources/admin/vendor/manage-orders"
 import VendorMessages from "./resources/admin/vendor/vendor-messages"
 import ApprovePayouts from "./resources/admin/vendor/approve-payout"
-
-import AddBanner from "./resources/admin/banner/add-banner"
-
-import UpdatePassword from "./resources/admin/setting/update-password"
+import ProtectPathAdmin from "./resources/admin/protectpath"
 
 
 import AddProduct from "./resources/vendor/product/add-products"
@@ -74,9 +75,9 @@ import CompletedOrders from "./resources/vendor/order/completed"
 import Refunds from "./resources/vendor/order/refunds"
 import Shipped from "./resources/vendor/order/shipped"
 
-
-
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+
 function App() {
   return (
     <div className="App">
@@ -84,52 +85,55 @@ function App() {
         <Routes>
 
           <Route path="/superadmin/dashboard" element={<SAdminDashboard />} />
-          <Route path="/superadmin/addcategory" element={<CategoryForm />} />
+          <Route path="/superadmin/add-category" element={<AddCategory />} />
+          <Route path="/superadmin/add-subcategory" element={<AddSubCategory />} />
           <Route path="/superadmin/login" element={<LoginAdmin />} />
           <Route path="/superadmin" element={<SAdminDashboard />} />
+
+
 
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/login" element={<LoginAdmin />} />
 
          
-          <Route path="/admin/list-users" element={<ListUsers />} />
-          <Route path="/admin/user-messages" element={<UserMessagesAdmin />} />
-          <Route path="/admin/new-Vendors" element={<NewVendors />} />
-          <Route path="/admin/list-vendors" element={<ListVendor />} />
-          <Route path="/admin/manage-products" element={<ManageProducts />} />
-          <Route path="/admin/manage-orders" element={<ManageOrders />} />
-          <Route path="/admin/approve-payout" element={<ApprovePayouts />} />
-          <Route path="/admin/vendor-messages" element={<VendorMessages />} />
+          <Route path="/admin/list-users" element={<ProtectPathAdmin Cmp={ListUsers} />}/>
+          <Route path="/admin/user-messages" element={<ProtectPathAdmin Cmp={UserMessagesAdmin} />} />
+          <Route path="/admin/new-Vendors" element={<ProtectPathAdmin Cmp={NewVendors} />} />
+          <Route path="/admin/list-vendors" element={<ProtectPathAdmin Cmp={ListVendor} />} />
+          <Route path="/admin/manage-products" element={<ProtectPathAdmin Cmp={ManageProducts} />}/>
+          <Route path="/admin/manage-orders" element={<ProtectPathAdmin Cmp={ManageOrders} />} />
+          <Route path="/admin/approve-payout" element={<ProtectPathAdmin Cmp={ApprovePayouts} />} />
+          <Route path="/admin/vendor-messages" element={<ProtectPathAdmin Cmp={VendorMessages} />} />
 
-          <Route path="/admin/banners" element={<AddBanner />} />
-          <Route path="/admin/manage-password" element={<UpdatePassword />} />
+          <Route path="/admin/banners" element={<ProtectPathAdmin Cmp={AddBanner} />} />
+          <Route path="/admin/manage-password" element={<ProtectPathAdmin Cmp={UpdatePassword} />}  />
 
-          <Route path="/admin/testone" element={<TestOne  />} />
+          <Route path="/superadmin/testone" element={<TestOne  />} />
 
 
-          <Route path="/vendor/dashboard" element={<VendorDashboard />} />
-          <Route path="/vendor" element={<VendorDashboard />} />
+          <Route path="/vendor/dashboard" element={<ProtectPathVendor Cmp={VendorDashboard} />} />
+          <Route path="/vendor" element={<ProtectPathVendor Cmp={VendorDashboard} />}  />
           <Route path="/vendor/login" element={<LoginVendor />} />
           <Route path="/vendor/register" element={<RegisterVendor />} />
           <Route path="/vendor/reset" element={<RestePassword />} />
 
-          <Route path="/vendor/manage-profile" element={<ManageProfile />} />
+          <Route path="/vendor/manage-profile" element={<ProtectPathVendor Cmp={ManageProfile} />}  />
 
-          <Route path="/vendor/user-messages" element={<UserMessages />} />
-          <Route path="/vendor/admin-messages" element={<AdminMessages />} />
-          <Route path="/vendor/notifications" element={<Notifications />} />
-          <Route path="/vendor/review-messages" element={<ReviewMessages />} />
-          <Route path="/vendor/add-products" element={<AddProduct />} />
-          <Route path="/vendor/add-coupons" element={<AddCoupons />} />
+          <Route path="/vendor/user-messages" element={<ProtectPathVendor Cmp={UserMessages} />}  />
+          <Route path="/vendor/admin-messages" element={<ProtectPathVendor Cmp={AdminMessages} />}  />
+          <Route path="/vendor/notifications" element={<ProtectPathVendor Cmp={Notifications} />} />
+          <Route path="/vendor/review-messages" element={<ProtectPathVendor Cmp={ReviewMessages} />} />
+          <Route path="/vendor/add-products" element={<ProtectPathVendor Cmp={AddProduct} />} />
+          <Route path="/vendor/add-coupons" element={<ProtectPathVendor Cmp={AddCoupons} />} />
 
-          <Route path="/vendor/new-orders" element={<ControlOrder />} />
-          <Route path="/vendor/shipped" element={<Shipped />} />
-          <Route path="/vendor/refunds" element={<Refunds />} />
-          <Route path="/vendor/completed" element={<CompletedOrders />} />
+          <Route path="/vendor/new-orders" element={<ProtectPathVendor Cmp={ControlOrder} />} />
+          <Route path="/vendor/shipped" element={<ProtectPathVendor Cmp={Shipped} />} />
+          <Route path="/vendor/refunds" element={<ProtectPathVendor Cmp={Refunds} />} />
+          <Route path="/vendor/completed" element={<ProtectPathVendor Cmp={CompletedOrders} />}/>
 
 
-          <Route path="/vendor/vendor-info" element={<VendorInfo />} />
+          <Route path="/vendor/vendor-info" element={<ProtectPathVendor Cmp={VendorInfo} />} />
 
 
           <Route path="/" element={<Home />} />

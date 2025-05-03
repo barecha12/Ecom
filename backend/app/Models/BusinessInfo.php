@@ -20,19 +20,17 @@ class businessInfo extends Model
         'business_name',
         'business_address',
         'business_city',
-        'business_region',
+        'business_state',
         'business_phone',
-        'blicess_number',
+        'blicense_number',
         'address_proof_img',
         'other_img_one',
         'other_img_two',
         'other_img_three',
         'other_img_four',
         'other_img_five',
-        'status',
-        'time_stamp',
-        'personal_id',
-        'admin_id'
+        'vendor_id',
+        'verified_by'
     ];
 
     public $timestamps = false;

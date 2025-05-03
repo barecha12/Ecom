@@ -1,19 +1,7 @@
-import React, { useState } from "react";
-import {
-  FaBars,
-  FaChartLine,
-  FaStore,
-  FaUsers,
-  FaUser,
-} from "react-icons/fa";
-import {
-  Row,
-  Col,
-  Button,
-  Form,
-  Modal,
-} from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { FaBars, FaChartLine, FaStore, FaUsers, FaUser } from "react-icons/fa";
+import { Row, Col, Button, Form, Modal } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "../style/list-user.css";
 
@@ -26,6 +14,7 @@ function ListUsers() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [userStatus, setUserStatus] = useState("Active");
+  const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
   const toggleSidebar = () => setSidebarVisible(!sidebarVisible);
@@ -34,88 +23,65 @@ function ListUsers() {
     setEntries(newEntries);
     setCurrentPage(1);
   };
+
   const handlePrevious = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
+
   const handleNext = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
-  const users = [
-    { id: 1, name: "John Doe", email: "john@example.com", status: "Active" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", status: "Inactive" },
-    { id: 3, name: "Alice Johnson", email: "alice@example.com", status: "Active" },
-    { id: 4, name: "Bob Brown", email: "bob@example.com", status: "Inactive" },
-    // Add more users as needed
-  ];
+  const logout = () => {
+    localStorage.clear();
+    toast.success("Logout Successful!", { position: "top-right", autoClose: 3000 });
+    setTimeout(() => navigate("/admin/login"), 1000);
+  };
 
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/admin/listusers");
+      const data = await response.json();
+      setUsers(data.users);
+    } catch {
+      toast.error("Failed to fetch users.");
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const changeUserStatus = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/admin/changeuserstatus", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: selectedUserId, status: userStatus }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        toast.success("User status updated successfully!");
+        setShowEditModal(false);
+        fetchUsers();
+      } else {
+        toast.error("Failed to update status.");
+      }
+    } catch {
+      toast.error("An error occurred. Please try again.");
+    }
+  };
+
+  // Filtering + Pagination
   const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    user.email.toLowerCase().startsWith(searchQuery.toLowerCase())
   );
+  
   const totalPages = Math.ceil(filteredUsers.length / entries);
   const indexOfLastUser = currentPage * entries;
   const indexOfFirstUser = indexOfLastUser - entries;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-
-  const changeUserStatus = async () => {
-    const payload = {
-      userId: selectedUserId,
-      status: userStatus,
-    };
-
-    try {
-      console.warn("Payload:", payload); // Log the payload for debugging
-      let response = await fetch("http://localhost:8000/api/userstatuschange", {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: {
-          "Content-Type": 'application/json',
-          "Accept": 'application/json',
-        },
-      });
-
-      let result = await response.json();
-      if (result.success) {
-        toast.success("User status updated successfully!", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-        setShowEditModal(false); // Close the modal after successful update
-      } else {
-        toast.error("Failed to update status. Please try again.", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-      }
-    } catch (error) {
-      toast.error('An error occurred. Please try again later.');
-    }
-  };
-
-
-    function logout() {
-      localStorage.clear();
-      toast.success("Logout Successful!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      setTimeout(() => {
-        navigate("/admin/login");
-      }, 1000); // Delay the navigation for 3 seconds
-    }
-
 
   return (
     <div className="dashboard-wrapper">
@@ -128,7 +94,7 @@ function ListUsers() {
           <h2 className="text-center admin-custom-css flex-grow-1 mt-2 ms-4">Admin Dashboard</h2>
         </div>
 
-        <a href="#analytics" className="admin-custom-link">
+        <a href="/admin/" className="admin-custom-link">
           <FaChartLine className="me-2" /> Dashboard
         </a>
 
@@ -150,7 +116,7 @@ function ListUsers() {
           </div>
           {openDropdown === "orders" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
-               <li><a href="/admin/new-vendors" className="dropdown-item-admin">New Vendors</a></li>
+              <li><a href="/admin/new-vendors" className="dropdown-item-admin">New Vendors</a></li>
               <li><a href="/admin/list-vendors" className="dropdown-item-admin">List of Vendors</a></li>
               <li><a href="/admin/manage-products" className="dropdown-item-admin">Manage Products</a></li>
               <li><a href="/admin/manage-orders" className="dropdown-item-admin">Manage Orders</a></li>
@@ -187,10 +153,9 @@ function ListUsers() {
                 onChange={(e) => handleEntriesChange(Number(e.target.value))}
                 style={{ width: '100px' }}
               >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
+                {[10, 25, 50, 100].map((num) => (
+                  <option key={num} value={num}>{num}</option>
+                ))}
               </Form.Select>
               <label className="ms-2">Entries</label>
             </Col>
@@ -203,7 +168,7 @@ function ListUsers() {
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  setCurrentPage(1);
+                  setCurrentPage(1); // reset to first page on search
                 }}
                 style={{ width: '150px' }}
               />
@@ -217,7 +182,7 @@ function ListUsers() {
               {currentUsers.length > 0 ? (
                 currentUsers.map((user) => (
                   <div
-                    key={user.id}
+                    key={user.user_id}
                     style={{
                       display: 'flex',
                       justifyContent: 'space-between',
@@ -245,11 +210,17 @@ function ListUsers() {
                       >
                         {user.status}
                       </span>
-                      <Button variant="primary" size="sm" onClick={() => {
-                        setSelectedUserId(user.id);
-                        setUserStatus(user.status);
-                        setShowEditModal(true);
-                      }}>Edit</Button>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedUserId(user.user_id);
+                          setUserStatus(user.status);
+                          setShowEditModal(true);
+                        }}
+                      >
+                        Edit
+                      </Button>
                     </div>
                   </div>
                 ))
@@ -258,7 +229,7 @@ function ListUsers() {
               )}
             </div>
 
-            {/* Pagination Controls */}
+            {/* Pagination */}
             <div
               style={{
                 position: 'absolute',
@@ -278,7 +249,7 @@ function ListUsers() {
                 Previous
               </Button>
               <div>
-                Page {currentPage} of {totalPages}
+                Page {currentPage} of {totalPages || 1}
               </div>
               <Button variant="secondary" onClick={handleNext} disabled={currentPage === totalPages || totalPages === 0}>
                 Next
@@ -288,21 +259,23 @@ function ListUsers() {
         </div>
       </div>
 
-      {/* Edit User Status Modal */}
+      {/* Edit Status Modal */}
       <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Edit User Status</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group controlId="userStatus">
-              <Form.Label>Select Status</Form.Label>
-              <Form.Control as="select" value={userStatus} onChange={(e) => setUserStatus(e.target.value)}>
-                <option value="Active">Active</option>
-                <option value="Suspended">Suspended</option>
-              </Form.Control>
-            </Form.Group>
-          </Form>
+          <Form.Group controlId="userStatus">
+            <Form.Label>Select Status</Form.Label>
+            <Form.Control
+              as="select"
+              value={userStatus}
+              onChange={(e) => setUserStatus(e.target.value)}
+            >
+              <option value="Active">Active</option>
+              <option value="Suspended">Suspended</option>
+            </Form.Control>
+          </Form.Group>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowEditModal(false)}>
