@@ -45,7 +45,7 @@ Route::post('/vendor/orderlist/', [VendorController::class, 'orderlist']);//done
 Route::post('/vendor/updatepassword/', [VendorController::class, 'updatepassword']);//done
 Route::delete('/vendor/delete-product', [VendorController::class, 'deleteProduct']);//done
 Route::post('/vendor/update-order-status', [VendorController::class, 'updateorderstatus']);//done
-
+Route::get('/vendor/get-categories', [AdminController::class, 'getCategories']);//done
 Route::post('/get-subcategories-by-category/{category_id}', [VendorController::class, 'categoryandsubcategory']);//done
 
 Route::post('/vendor/editproduct', [VendorController::class, 'editproduct']);//one
@@ -80,6 +80,7 @@ Route::post('/vendor/vendorstatus', [VendorController::class, 'vendorstatus']);
 
 Route::post('add-categories', [AdminController::class, 'addCategories']);
 Route::post('/get-categories', [AdminController::class, 'getCategories']);//done
+
 Route::post('/delete-category', [AdminController::class, 'deleteCategory']);//done
 Route::post('/edit-category', [AdminController::class, 'editCategory']);//done
 

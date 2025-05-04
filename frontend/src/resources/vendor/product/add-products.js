@@ -65,7 +65,7 @@ function AddProduct() {
 
   // Load categories
   useEffect(() => {
-    fetch("http://localhost:8000/api/get-categories")
+    fetch("http://localhost:8000/api/vendor/get-categories")
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch((err) => console.error("Error loading categories:", err));
