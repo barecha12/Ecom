@@ -28,6 +28,8 @@ import SAdminListUsers from "./resources/superadmin/user/list-users"
 import SAdminListVendor from "./resources/superadmin/vendor/list-vendors"
 import SAdminNewVendors from "./resources/superadmin/vendor/new-vendors"
 import SAdminListAdmins from "./resources/superadmin/admin/list-admins"
+import ProtectPathSAdmin from "./resources/superadmin/protectpath"
+
 
 import VendorDashboard from "./resources/vendor/dashboard"
 import LoginVendor from "./resources/vendor/login"
@@ -88,16 +90,16 @@ function App() {
       <BrowserRouter>
         <Routes>
 
-          <Route path="/superadmin/dashboard" element={<SAdminDashboard />} />
+          <Route path="/superadmin/dashboard" element={<ProtectPathSAdmin Cmp={SAdminDashboard} />} />
           <Route path="/superadmin/add-category" element={<AddCategory />} />
           <Route path="/superadmin/add-subcategory" element={<AddSubCategory />} />
           <Route path="/superadmin/login" element={<LoginAdmin />} />
-          <Route path="/superadmin" element={<SAdminDashboard />} />
+          <Route path="/superadmin" element={<ProtectPathSAdmin Cmp={SAdminDashboard} />} />
           
-          <Route path="/superadmin/list-users" element={<ProtectPathAdmin Cmp={SAdminListUsers} />}/>
-          <Route path="/superadmin/new-Vendors" element={<ProtectPathAdmin Cmp={SAdminNewVendors} />} />
-          <Route path="/superadmin/list-vendors" element={<ProtectPathAdmin Cmp={SAdminListVendor} />} />
-          <Route path="/superadmin/list-admins" element={<ProtectPathAdmin Cmp={SAdminListAdmins} />} />
+          <Route path="/superadmin/list-users" element={<ProtectPathSAdmin Cmp={SAdminListUsers} />}/>
+          <Route path="/superadmin/new-Vendors" element={<ProtectPathSAdmin Cmp={SAdminNewVendors} />} />
+          <Route path="/superadmin/list-vendors" element={<ProtectPathSAdmin Cmp={SAdminListVendor} />} />
+          <Route path="/superadmin/list-admins" element={<ProtectPathSAdmin Cmp={SAdminListAdmins} />} />
 
           <Route path="/admin/dashboard" element={<ProtectPathAdmin Cmp={AdminDashboard} />}  />
           <Route path="/admin" element={<ProtectPathAdmin Cmp={AdminDashboard} />}  />

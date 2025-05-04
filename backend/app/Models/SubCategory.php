@@ -11,7 +11,8 @@ class SubCategory extends Model
 
     // Define the table name (optional if it's the plural form of the model name)
     protected $table = 'sub_category';
-
+    protected $primaryKey = 'sub_category_id';
+    
     // Specify which columns are fillable
     protected $fillable = ['sub_category_name', 'category_id', 'admin_id'];
 

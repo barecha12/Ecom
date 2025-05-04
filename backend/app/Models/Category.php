@@ -11,7 +11,8 @@ class Category extends Model
 
     // Define the table name (optional if it's the plural form of the model name)
     protected $table = 'category';
-
+    protected $primaryKey = 'category_id';
+    
     // Specify which columns are fillable
     protected $fillable = ['category_name', 'admin_id'];
 

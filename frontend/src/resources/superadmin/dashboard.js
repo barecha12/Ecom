@@ -13,40 +13,12 @@ function SAdminDashboard() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [subcategoryToEdit, setSubcategoryToEdit] = useState(null);
   const [subcategoryToDelete, setSubcategoryToDelete] = useState(null);
-
-  const categories = ["Electronics", "Furniture", "Clothing"];
   const [subcategories, setSubcategories] = useState([]);
-
   const toggleSidebar = () => setSidebarVisible(!sidebarVisible);
   const handleDropdown = (menu) => setOpenDropdown(openDropdown === menu ? null : menu);
 
-  const handleAddSubcategory = () => {
-    if (subcategoryName.trim() && selectedCategory) {
-      setSubcategories([...subcategories, { name: subcategoryName.trim(), category: selectedCategory }]);
-      setSubcategoryName("");
-      setSelectedCategory("");
-      setShowAddSubcategoryModal(false);
-    }
-  };
-
-  const handleDeleteSubcategory = () => {
-    setSubcategories(subcategories.filter((_, i) => i !== subcategoryToDelete));
-    setShowConfirmDeleteModal(false);
-    setSubcategoryToDelete(null);
-  };
-
-  const handleEditSubcategory = () => {
-    if (subcategoryToEdit !== null && subcategoryName.trim() && selectedCategory) {
-      const updated = [...subcategories];
-      updated[subcategoryToEdit] = { name: subcategoryName.trim(), category: selectedCategory };
-      setSubcategories(updated);
-      setShowEditSubcategoryModal(false);
-      setSubcategoryName("");
-      setSelectedCategory("");
-      setSubcategoryToEdit(null);
-    }
-  };
-
+  
+  
   return (
     <div className="admin-dashboard-wrapper">
       <button className="admin-hamburger-btn" onClick={toggleSidebar}>

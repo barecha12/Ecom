@@ -51,10 +51,6 @@ Route::post('/get-subcategories-by-category/{category_id}', [VendorController::c
 Route::post('/vendor/editproduct', [VendorController::class, 'editproduct']);//one
 
 
-Route::get('/get-categories', [VendorController::class, 'getCategories']);//done
-
-
-
 Route::post('/vendor/vendorinfo',[VendorController::class,'vendorinfo']);
 
 
@@ -75,10 +71,21 @@ Route::post('/admin/login', [AdminController::class, 'loginadmin']);//done
 Route::get('/admin/listusers', [AdminController::class, 'listusers']);//done
 Route::post('/admin/changeuserstatus', [AdminController::class, 'changeuserstatus']);//done
 
-Route::get('/admin/listvendors', [AdminController::class, 'listvendors']);
-Route::post('/admin/changevendorstatus', [AdminController::class, 'changevendorstatus']);
-Route::post('/admin/updatepassword', [AdminController::class, 'updatepassword']);
-Route::post('/admin/newvendorrequest', [AdminController::class, 'newvendorrequest']);
-Route::post('/admin/listnewvendors', [AdminController::class, 'listnewvendors']);
+Route::get('/admin/listvendors', [AdminController::class, 'listvendors']);//done
+Route::post('/admin/changevendorstatus', [AdminController::class, 'changevendorstatus']);//done
+Route::post('/admin/updatepassword', [AdminController::class, 'updatepassword']);//done
+Route::post('/admin/newvendorrequest', [AdminController::class, 'newvendorrequest']);//done
+Route::post('/admin/listnewvendors', [AdminController::class, 'listnewvendors']);//done
+Route::post('/vendor/vendorstatus', [VendorController::class, 'vendorstatus']);
 
+Route::post('add-categories', [AdminController::class, 'addCategories']);
+Route::post('/get-categories', [AdminController::class, 'getCategories']);//done
+Route::post('/delete-category', [AdminController::class, 'deleteCategory']);//done
+Route::post('/edit-category', [AdminController::class, 'editCategory']);//done
 
+Route::post('/add-subcategories', [AdminController::class, 'addSubCategories']);
+Route::post('/get-subcategories', [AdminController::class, 'getSubCategories']);//done
+Route::post('/delete-subcategory', [AdminController::class, 'deleteSubCategory']);//done
+Route::post('/edit-subcategory', [AdminController::class, 'editSubCategory']);//done
+
+Route::post('/superadmin/addadmins', [AdminController::class, 'addAdmins']);

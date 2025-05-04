@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaBars, FaChartLine, FaStore, FaThList, FaUsers, FaUser, FaUserShield, FaTools, FaEdit, FaTrash, } from "react-icons/fa";
-import { Button, Modal, Form, ListGroup, } from "react-bootstrap";
+import { Button, Modal, Form, ListGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "../style/add-subcategory.css";
@@ -13,36 +13,163 @@ function AddSubCategory() {
   const [showEditSubcategoryModal, setShowEditSubcategoryModal] = useState(false);
   const [subcategoryName, setSubcategoryName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [subcategories, setSubcategories] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [subcategoryToEdit, setSubcategoryToEdit] = useState(null);
   const [subcategoryToDelete, setSubcategoryToDelete] = useState(null);
   const navigate = useNavigate();
 
-  const categories = ["Electronics", "Furniture", "Clothing"];
-  const [subcategories, setSubcategories] = useState([]);
+  useEffect(() => {
+    fetchCategories();
+    fetchSubcategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const adminInfo = localStorage.getItem('admin-info');
+      const parsedInfo = JSON.parse(adminInfo);
+      const admin_id = parsedInfo.admin_id;
+
+      const response = await fetch('http://localhost:8000/api/get-categories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          admin_id: admin_id,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch categories");
+      const data = await response.json();
+      setCategories(data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      toast.error("Error fetching categories");
+    }
+  };
+
+
+  const fetchSubcategories = async () => {
+    try {
+      const adminInfo = localStorage.getItem('admin-info');
+
+      const parsedInfo = JSON.parse(adminInfo);
+      const admin_id = parsedInfo.admin_id;
+
+      const response = await fetch('http://localhost:8000/api/get-subcategories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          admin_id: admin_id,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch subcategories");
+      const data = await response.json();
+      setSubcategories(data);
+    } catch (error) {
+      console.error("Error fetching subcategories:", error);
+      toast.error("Error fetching subcategories");
+    }
+  };
+
 
   const toggleSidebar = () => setSidebarVisible(!sidebarVisible);
   const handleDropdown = (menu) => setOpenDropdown(openDropdown === menu ? null : menu);
 
-  const handleAddSubcategory = () => {
+  const handleAddSubcategory = async () => {
     if (subcategoryName.trim() && selectedCategory) {
-      setSubcategories([...subcategories, { name: subcategoryName.trim(), category: selectedCategory }]);
+      const adminInfo = localStorage.getItem('admin-info');
+      const parsedInfo = JSON.parse(adminInfo);
+      const admin_id = parsedInfo.admin_id;
+
+      const newSubcategory = {
+        admin_id,
+        sub_category_name: subcategoryName.trim(),
+        category_id: selectedCategory,
+      };
+
+      try {
+        const response = await fetch('http://localhost:8000/api/add-subcategories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newSubcategory),
+        });
+        const result = await response.json();
+        if (result.success) {
+          // Fetch updated subcategories after adding
+          await fetchSubcategories();
+          toast.success(result.message);
+        } else {
+          toast.error(result.message);
+        }
+      } catch (error) {
+        console.error("Error adding subcategory:", error);
+        toast.error("Error adding subcategory");
+      }
+
       setSubcategoryName("");
       setSelectedCategory("");
       setShowAddSubcategoryModal(false);
+    } else {
+      toast.error("Please fill in all fields");
     }
   };
 
-  const handleDeleteSubcategory = () => {
-    setSubcategories(subcategories.filter((_, i) => i !== subcategoryToDelete));
+
+  const handleDeleteSubcategory = async () => {
+    if (subcategoryToDelete === null) return;
+    try {
+      const response = await fetch('http://localhost:8000/api/delete-subcategory', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sub_category_id: subcategoryToDelete }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        // Remove the subcategory with matching ID
+        setSubcategories(subcategories.filter((s) => s.sub_category_id !== subcategoryToDelete));
+        toast.success("Subcategory deleted successfully");
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error deleting subcategory:", error);
+      toast.error("Error deleting subcategory");
+    }
     setShowConfirmDeleteModal(false);
     setSubcategoryToDelete(null);
   };
 
-  const handleEditSubcategory = () => {
+
+  const handleEditSubcategory = async () => {
     if (subcategoryToEdit !== null && subcategoryName.trim() && selectedCategory) {
-      const updated = [...subcategories];
-      updated[subcategoryToEdit] = { name: subcategoryName.trim(), category: selectedCategory };
-      setSubcategories(updated);
+      const updatedSubcategory = {
+        sub_category_id: subcategoryToEdit,
+        sub_category_name: subcategoryName.trim(),
+        category_id: selectedCategory,
+      };
+      try {
+        const response = await fetch('http://localhost:8000/api/edit-subcategory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedSubcategory),
+        });
+        const result = await response.json();
+        if (result.success) {
+          // Fetch updated subcategories after editing
+          await fetchSubcategories();
+          toast.success("Subcategory updated successfully");
+        } else {
+          toast.error(result.message);
+        }
+      } catch (error) {
+        console.error("Error editing subcategory:", error);
+        toast.error("Error editing subcategory");
+      }
       setShowEditSubcategoryModal(false);
       setSubcategoryName("");
       setSelectedCategory("");
@@ -51,8 +178,7 @@ function AddSubCategory() {
   };
 
 
-
-  function logout() {
+  const logout = () => {
     localStorage.clear();
     toast.success("Logout Successful!", {
       position: "top-right",
@@ -65,7 +191,7 @@ function AddSubCategory() {
     setTimeout(() => {
       navigate("/admin/login");
     }, 1000);
-  }
+  };
 
   return (
     <div className="admin-dashboard-wrapper">
@@ -75,7 +201,7 @@ function AddSubCategory() {
 
       <div className={`admin-custom-sidebar ${sidebarVisible ? "show" : "hide"}`}>
         <div className="d-flex align-items-center mb-3">
-          <h2 className="text-center admin-custom-css flex-grow-1 mt-2 ms-4">Admin Dashboard</h2>
+          <h2 className="text-center admin-custom-css flex-grow-1 mt-2 ms-4">SAdmin Dashboard</h2>
         </div>
 
         <a href="/superadmin/dashboard" className="admin-custom-link">
@@ -152,7 +278,7 @@ function AddSubCategory() {
           {openDropdown === "profile" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
               <li><a href="/superadmin/manage-profile" className="dropdown-item-admin">Manage Profile</a></li>
-              <li><a onClick={logout} className="dropdown-item-admin">Logout</a></li>
+              <li><a href="/superadmin/login" className="dropdown-item-admin">Logout</a></li>
             </ul>
           )}
         </div>
@@ -188,8 +314,8 @@ function AddSubCategory() {
                     onChange={(e) => setSelectedCategory(e.target.value)}
                   >
                     <option value="">Select a category</option>
-                    {categories.map((cat, i) => (
-                      <option key={i} value={cat}>{cat}</option>
+                    {categories.map((cat) => (
+                      <option key={cat.category_id} value={cat.category_id}>{cat.category_name}</option>
                     ))}
                   </Form.Control>
                 </Form.Group>
@@ -225,8 +351,8 @@ function AddSubCategory() {
                     onChange={(e) => setSelectedCategory(e.target.value)}
                   >
                     <option value="">Select a category</option>
-                    {categories.map((cat, i) => (
-                      <option key={i} value={cat}>{cat}</option>
+                    {categories.map((cat) => (
+                      <option key={cat.category_id} value={cat.category_id}>{cat.category_name}</option>
                     ))}
                   </Form.Control>
                 </Form.Group>
@@ -263,18 +389,18 @@ function AddSubCategory() {
           <div className="category-list mt-4">
             <h3>Subcategories</h3>
             <ListGroup>
-              {subcategories.map((sub, i) => (
-                <ListGroup.Item key={i}>
+              {subcategories.map((sub) => (
+                <ListGroup.Item key={sub.sub_category_id}>
                   <div>
-                    <strong>{sub.name}</strong> <small className="text-muted">({sub.category})</small>
+                    <strong>{sub.sub_category_name}</strong> <small className="text-muted">({sub.category_name})</small>
                   </div>
                   <div className="action-buttons">
                     <Button
                       variant="link"
                       onClick={() => {
-                        setSubcategoryToEdit(i);
-                        setSubcategoryName(sub.name);
-                        setSelectedCategory(sub.category);
+                        setSubcategoryToEdit(sub.sub_category_id);
+                        setSubcategoryName(sub.sub_category_name);
+                        setSelectedCategory(sub.category_id);
                         setShowEditSubcategoryModal(true);
                       }}
                     >
@@ -283,7 +409,7 @@ function AddSubCategory() {
                     <Button
                       variant="link"
                       onClick={() => {
-                        setSubcategoryToDelete(i);
+                        setSubcategoryToDelete(sub.sub_category_id);
                         setShowConfirmDeleteModal(true);
                       }}
                     >

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { FaBars, FaChartLine, FaStore, FaThList, FaUsers, FaUser, FaUserShield, FaTools, FaEdit, FaTrash, } from "react-icons/fa";
+import {
+  FaBars, FaChartLine, FaStore, FaThList, FaUsers, FaUser, FaUserShield, FaTools,
+} from "react-icons/fa";
 import { Row, Col, Button, Form, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { toast,ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "../style/list-admin.css";
 
 function SAdminListAdmins() {
@@ -12,23 +14,24 @@ function SAdminListAdmins() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [userStatus, setUserStatus] = useState("Active");
   const [users, setUsers] = useState([]);
+  const [newUser, setNewUser] = useState({ email: '', password: '', name: '', phone: '', image: null });
   const navigate = useNavigate();
 
   const toggleSidebar = () => setSidebarVisible(!sidebarVisible);
   const handleDropdown = (menu) => setOpenDropdown(openDropdown === menu ? null : menu);
+
   const handleEntriesChange = (newEntries) => {
     setEntries(newEntries);
     setCurrentPage(1);
   };
 
-  const handlePrevious = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
+  const handlePrevious = () => { if (currentPage > 1) setCurrentPage(currentPage - 1); };
   const handleNext = () => {
+    const totalPages = Math.ceil(users.length / entries);
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
@@ -48,9 +51,7 @@ function SAdminListAdmins() {
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  useEffect(() => { fetchUsers(); }, []);
 
   const changeUserStatus = async () => {
     try {
@@ -59,7 +60,6 @@ function SAdminListAdmins() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id: selectedUserId, status: userStatus }),
       });
-
       const result = await response.json();
       if (result.success) {
         toast.success("User status updated successfully!");
@@ -73,21 +73,57 @@ function SAdminListAdmins() {
     }
   };
 
-  // Filtering + Pagination
+
+
+
   const filteredUsers = users.filter(user =>
     user.email.toLowerCase().startsWith(searchQuery.toLowerCase())
   );
-  
+
   const totalPages = Math.ceil(filteredUsers.length / entries);
   const indexOfLastUser = currentPage * entries;
   const indexOfFirstUser = indexOfLastUser - entries;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
+
+
+
+  const handleAddUser = async () => {
+    const formData = new FormData();
+    formData.append("email", newUser.email);
+    formData.append("password", newUser.password);
+    formData.append("name", newUser.name);
+    formData.append("phone", newUser.phone);
+    if (newUser.image) formData.append("image", newUser.image);
+
+    try {
+      console.log("Form Data:", formData); // Debugging line
+      const response = await fetch("http://localhost:8000/api/superadmin/addadmins", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success("User added successfully!", { position: "top-right", autoClose: 3000 });
+        setShowAddModal(false);
+        setNewUser({ name: "", email: "", password: "", phone: "", image: null });
+        fetchUsers();
+      } else {
+        toast.error("Failed to add user. Please try again.", { position: "top-right", autoClose: 3000 });
+      }
+    } catch (error) {
+      console.error("Error adding user:", error);
+      toast.error("An error occurred. Please try again later.");
+    }
+  };
+
+
+
   return (
     <div className="dashboard-wrapper">
-      <button className="admin-hamburger-btn" onClick={toggleSidebar}>
-        <FaBars />
-      </button>
+      <button className="admin-hamburger-btn" onClick={toggleSidebar}><FaBars /></button>
 
       <div className={`admin-custom-sidebar ${sidebarVisible ? "show" : "hide"}`}>
         <div className="d-flex align-items-center mb-3">
@@ -168,7 +204,7 @@ function SAdminListAdmins() {
           {openDropdown === "profile" && (
             <ul className="dropdown-menu admin-custom-dropdown-menu">
               <li><a href="/superadmin/manage-profile" className="dropdown-item-admin">Manage Profile</a></li>
-              <li><a onClick={logout} className="dropdown-item-admin">Logout</a></li>
+              <li><a href="/superadmin/login" className="dropdown-item-admin">Logout</a></li>
             </ul>
           )}
         </div>
@@ -186,8 +222,7 @@ function SAdminListAdmins() {
               <Form.Select
                 value={entries}
                 onChange={(e) => handleEntriesChange(Number(e.target.value))}
-                style={{ width: '100px' }}
-              >
+                style={{ width: '100px' }}>
                 {[10, 25, 50, 100].map((num) => (
                   <option key={num} value={num}>{num}</option>
                 ))}
@@ -195,19 +230,19 @@ function SAdminListAdmins() {
               <label className="ms-2">Entries</label>
             </Col>
 
-            <Col xs="auto" className="d-flex align-items-center mt-3 mt-sm-0">
-              <label className="me-2">Search:</label>
+            <Col xs="auto">
               <Form.Control
                 type="text"
                 placeholder="Search"
                 value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setCurrentPage(1); // reset to first page on search
-                }}
-                style={{ width: '150px' }}
+                onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                style={{ width: '180px', textAlign: 'center' }}
               />
             </Col>
+            <Col xs="auto">
+              <Button variant="success" onClick={() => setShowAddModal(true)}>Add User</Button>
+            </Col>
+
           </Row>
         </div>
 
@@ -216,111 +251,78 @@ function SAdminListAdmins() {
             <div style={{ overflowY: 'auto', height: 'calc(100% - 60px)', padding: '1rem' }}>
               {currentUsers.length > 0 ? (
                 currentUsers.map((user) => (
-                  <div
-                    key={user.user_id}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '1rem',
-                      backgroundColor: '#fff',
-                      borderRadius: '8px',
-                      boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-                      marginBottom: '10px'
-                    }}
-                  >
+                  <div key={user.user_id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', marginBottom: '10px' }}>
                     <div>
                       <h5 style={{ margin: 0 }}>{user.name}</h5>
                       <p style={{ margin: 0, color: '#666' }}>{user.email}</p>
                     </div>
                     <div>
-                      <span
-                        style={{
-                          padding: '0.5rem 1rem',
-                          borderRadius: '20px',
-                          backgroundColor: user.status === 'Active' ? '#d4edda' : '#f8d7da',
-                          color: user.status === 'Active' ? '#155724' : '#721c24',
-                          marginRight: '1rem'
-                        }}
-                      >
-                        {user.status}
-                      </span>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedUserId(user.user_id);
-                          setUserStatus(user.status);
-                          setShowEditModal(true);
-                        }}
-                      >
-                        Edit
-                      </Button>
+                      <span style={{ padding: '0.5rem 1rem', borderRadius: '20px', backgroundColor: user.status === 'Active' ? '#d4edda' : '#f8d7da', color: user.status === 'Active' ? '#155724' : '#721c24', marginRight: '1rem' }}>{user.status}</span>
+                      <Button variant="primary" size="sm" onClick={() => { setSelectedUserId(user.user_id); setUserStatus(user.status); setShowEditModal(true); }}>Edit</Button>
                     </div>
                   </div>
                 ))
-              ) : (
-                <p>No users found.</p>
-              )}
+              ) : (<p>No users found.</p>)}
             </div>
-
-            {/* Pagination */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                width: '100%',
-                height: '60px',
-                backgroundColor: '#fff',
-                borderTop: '1px solid #ddd',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '0 1rem'
-              }}
-            >
-              <Button variant="secondary" onClick={handlePrevious} disabled={currentPage === 1}>
-                Previous
-              </Button>
-              <div>
-                Page {currentPage} of {totalPages || 1}
-              </div>
-              <Button variant="secondary" onClick={handleNext} disabled={currentPage === totalPages || totalPages === 0}>
-                Next
-              </Button>
+            <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '60px', backgroundColor: '#fff', borderTop: '1px solid #ddd', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 1rem' }}>
+              <Button variant="secondary" onClick={handlePrevious} disabled={currentPage === 1}>Previous</Button>
+              <div>Page {currentPage} of {totalPages || 1}</div>
+              <Button variant="secondary" onClick={handleNext} disabled={currentPage === totalPages || totalPages === 0}>Next</Button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Edit Status Modal */}
       <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit User Status</Modal.Title>
-        </Modal.Header>
+        <Modal.Header closeButton><Modal.Title>Edit User Status</Modal.Title></Modal.Header>
         <Modal.Body>
           <Form.Group controlId="userStatus">
             <Form.Label>Select Status</Form.Label>
-            <Form.Control
-              as="select"
-              value={userStatus}
-              onChange={(e) => setUserStatus(e.target.value)}
-            >
+            <Form.Control as="select" value={userStatus} onChange={(e) => setUserStatus(e.target.value)}>
               <option value="Active">Active</option>
               <option value="Suspended">Suspended</option>
             </Form.Control>
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowEditModal(false)}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={changeUserStatus}>
-            Save Changes
-          </Button>
+          <Button variant="secondary" onClick={() => setShowEditModal(false)}>Close</Button>
+          <Button variant="primary" onClick={changeUserStatus}>Save Changes</Button>
         </Modal.Footer>
       </Modal>
+
+      <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
+        <Modal.Header closeButton><Modal.Title>Add User</Modal.Title></Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control type="email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Password</Form.Label>
+              <Form.Control type="password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Name</Form.Label>
+              <Form.Control type="text" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Phone Number</Form.Label>
+              <Form.Control type="text" value={newUser.phone} onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Profile Image</Form.Label>
+              <Form.Control type="file" accept="image/*" onChange={(e) => setNewUser({ ...newUser, image: e.target.files[0] })} />
+            </Form.Group>
+
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowAddModal(false)}>Cancel</Button>
+          <Button variant="primary" onClick={handleAddUser}>Add</Button>
+        </Modal.Footer>
+      </Modal>
+
       <ToastContainer />
     </div>
   );

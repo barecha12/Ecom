@@ -451,11 +451,6 @@ public function updateorderstatus(Request $request)
         return response()->json(['message' => 'Failed to update order statussss'], 500);
     }
 
-    public function getCategories()
-    {
-        $categories = Category::all();  // Fetch all categories
-        return response()->json($categories);
-    }
     
     public function categoryandsubcategory($category_id)
     {

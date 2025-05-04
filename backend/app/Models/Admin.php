@@ -17,6 +17,7 @@ class Admin extends Authenticatable
     public $timestamps = true; // Laravel handles created_at and updated_at
 
     protected $fillable = [
+        'name',
         'email',
         'password',
         'phone',

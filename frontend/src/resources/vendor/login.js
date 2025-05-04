@@ -13,37 +13,44 @@ const LoginVendro = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userInfo = localStorage.getItem("vendor-info");
-    if (userInfo) {
-      const user = JSON.parse(userInfo);
-      console.warn("User",user.vendro_role_id);
-      if (user.vendor_role_id === "SuperAdmin") {
-        navigate("/superadmin/");
-      } else if (user.vendor_role_id === "Vendor") {
-        //status check
-        if(user.status === "Pending"){
-          navigate("/underreview/");
-        } else if(user.status === "Rejected"){
-          navigate("/vendor-info/");
-        } else if(user.status === "Suspended"){
-          navigate("/suspend/");
-        }else{
-          navigate("/vendor/");
-        }
-
-      } else if (user.vendor_role_id === "Admin") {
-        navigate("/admin/");
+    const vendorInfo = localStorage.getItem("vendor-info");
+    const userInfo = localStorage.getItem("user-info");
+    const adminInfo = localStorage.getItem("admin-info");
+    if (vendorInfo) {
+      const vendor = JSON.parse(vendorInfo);
+      //status check
+      if (vendor.status === "Pending") {
+        navigate("/underreview/");
+      } else if (vendor.status === "Rejected") {
+        navigate("/vendor-info/");
+      } else if(vendor.status === "UnVerified"){
+        navigate("/vendor-info/");
+      }else if (vendor.status === "Suspended") {
+        navigate("/suspend/");
       } else {
-        navigate("/bxone");
+        navigate("/vendor/");
       }
+
     }
+
+    if (userInfo) {
+      navigate("/");
+    }
+    if (adminInfo) {
+      navigate("/admin/");
+    }
+
+
+
+
+
   }, [navigate]);
 
   const login = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
-  
+
       toast.error("Please enter both email and password.", {
         position: "top-right",
         autoClose: 3000,
@@ -80,15 +87,17 @@ const LoginVendro = () => {
         localStorage.setItem("vendor-info", JSON.stringify(result.storeData));
 
         setTimeout(() => {
-          if(result.storeData.status === "Pending"){
+          if (result.storeData.status === "Pending") {
             navigate("/vendor/underreview/");
-          }else if(result.storeData.status === "Verified"){
+          } else if (result.storeData.status === "Verified") {
             navigate("/vendor/");
-          }else if(result.storeData.status === "Rejected"){
+          } else if (result.storeData.status === "Rejected") {
             navigate("/vendor/vendor-info/");
-          }else if(result.storeData.status === "Suspended"){
+          } else if (result.storeData.status === "Suspended") {
             navigate("/vendor/suspend/");
-          }    
+          } else if (result.storeData.status === "UnVerified") {
+            navigate("/vendor/vendor-info/");
+          }
         }, 1000);
       } else {
         toast.error("Login Failed. Please check your credentials.", {

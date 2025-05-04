@@ -7,8 +7,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('admin', function (Blueprint $table) {
+        Schema::create('admins', function (Blueprint $table) {
             $table->increments('admin_id'); // Auto-increment primary key
+            $table->string('name', 100);
             $table->string('email', 100);
             $table->string('password', 100);
             $table->bigInteger('phone'); // Using bigInteger for phone number

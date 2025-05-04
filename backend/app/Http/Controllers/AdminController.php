@@ -11,6 +11,10 @@ use App\Models\Vendor;
 use App\Models\PersonalInfo;
 use App\Models\businessInfo;
 use App\Models\bankInfo;
+use App\Models\Category;
+use App\Models\SubCategory;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
@@ -23,7 +27,7 @@ class AdminController extends Controller
             'email' => 'required|email',
             'password' => 'required|string|min:6',
         ]);
-    
+  
         // Find admin by email
         $admin = Admin::where('email', $request->email)->first();
     
@@ -233,12 +237,199 @@ class AdminController extends Controller
 
 
 
+public function addCategories(Request $request)
+{
+    // Validate the request
+    $validated = $request->validate([
+        'admin_id' => 'required|exists:admins,admin_id',
+        'category_name' => 'required|string|max:10',
+    ]);
+
+    // Fetch the admin
+    $admin = Admin::where('admin_id', $validated['admin_id'])->first();
+
+    // Check if the admin role is SuperAdmin
+    if ($admin->admin_role_id !== 'SuperAdmin') {
+        return response()->json([
+            'success' => false,
+            'message' => 'Only SuperAdmins are allowed to add categories.'
+        ], 403); // 403 Forbidden
+    }
+
+    // Create the category
+    $category = Category::create([
+        'admin_id' => $validated['admin_id'],
+        'category_name' => $validated['category_name'],
+    ]);
+
+    // Return a success response
+    return response()->json([
+        'success' => true,
+        'message' => 'Category added successfully.',
+        'data' => $category
+    ], 201);
+}
+
+
+public function getCategories()
+{
+    $categories = Category::all();  // Fetch all categories
+    return response()->json($categories);
+}
+
+
+public function deleteCategory(Request $request) {
+    $request->validate(['category_id' => 'required']);
+    Category::where('category_id', $request->category_id)->delete();
+    return response()->json(['success' => true]);
+}
+
+public function editCategory(Request $request) {
+    $request->validate(['category_id' => 'required', 'category_name' => 'required']);
+    $category = Category::find($request->category_id);
+    if ($category) {
+        $category->category_name = $request->category_name;
+        $category->save();
+    }
+    return response()->json($category);
+}
 
 
 
 
 
+public function addSubCategories(Request $request)
+{
+    // Step 1: Validate the incoming request
+    $validated = $request->validate([
+        'admin_id' => 'required|exists:admins,admin_id',
+        'category_id' => 'required|exists:category,category_id',
+        'sub_category_name' => 'required|string|max:10',
+    ]);
 
+    // Step 2: Check if the admin is a SuperAdmin
+    $admin = Admin::where('admin_id', $validated['admin_id'])->first();
+
+    if (!$admin || $admin->admin_role_id !== 'SuperAdmin') {
+        return response()->json([
+            'success' => false,
+            'message' => 'Only SuperAdmins are allowed to add subcategories.'
+        ], 403);
+    }
+
+    // Step 3: Create the subcategory
+    $subCategory = SubCategory::create([
+        'admin_id' => $validated['admin_id'],
+        'category_id' => $validated['category_id'],
+        'sub_category_name' => $validated['sub_category_name'],
+    ]);
+
+    // Step 4: Return JSON response
+    return response()->json([
+        'success' => true,
+        'message' => 'Subcategory added successfully.',
+        'data' => $subCategory
+    ], 201);
+}
+
+
+
+public function getSubCategories()
+{
+    // Fetch all subcategories with their associated category names
+    $subcategories = SubCategory::with('category')->get();
+
+    // Transform the collection to include the category name
+    $subcategoriesWithCategoryNames = $subcategories->map(function ($subcategory) {
+        return [
+            'sub_category_id' => $subcategory->sub_category_id,
+            'sub_category_name' => $subcategory->sub_category_name,
+            'category_id' => $subcategory->category_id,
+            'category_name' => $subcategory->category->category_name, // Assuming 'category_name' exists in the Category model
+        ];
+    });
+
+    return response()->json($subcategoriesWithCategoryNames);
+}
+
+
+public function deleteSubCategory(Request $request) {
+    $request->validate(['sub_category_id' => 'required']);
+    SubCategory::where('sub_category_id', $request->sub_category_id)->delete();
+    return response()->json(['success' => true]);
+}
+
+public function editSubCategory(Request $request) {
+    // Validate the incoming request
+    $request->validate([
+        'sub_category_id' => 'required',
+        'sub_category_name' => 'required',
+        'category_id' => 'required|exists:category,category_id'  // Ensure category exists
+    ]);
+
+    // Find the subcategory by ID
+    $subcategory = SubCategory::find($request->sub_category_id);
+
+    // If subcategory exists, update the fields
+    if ($subcategory) {
+        $subcategory->sub_category_name = $request->sub_category_name;
+        $subcategory->category_id = $request->category_id;  // Link to the category
+        $subcategory->save();
+
+        // Return the updated subcategory with a success message
+        return response()->json([
+            'success' => true,
+            'message' => 'Subcategory updated successfully.',
+            'data' => $subcategory
+        ]);
+    }
+
+    // Return an error response if subcategory does not exist
+    return response()->json([
+        'success' => false,
+        'message' => 'Subcategory not found.'
+    ], 404); // Not Found status code
+}
+
+
+public function addAdmins(Request $request)
+{
+    // ✅ Step 1: Validate request data
+    $validated = $request->validate([
+        'name'         => 'required|string|max:255',
+        'phone'        => 'required|numeric',
+        'email'        => 'required|email|unique:admins,email',
+        'password'     => 'required|min:8',
+        'profile_img'  => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    // ✅ Step 2: Handle image upload (optional)
+    if ($request->hasFile('profile_img')) {
+        $imageName = Str::uuid() . '.' . $request->file('profile_img')->getClientOriginalExtension();
+        $path = 'profile_img/' . $imageName;
+        $request->file('profile_img')->storeAs('public/profile_img', $imageName);
+        $validated['profile_img'] = $path;
+    } else {
+        $validated['profile_img'] = null;
+    }
+
+    // ✅ Step 3: Create new Admin
+    $admin = Admin::create([
+        'phone'         => $validated['phone'],
+        'name'          => $validated['name'],
+        'email'         => $validated['email'],
+        'password'      => Hash::make($validated['password']),
+        'profile_img'   => $validated['profile_img'],
+        'admin_role_id' => 'Admin',
+        'status'        => 'Active',
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Admin added successfully!',
+        'admin' => $admin
+    ], 201);
+}
 
 
 

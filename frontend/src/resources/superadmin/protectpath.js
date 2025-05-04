@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-function ProtectPathAdmin(props) {
+function ProtectPathSAdmin(props) {
     let Cmp = props.Cmp
     const navigate = useNavigate();
     useEffect(() => {
@@ -9,12 +9,12 @@ function ProtectPathAdmin(props) {
             const adminInfo = localStorage.getItem("admin-info");
 
             if (!adminInfo) {
-                navigate("/admin/login");
+                navigate("/superadmin/login");
             } else {
                 const admin = JSON.parse(adminInfo);
 
-                if (admin.admin_role_id === "SuperAdmin") {
-                    navigate("/superadmin/");
+                if (admin.admin_role_id === "Admin") {
+                    navigate("/admin/");
                 } else if (!admin.admin_role_id) {
                     navigate("/");
                 }
@@ -32,4 +32,4 @@ function ProtectPathAdmin(props) {
     );
 }
 
-export default ProtectPathAdmin;
+export default ProtectPathSAdmin;

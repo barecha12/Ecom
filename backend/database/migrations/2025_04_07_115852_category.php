@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('category', function (Blueprint $table) {
             $table->increments('category_id'); // Auto-increment primary key
-            $table->string('category_name', 10);
+            $table->string('category_name', 100);
             $table->unsignedInteger('admin_id'); // Foreign key reference (unsigned)
             $table->timestamps(); // Adding created_at and updated_at timestamps
 

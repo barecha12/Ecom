@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('product_img3', 100)->nullable();
             $table->string('product_img4', 100)->nullable();
             $table->string('product_img5', 100)->nullable();
-            $table->string('product_desc', 100);
+            $table->text('product_desc');
             $table->unsignedInteger('vendor_id'); // Foreign key reference
             $table->unsignedInteger('category_id'); // Foreign key reference
             $table->unsignedInteger('sub_category_id'); // Foreign key reference
