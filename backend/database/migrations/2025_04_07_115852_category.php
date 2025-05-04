@@ -13,8 +13,8 @@ return new class extends Migration {
             $table->unsignedInteger('admin_id'); // Foreign key reference (unsigned)
             $table->timestamps(); // Adding created_at and updated_at timestamps
 
-            // Foreign key constraint
-            $table->foreign('admin_id')->references('admin_id')->on('admin')->onDelete('cascade');
+            // Foreign key constraint - Corrected table name to 'admins'
+            $table->foreign('admin_id')->references('admin_id')->on('admins')->onDelete('cascade');
         });
     }
 
