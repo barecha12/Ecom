@@ -112,7 +112,7 @@ function Settings() {
             <option value="tigrinya">ትግሪኛ</option>
           </Form.Control>
         </Form.Group>
-
+{/* 
         <Form.Group controlId="currency">
           <Form.Label>Currency:</Form.Label>
           <Form.Control as="select">
@@ -120,7 +120,7 @@ function Settings() {
             <option value="etb">ETB</option>
             <option value="eur">EUR</option>
           </Form.Control>
-        </Form.Group>
+        </Form.Group> */}
 
         <Form.Group controlId="font-size">
           <Form.Label>Font Size:</Form.Label>
