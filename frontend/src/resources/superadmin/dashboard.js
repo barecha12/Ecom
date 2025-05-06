@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { FaBars, FaChartLine, FaStore, FaThList, FaUsers, FaUser, FaUserShield, FaTools, FaEdit, FaTrash, } from "react-icons/fa";
 
 import Translation from "../translations/lang.json";
@@ -17,6 +17,28 @@ function SAdminDashboard() {
   const [subcategories, setSubcategories] = useState([]);
   const toggleSidebar = () => setSidebarVisible(!sidebarVisible);
   const handleDropdown = (menu) => setOpenDropdown(openDropdown === menu ? null : menu);
+
+  const defaultFontSize = 'medium';
+  const defaultFontColor = '#000000';
+  const defaultLanguage = 'english'; // Default language
+
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
+  const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || defaultLanguage);
+  const [content, setContent] = useState(Translation[language]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--font-size', fontSize);
+    document.documentElement.style.setProperty('--font-color', fontColor);
+    
+    localStorage.setItem('fontSize', fontSize);
+    localStorage.setItem('fontColor', fontColor);
+    localStorage.setItem('language', language);
+
+    // Update content based on selected language
+    setContent(Translation[language]);
+  }, [fontSize, fontColor, language]);
+  
 
   
   
