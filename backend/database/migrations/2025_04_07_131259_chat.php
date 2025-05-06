@@ -20,7 +20,7 @@ return new class extends Migration {
             // Foreign key constraints
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->foreign('vendor_id')->references('vendor_id')->on('vendors')->onDelete('cascade');
-            $table->foreign('admin_id')->references('admin_id')->on('admin')->onDelete('cascade');
+            $table->foreign('admin_id')->references('admin_id')->on('admins')->onDelete('cascade');
             $table->foreign('product_id')->references('product_id')->on('product')->onDelete('cascade');
         });
     }
