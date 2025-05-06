@@ -1,5 +1,14 @@
 /* dashboard.css */
 
+:root {
+  --font-size: medium; /* Default font size */
+  --font-color: #000000; /* Default font color */
+}
+
+body {
+  font-size: var(--font-size);
+  color: var(--font-color);
+}
 /* Sidebar styling */
 .sidebar {
   position: fixed;

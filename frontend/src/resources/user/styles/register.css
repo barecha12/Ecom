@@ -1,8 +1,17 @@
-body {
+
+:root {
+    --font-size: medium; /* Default font size */
+    --font-color: #000000; /* Default font color */
+  }
+  
+  body {
+    font-size: var(--font-size);
+    color: var(--font-color);
+  
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
-}
-
+  }
+  
 .signup-container {
     display: flex;
     justify-content: center;

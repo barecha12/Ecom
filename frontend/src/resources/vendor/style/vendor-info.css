@@ -1,4 +1,15 @@
-.vendor-info-container {
+
+:root {
+    --font-size: medium; /* Default font size */
+    --font-color: #000000; /* Default font color */
+  }
+  
+  body {
+    font-size: var(--font-size);
+    color: var(--font-color);
+  }
+  
+  .vendor-info-container {
     max-width: 600px;
     margin: 40px auto;
     padding: 20px;

@@ -1,3 +1,16 @@
+
+:root {
+  --font-size: medium; /* Default font size */
+  --font-color: #000000; /* Default font color */
+}
+
+body {
+  font-size: var(--font-size);
+  color: var(--font-color);
+
+ 
+}
+
 .custom-table th,
 .custom-table td {
   white-space: nowrap; /* Prevent text from wrapping */

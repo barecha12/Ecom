@@ -1,3 +1,14 @@
+
+:root {
+  --font-size: medium; /* Default font size */
+  --font-color: #000000; /* Default font color */
+}
+
+body {
+  font-size: var(--font-size);
+  color: var(--font-color);
+}
+
 /* Container for the whole category section */
 .admin-category-container {
     max-width: 600px;
