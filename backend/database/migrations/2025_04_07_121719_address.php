@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->string('country', 100);
             $table->string('state', 100);
             $table->string('city', 100);
-            $table->integer('post')->nullable();
+            $table->string('post')->nullable();
             $table->unsignedInteger('user_id'); // Foreign key reference
             $table->timestamps(); // Adding created_at and updated_at timestamps
             

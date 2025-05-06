@@ -35,7 +35,7 @@ Route::middleware('auth:api')->group(function () {
 
 Route::post('register',[UserController::class,'register']);//done
 Route::post('login',[UserController::class,'login']);//done
-
+Route::post('/addadress',[UserController::class,'addadress']);//done
 
 Route::post('vendor/register',[VendorController::class,'register']);//done
 Route::post('/vendor/login',[VendorController::class,'login']);//done
@@ -90,3 +90,6 @@ Route::post('/delete-subcategory', [AdminController::class, 'deleteSubCategory']
 Route::post('/edit-subcategory', [AdminController::class, 'editSubCategory']);//done
 
 Route::post('/superadmin/addadmins', [AdminController::class, 'addAdmins']);
+
+
+

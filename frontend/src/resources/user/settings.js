@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Button, Form, Modal } from 'react-bootstrap';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './styles/settings.css'; // Import custom CSS
 
 function Settings() {
@@ -8,10 +10,46 @@ function Settings() {
   const handleClose = () => setShowPopup(false);
   const handleShow = () => setShowPopup(true);
 
-  const saveAddress = () => {
-    // Logic to save the address can go here
-    alert('Address saved successfully!');
-    handleClose();
+  const saveAddress = async () => {
+    // Retrieve user info from local storage
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    const userId = userInfo ? userInfo.user_id : null; // Get user_id
+  
+    const formData = {
+      user_id: userId, // Add user_id to formData
+      full_name: document.getElementById("buyername").value,
+      phone: document.getElementById("phone").value,
+      country: document.getElementById("country").value,
+      state: document.getElementById("state").value,
+      city: document.getElementById("city").value,
+      post: document.getElementById("zipcode").value,
+    };
+  
+    try {
+      console.warn("Form Data:", formData); // Log form data for debugging
+      const response = await fetch("http://localhost:8000/api/addadress", {
+          method: 'POST',
+          body: JSON.stringify(formData),
+          headers: {
+              "Content-Type": 'application/json',
+              "Accept": 'application/json',
+          },
+      });
+  
+      const data = await response.json(); // Parse JSON response
+  
+      if (!response.ok) {
+          throw new Error(data.message || 'Network response was not ok.');
+      }
+  
+      // Show success toast
+      toast.success(data.message);
+      handleClose();
+  } catch (error) {
+      console.error("Error saving address:", error);
+      // Show error toast with a message from the error object
+      toast.error(error.message || "Failed to save address.");
+  }
   };
 
   return (
@@ -111,7 +149,9 @@ function Settings() {
           </Button>
         </Modal.Footer>
       </Modal>
+      <ToastContainer />
     </Container>
+    
   );
 }
 
