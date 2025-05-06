@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaBars, FaChartLine, FaStore, FaUsers, FaUser, } from "react-icons/fa";
-
+import Translation from "../translations/lang.json";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

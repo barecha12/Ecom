@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
+import Translation from "../translations/lang.json";
 import 'react-toastify/dist/ReactToastify.css';
 import "./style/vendor-info.css";
 

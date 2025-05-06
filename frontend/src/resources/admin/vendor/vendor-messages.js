@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Container, Row, Col, Card, ListGroup, Button, Navbar, Nav, Dropdown, Modal, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FaTachometerAlt, FaUsers, FaUsersCog, FaShoppingCart, FaStore, FaUser, FaList, FaSignOutAlt, FaBars, FaCog, FaBox, FaDollarSign, FaFlag, FaAd, FaLock, FaComment, FaBell, FaUserCog } from "react-icons/fa";
+import Translation from "../../translations/lang.json";
 import './style.css';
 
 function VendorMessages() {

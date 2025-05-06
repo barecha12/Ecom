@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import Translation from "../translations/lang.json";
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/itemstyle.css'; // Custom CSS file
 import 'bootstrap/dist/css/bootstrap.min.css';

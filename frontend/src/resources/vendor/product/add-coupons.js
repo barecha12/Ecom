@@ -1,27 +1,9 @@
 import React, { useState } from "react";
-import {
-    FaBars,
-    FaChartLine,
-    FaBox,
-    FaShoppingCart,
-    FaComments,
-    FaUser,
-    FaPen,
-    FaTimes,
-} from "react-icons/fa";
-import {
-    Container,
-    Row,
-    Col,
-    Card,
-    ListGroup,
-    Button,
-    Modal,
-    Form,
-    Image,
-} from "react-bootstrap";
+import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, FaPen, FaTimes, } from "react-icons/fa";
+import { Container, Row, Col, Card, ListGroup, Button, Modal, Form, Image, } from "react-bootstrap";
 import { ToastContainer, toast } from 'react-toastify';
 import { Link, useNavigate } from "react-router-dom";
+import Translation from "../../translations/lang.json";
 import "../style/add-coupons.css";
 
 function AddCoupons() {
@@ -180,18 +162,18 @@ function AddCoupons() {
     function logout() {
         localStorage.clear();
         toast.success("Logout Successful!", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
         });
         setTimeout(() => {
-          navigate("/vendor/login");
+            navigate("/vendor/login");
         }, 1000); // Delay the navigation for 3 seconds
-      }
-            
+    }
+
     return (
         <div className="dashboard-wrapper">
             <button className="hamburger-btn" onClick={toggleSidebar}>

@@ -3,6 +3,7 @@ import { FaBars, FaChartLine, FaStore, FaThList, FaUsers, FaUser, FaUserShield, 
 import { Row, Col, Button, Form, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { toast,ToastContainer } from "react-toastify";
+import Translation from "../../translations/lang.json";
 import "../style/list-vendors.css";
 
 function SAdminListVendor() {

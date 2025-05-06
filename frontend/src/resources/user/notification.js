@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Translation from "../translations/lang.json";
 import "./styles/notification.css"; // Your custom CSS
 
 const Notification = () => {

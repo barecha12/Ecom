@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaLock } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
+import Translation from "../translations/lang.json";
 import "react-toastify/dist/ReactToastify.css";
 import "./style/login.css";
 
@@ -23,9 +24,9 @@ const LoginVendro = () => {
         navigate("/underreview/");
       } else if (vendor.status === "Rejected") {
         navigate("/vendor-info/");
-      } else if(vendor.status === "UnVerified"){
+      } else if (vendor.status === "UnVerified") {
         navigate("/vendor-info/");
-      }else if (vendor.status === "Suspended") {
+      } else if (vendor.status === "Suspended") {
         navigate("/suspend/");
       } else {
         navigate("/vendor/");

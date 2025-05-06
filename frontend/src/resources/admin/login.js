@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import Translation from "../translations/lang.json";
 import "./style/login.css"; // Import the custom CSS
 
 function LoginAdmin() {

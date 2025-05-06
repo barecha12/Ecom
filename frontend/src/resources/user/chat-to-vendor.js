@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import Translation from "../translations/lang.json";
 import { useNavigate } from "react-router-dom";
 import './styles/chat.css'; // Custom CSS file
 import 'bootstrap/dist/css/bootstrap.min.css';

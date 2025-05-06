@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaUser, FaEnvelope, FaLock, FaCheckCircle } from "react-icons/fa";
 import { ToastContainer, toast } from 'react-toastify';
+import Translation from "../translations/lang.json";
 import { useNavigate } from "react-router-dom";
 import "./style/register.css";  // Make sure this points to your custom CSS file
 

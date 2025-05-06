@@ -1,19 +1,11 @@
 import React, { useState } from "react";
-import {
-  FaBars,
-  FaChartLine,
-  FaBox,
-  FaShoppingCart,
-  FaComments,
-  FaUser,
-} from "react-icons/fa";
-import {
-  Card,
-} from "react-bootstrap";
+import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, } from "react-icons/fa";
+import { Card, } from "react-bootstrap";
 import { Bar } from 'react-chartjs-2';
 import { ToastContainer, toast } from 'react-toastify';
 import { Link, useNavigate } from "react-router-dom";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
+import Translation from "../translations/lang.json";
 import "./style/dashboard.css";
 
 // Register Chart.js components
@@ -57,20 +49,20 @@ function VendorDashboard() {
   const handleDropdown = (menu) => {
     setOpenDropdown(openDropdown === menu ? null : menu);
   };
-function logout() {
-  localStorage.clear();
-  toast.success("Logout Successful!", {
-    position: "top-right",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-  });
-  setTimeout(() => {
-    navigate("/vendor/login");
-  }, 1000); // Delay the navigation for 3 seconds
-}
+  function logout() {
+    localStorage.clear();
+    toast.success("Logout Successful!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    setTimeout(() => {
+      navigate("/vendor/login");
+    }, 1000); // Delay the navigation for 3 seconds
+  }
   return (
     <div className="dashboard-wrapper">
       <button className="hamburger-btn" onClick={toggleSidebar}>
@@ -178,7 +170,7 @@ function logout() {
           </div>
         </div>
       </div>
-       <ToastContainer />
+      <ToastContainer />
     </div>
   );
 }

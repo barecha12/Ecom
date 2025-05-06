@@ -1,15 +1,9 @@
 import React, { useState } from "react";
-import {
-  FaBars,
-  FaChartLine,
-  FaBox,
-  FaShoppingCart,
-  FaComments,
-  FaUser,
-} from "react-icons/fa";
+import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import { Container, Row, Col, Card, ListGroup, Button, Modal, Form } from "react-bootstrap";
+import Translation from "../../translations/lang.json";
 import "../style/admin-messages.css";
 
 function AdminMessages() {
@@ -76,7 +70,7 @@ function AdminMessages() {
       navigate("/vendor/login");
     }, 1000); // Delay the navigation for 3 seconds
   }
-  
+
   return (
     <div className="dashboard-wrapper">
       <button className="hamburger-btn" onClick={toggleSidebar}>
@@ -201,11 +195,11 @@ function AdminMessages() {
               </div>
               <Form>
                 <Form.Group controlId="messageInput">
-                  <Form.Control 
-                    type="text" 
-                    placeholder="Type your message..." 
-                    value={message} 
-                    onChange={(e) => setMessage(e.target.value)} 
+                  <Form.Control
+                    type="text"
+                    placeholder="Type your message..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     style={{ width: '100%' }}
                   />
                 </Form.Group>

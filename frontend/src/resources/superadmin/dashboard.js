@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaBars, FaChartLine, FaStore, FaThList, FaUsers, FaUser, FaUserShield, FaTools, FaEdit, FaTrash, } from "react-icons/fa";
 
+import Translation from "../translations/lang.json";
 import "./style/dashboard.css";
 
 function SAdminDashboard() {

@@ -3,6 +3,7 @@ import { FaBars, FaChartLine, FaStore, FaThList, FaUsers, FaUser, FaUserShield, 
 import { Button, Modal, Form, ListGroup } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import Translation from "../../translations/lang.json";
 import "../style/add-category.css";
 
 function AddCategory() {

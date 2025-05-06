@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Button, Form, Modal } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
+import Translation from "../translations/lang.json";
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/settings.css'; // Import custom CSS
 
@@ -12,26 +13,35 @@ function Settings() {
 
   const defaultFontSize = 'medium';
   const defaultFontColor = '#000000';
-  // Initialize state with values from local storage or default values
-  const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || 'medium');
-  const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || '#000000');
+  const defaultLanguage = 'english'; // Default language
+
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
+  const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || defaultLanguage);
+  const [content, setContent] = useState(Translation[language]);
+
   useEffect(() => {
-    // Update CSS variables
     document.documentElement.style.setProperty('--font-size', fontSize);
     document.documentElement.style.setProperty('--font-color', fontColor);
-
-    // Store in local storage
+    
     localStorage.setItem('fontSize', fontSize);
     localStorage.setItem('fontColor', fontColor);
-  }, [fontSize, fontColor]);
+    localStorage.setItem('language', language);
+
+    // Update content based on selected language
+    setContent(Translation[language]);
+  }, [fontSize, fontColor, language]);
 
   const resetToDefault = () => {
     setFontSize(defaultFontSize);
     setFontColor(defaultFontColor);
+    setLanguage(defaultLanguage);
     localStorage.removeItem('fontSize');
     localStorage.removeItem('fontColor');
+    localStorage.removeItem('language');
     toast.success("Settings reset to default.");
   };
+
   const saveAddress = async () => {
     // Retrieve user info from local storage
     const userInfo = JSON.parse(localStorage.getItem("user-info"));
@@ -79,7 +89,7 @@ function Settings() {
 
 
       <Form>
-        <h2 className="text-start" style={{  color: 'var(--font-color)' }} >Settings</h2>
+        <h2 className="text-start" style={{ color: 'var(--font-color)' }} >Settings</h2>
 
 
         <div className="form-group">
@@ -90,12 +100,16 @@ function Settings() {
 
         <Form.Group controlId="language">
           <Form.Label>Language:</Form.Label>
-          <Form.Control as="select">
+          <Form.Control as="select" value={language} onChange={(e) => {
+            const selectedLanguage = e.target.value;
+            setLanguage(selectedLanguage);
+            localStorage.setItem('language', selectedLanguage);
+          }}>
             <option value="english">English</option>
-            <option value="spanish">አማርኛ</option>
-            <option value="french">Afaan Oromoo</option>
-            <option value="german">Soomaali</option>
-            <option value="chinese">ትግሪኛ</option>
+            <option value="amharic">አማርኛ</option>
+            <option value="afan_oromo">Afaan Oromoo</option>
+            <option value="ethiopian_somali">Somali</option>
+            <option value="tigrinya">ትግሪኛ</option>
           </Form.Control>
         </Form.Group>
 
@@ -126,7 +140,7 @@ function Settings() {
           Back
         </Button>
         <Button variant="primary" type="button" className="custom-button-save mt-3 " style={{ color: 'var(--font-color)' }} >Save Settings</Button>
-        <Button variant="secondary" style={{ fontSize: 'var(--font-size)', color: 'var(--font-color)' }}className="custom-button mt-3" onClick={resetToDefault}>
+        <Button variant="secondary" style={{ fontSize: 'var(--font-size)', color: 'var(--font-color)' }} className="custom-button mt-3" onClick={resetToDefault}>
           Set to Default
         </Button>
       </Form>
@@ -172,7 +186,7 @@ function Settings() {
           <Button variant="primary" onClick={saveAddress} className="custom-button">
             Save Address
           </Button>
-          
+
         </Modal.Footer>
       </Modal>
       <ToastContainer />

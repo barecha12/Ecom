@@ -3,6 +3,7 @@ import { FaBars, FaChartLine, FaStore, FaUsers, FaUser } from "react-icons/fa";
 import { Row, Col, Button, Form, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Translation from "../../translations/lang.json";
 import "../style/list-user.css";
 
 function ListUsers() {

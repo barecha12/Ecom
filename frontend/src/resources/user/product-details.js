@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate,useParams  } from 'react-router-dom';
+import Translation from "../translations/lang.json";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/ProductDetail.css'; // Custom CSS file for additional styles
 

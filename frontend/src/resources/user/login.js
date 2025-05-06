@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import Translation from "../translations/lang.json";
 import { useNavigate } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/login.css';
@@ -110,6 +111,7 @@ function Login() {
           draggable: true,
         });
         localStorage.clear();
+        
         localStorage.setItem("user-info", JSON.stringify(result.storeData));
         
         // Redirect based on user role

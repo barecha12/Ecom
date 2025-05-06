@@ -1,16 +1,9 @@
 import React, { useState } from "react";
-import {
-  FaBars,
-  FaChartLine,
-  FaBox,
-  FaShoppingCart,
-  FaComments,
-  FaUser,
-  FaBell,
-} from "react-icons/fa";
+import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, FaBell, } from "react-icons/fa";
 import { Container, Row, Col, Card, ListGroup, Button, Modal, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
+import Translation from "../../translations/lang.json";
 import "../style/notifications.css";
 
 function Notifications() {
@@ -84,8 +77,8 @@ function Notifications() {
       navigate("/vendor/login");
     }, 1000); // Delay the navigation for 3 seconds
   }
-  
-  
+
+
 
 
   return (

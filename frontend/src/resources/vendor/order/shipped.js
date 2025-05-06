@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, FaPen, } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
+import Translation from "../../translations/lang.json";
 import "../style/new-orders.css";
 
 function ShippedItems() {

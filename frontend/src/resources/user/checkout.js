@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Translation from "../translations/lang.json";
 import './styles/checkout.css'; // Custom CSS file
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal } from 'react-bootstrap';

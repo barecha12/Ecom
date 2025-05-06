@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaEnvelope, FaLock, FaCheckCircle } from "react-icons/fa";
+import Translation from "../translations/lang.json";
 import "./style/reset-password.css";  // Make sure this points to your custom CSS file
 
 const ResetPassword = () => {

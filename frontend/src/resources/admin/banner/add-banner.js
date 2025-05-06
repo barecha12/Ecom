@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Container, Row, Col, Card, ListGroup, Button, Navbar, Nav, Dropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FaTachometerAlt, FaUsersCog, FaUsers, FaShoppingCart, FaStar, FaUser, FaList, FaSignOutAlt, FaBars, FaCog, FaFlag, FaAd, FaTruck, FaLock, FaDollarSign, FaComment, FaBox, FaUserCog, FaClipboardList, FaClock, FaCheckCircle, FaStore } from "react-icons/fa"; // Added FaPlus and FaTag
-//import './style.css';
+import Translation from "../../translations/lang.json";
 
 function AddBanner() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -156,7 +156,7 @@ function AddBanner() {
           }}
         >
           <h3>List Banner</h3>
-          
+
         </Col>
       </Row>
     </Container>

@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import Translation from "../translations/lang.json";
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/reset.css'; // Import custom CSS file
 

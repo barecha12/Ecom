@@ -1,6 +1,7 @@
 
 import React, { useEffect,useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import Translation from "../translations/lang.json";
 function ProtectPathVendor(props) {
       const [vendors, setVendors] = useState([]);
     let Cmp = props.Cmp

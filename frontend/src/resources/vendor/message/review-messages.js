@@ -1,16 +1,9 @@
 import React, { useState } from "react";
-import {
-  FaBars,
-  FaChartLine,
-  FaBox,
-  FaShoppingCart,
-  FaComments,
-  FaUser,
-  FaUserCircle,
-} from "react-icons/fa";
+import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, FaUserCircle, } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import { Container, Row, Col, Card, ListGroup, Button, Modal } from "react-bootstrap";
+import Translation from "../../translations/lang.json";
 import "../style/review-messages.css";
 
 function ReviewMessages() {
@@ -86,9 +79,9 @@ function ReviewMessages() {
       navigate("/vendor/login");
     }, 1000); // Delay the navigation for 3 seconds
   }
-  
-  
-  
+
+
+
   return (
     <div className="dashboard-wrapper">
       <button className="hamburger-btn" onClick={toggleSidebar}>
