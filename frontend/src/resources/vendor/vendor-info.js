@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-=======
-import { toast, ToastContainer } from 'react-toastify';
-import Translation from "../translations/lang.json";
-import 'react-toastify/dist/ReactToastify.css';
->>>>>>> bbc1b58bb257d523ac9e14cfa967f6891aba95ff
 import "./style/vendor-info.css";
 
 const VendorInfo = () => {
@@ -139,7 +133,6 @@ const VendorInfo = () => {
       return true;
     });
 
-<<<<<<< HEAD
   const isBusinessComplete = () =>
     Object.keys(businessErrors).length === 0 &&
     businessData.business_name.trim() !== "" &&
@@ -149,35 +142,6 @@ const VendorInfo = () => {
     businessData.business_phone.trim() !== "" &&
     businessData.blicense_number.trim() !== "" &&
     businessData.addressProofImage !== null;
-=======
-  
-    const defaultFontSize = 'medium';
-    const defaultFontColor = '#000000';
-    const defaultLanguage = 'english'; // Default language
-  
-    const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
-    const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
-    const [language, setLanguage] = useState(() => localStorage.getItem('language') || defaultLanguage);
-    const [content, setContent] = useState(Translation[language]);
-  
-    useEffect(() => {
-      document.documentElement.style.setProperty('--font-size', fontSize);
-      document.documentElement.style.setProperty('--font-color', fontColor);
-      
-      localStorage.setItem('fontSize', fontSize);
-      localStorage.setItem('fontColor', fontColor);
-      localStorage.setItem('language', language);
-  
-      // Update content based on selected language
-      setContent(Translation[language]);
-    }, [fontSize, fontColor, language]);
-    
-  
-    const handlePersonalFileChange = (e) => {
-        const { name, files } = e.target;
-        setPersonalData({ ...personalData, [name]: files[0] });
-    };
->>>>>>> bbc1b58bb257d523ac9e14cfa967f6891aba95ff
 
   const handlePersonalChange = (e) => {
     setPersonalData({ ...personalData, [e.target.name]: e.target.value });
