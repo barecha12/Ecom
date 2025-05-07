@@ -102,13 +102,10 @@ Route::post('/vendor/getnotifications', [VendorController::class, 'getNotificati
 Route::post('/vendor/deletenotification', [VendorController::class, 'deleteNotification']);//done
 Route::post('/vendor/addnotification', [VendorController::class, 'addNotification']);//done
 
-
 Route::get('/admin/listadmins', [AdminController::class, 'listadmins']);//done
-
-
 Route::post('/admin/changeuserstatusadmin', [AdminController::class, 'changeuserstatusadmin']);//done
 
 
-
-
+Route::post('/vendor/listproduct', [VendorController::class, 'listproduct']);//done
+Route::post('/vendor/listreview', [VendorController::class, 'listreview']);//done
 

@@ -1,25 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, FaTrash } from "react-icons/fa";
-import { Container, Row, Col, Card, ListGroup, Button, Modal, Form } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import Translation from "../../translations/lang.json";
 import "../style/notifications.css";
 
 function Notifications() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [notifications, setNotifications] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([]);
-  const [notifications, setNotifications] = useState([
-    { id: 1, message: "Your order has been shipped.", time: "10 minutes ago" },
-    { id: 2, message: "You have a new message from support.", time: "1 hour ago" },
-    { id: 3, message: "Your profile has been updated.", time: "2 hours ago" },
-    { id: 4, message: "New product added to your favorites.", time: "3 hours ago" },
-  ]);
-  
   const navigate = useNavigate();
 
   const defaultFontSize = 'medium';
@@ -34,7 +24,7 @@ function Notifications() {
   useEffect(() => {
     document.documentElement.style.setProperty('--font-size', fontSize);
     document.documentElement.style.setProperty('--font-color', fontColor);
-    
+
     localStorage.setItem('fontSize', fontSize);
     localStorage.setItem('fontColor', fontColor);
     localStorage.setItem('language', language);
@@ -42,42 +32,71 @@ function Notifications() {
     setContent(Translation[language]);
   }, [fontSize, fontColor, language]);
 
-  const toggleSidebar = () => {
-    setSidebarVisible(!sidebarVisible);
-  };
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem('vendor-info'));
+    const vendorId = userInfo?.vendor_id;
 
-  const handleDropdown = (menu) => {
-    setOpenDropdown(openDropdown === menu ? null : menu);
-  };
+    if (vendorId) {
+      fetchNotifications(vendorId);
+    }
+  }, []);
 
-  const handleShow = (user) => {
-    setSelectedUser(user);
-    setShowModal(true);
-    setMessages([
-      { text: "How can I track my order?", sender: "user", time: formatTime(new Date()) },
-      { text: "Please provide your order ID.", sender: "me", time: formatTime(new Date()) },
-    ]);
-  };
+  const fetchNotifications = async (vendorId) => {
+    try {
+      const response = await fetch('http://localhost:8000/api/vendor/getnotifications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ vendor_id: vendorId }),
+      });
 
-  const handleClose = () => {
-    setShowModal(false);
-    setSelectedUser(null);
-    setMessage('');
-  };
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
 
-  const handleSendMessage = () => {
-    if (message.trim()) {
-      setMessages(prevMessages => [...prevMessages, { text: message, sender: 'me', time: formatTime(new Date()) }]);
-      setMessage('');
+      const data = await response.json();
+      setNotifications(data.notifications);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
     }
   };
 
-  const formatTime = (date) => {
-    return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toISOString().slice(0, 19).replace("T", " ");
   };
 
-  const handleDeleteNotification = (id) => {
-    setNotifications(notifications.filter(notification => notification.id !== id));
+  const handleDeleteNotification = async (notificationId) => {
+    const userInfo = JSON.parse(localStorage.getItem('vendor-info'));
+    const vendorId = userInfo?.vendor_id;
+
+    if (vendorId) {
+      try {
+        const response = await fetch('http://localhost:8000/api/vendor/deletenotification', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ vendor_id: vendorId, notification_id: notificationId }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        // Remove the notification from the state
+        setNotifications(prev => prev.filter(notification => notification.notification_id !== notificationId));
+        toast.success("Notification deleted successfully!");
+      } catch (error) {
+        console.error('Error deleting notification:', error);
+      }
+    }
+  };
+
+
+  const handleDropdown = (menu) => {
+    setOpenDropdown(openDropdown === menu ? null : menu);
   };
 
   function logout() {
@@ -95,9 +114,10 @@ function Notifications() {
     }, 1000);
   }
 
+  
   return (
     <div className="dashboard-wrapper">
-      <button className="hamburger-btn" onClick={toggleSidebar}>
+      <button className="hamburger-btn" onClick={() => setSidebarVisible(!sidebarVisible)}>
         <FaBars />
       </button>
 
@@ -183,13 +203,13 @@ function Notifications() {
                       </ListGroup.Item>
                     ) : (
                       notifications.map(notification => (
-                        <ListGroup.Item key={notification.id} className="notification-item d-flex justify-content-between align-items-center text-center">
+                        <ListGroup.Item key={notification.notification_id} className="notification-item d-flex justify-content-between align-items-center text-center">
                           <div className="flex-grow-1">
-                            <strong>{notification.message}</strong>
+                            <strong>{notification.notification_text}</strong>
                             <br />
-                            <small className="text-muted">{notification.time}</small>
+                            <small className="text-muted">{formatDate(notification.created_at)}</small>
                           </div>
-                          <Button variant="link" onClick={() => handleDeleteNotification(notification.id)}>
+                          <Button variant="link" onClick={() => handleDeleteNotification(notification.notification_id)}>
                             <FaTrash />
                           </Button>
                         </ListGroup.Item>
@@ -200,42 +220,6 @@ function Notifications() {
               </Card>
             </Col>
           </Row>
-
-          {/* Modal for Viewing Messages */}
-          <Modal show={showModal} onHide={handleClose} size="lg">
-            <Modal.Header closeButton>
-              <Modal.Title>{selectedUser ? selectedUser.name : ''}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <div style={{ height: '350px', overflowY: 'scroll', marginBottom: '20px' }}>
-                {messages.map((msg, index) => (
-                  <div key={index} className={`message ${msg.sender === 'me' ? 'my-message' : 'user-message'}`} style={{ display: 'flex', justifyContent: msg.sender === 'me' ? 'flex-end' : 'flex-start' }}>
-                    <span>{msg.text}</span>
-                    <span style={{ fontSize: 'small', marginLeft: '10px', marginTop: '5px', alignSelf: 'flex-end' }}>{msg.time}</span>
-                  </div>
-                ))}
-              </div>
-              <Form>
-                <Form.Group controlId="messageInput">
-                  <Form.Control
-                    type="text"
-                    placeholder="Type your message..."
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    style={{ width: '100%' }}
-                  />
-                </Form.Group>
-              </Form>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={handleClose}>
-                Cancel
-              </Button>
-              <Button variant="primary" onClick={handleSendMessage}>
-                Send
-              </Button>
-            </Modal.Footer>
-          </Modal>
         </Container>
       </div>
     </div>
