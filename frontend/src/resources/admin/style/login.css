@@ -1,3 +1,14 @@
+
+:root {
+  --font-size: medium; /* Default font size */
+  --font-color: #000000; /* Default font color */
+}
+
+body {
+  font-size: var(--font-size);
+  color: var(--font-color);
+}
+
 /* Login Page Container */
 .login-container {
   min-height: 100vh;

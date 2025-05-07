@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Container, Row, Col, Card, ListGroup, Button, Navbar, Nav, Dropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FaTachometerAlt, FaUsersCog, FaUsers, FaShoppingCart, FaStar, FaUser, FaList, FaSignOutAlt, FaBars, FaCog, FaFlag, FaAd, FaTruck, FaLock, FaDollarSign, FaComment, FaBox, FaUserCog, FaClipboardList, FaClock, FaCheckCircle, FaStore } from "react-icons/fa"; // Added FaPlus and FaTag
-//import './style.css';
+import Translation from "../../translations/lang.json";
 
 function AddBanner() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -11,6 +11,28 @@ function AddBanner() {
   const [orderManagementOpen, setOrderManagementOpen] = useState(false);
   const [messageManagementOpen, setMessageManagementOpen] = useState(false);
   const [accountSettingOpen, setAccountSettingOpen] = useState(false);
+
+  const defaultFontSize = 'medium';
+  const defaultFontColor = '#000000';
+  const defaultLanguage = 'english'; // Default language
+
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
+  const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || defaultLanguage);
+  const [content, setContent] = useState(Translation[language]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--font-size', fontSize);
+    document.documentElement.style.setProperty('--font-color', fontColor);
+    
+    localStorage.setItem('fontSize', fontSize);
+    localStorage.setItem('fontColor', fontColor);
+    localStorage.setItem('language', language);
+
+    // Update content based on selected language
+    setContent(Translation[language]);
+  }, [fontSize, fontColor, language]);
+  
 
   const toggleProductManagement = () => {
     setProductManagementOpen(!productManagementOpen);
@@ -156,7 +178,7 @@ function AddBanner() {
           }}
         >
           <h3>List Banner</h3>
-          
+
         </Col>
       </Row>
     </Container>

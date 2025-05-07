@@ -35,7 +35,7 @@ Route::middleware('auth:api')->group(function () {
 
 Route::post('register',[UserController::class,'register']);//done
 Route::post('login',[UserController::class,'login']);//done
-
+Route::post('/addadress',[UserController::class,'addadress']);//done
 
 Route::post('vendor/register',[VendorController::class,'register']);//done
 Route::post('/vendor/login',[VendorController::class,'login']);//done
@@ -90,3 +90,25 @@ Route::post('/delete-subcategory', [AdminController::class, 'deleteSubCategory']
 Route::post('/edit-subcategory', [AdminController::class, 'editSubCategory']);//done
 
 Route::post('/superadmin/addadmins', [AdminController::class, 'addAdmins']);
+
+
+
+
+Route::post('/admin/addnotification', [AdminController::class, 'addNotification']);//done
+Route::post('/getnotifications', [UserController::class, 'getNotifications']);//done
+Route::post('/deletenotification', [UserController::class, 'deleteNotification']);//done
+
+Route::post('/vendor/getnotifications', [VendorController::class, 'getNotifications']);//done
+Route::post('/vendor/deletenotification', [VendorController::class, 'deleteNotification']);//done
+Route::post('/vendor/addnotification', [VendorController::class, 'addNotification']);//done
+
+
+Route::get('/admin/listadmins', [AdminController::class, 'listadmins']);//done
+
+
+Route::post('/admin/changeuserstatusadmin', [AdminController::class, 'changeuserstatusadmin']);//done
+
+
+
+
+

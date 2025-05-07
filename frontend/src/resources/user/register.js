@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+<<<<<<< HEAD
 import { FaCheckCircle } from 'react-icons/fa';
+=======
+import Translation from "../translations/lang.json";
+>>>>>>> bbc1b58bb257d523ac9e14cfa967f6891aba95ff
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/register.css'; // Corrected relative path
 
@@ -23,6 +27,7 @@ function Register() {
         special: false,
     });
 
+<<<<<<< HEAD
     useEffect(() => {
         const userInfo = localStorage.getItem('user-info');
         if (userInfo) {
@@ -36,6 +41,114 @@ function Register() {
             } else {
                 navigate("/");
             }
+=======
+  
+  const defaultFontSize = 'medium';
+  const defaultFontColor = '#000000';
+  const defaultLanguage = 'english'; // Default language
+
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
+  const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || defaultLanguage);
+  const [content, setContent] = useState(Translation[language]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--font-size', fontSize);
+    document.documentElement.style.setProperty('--font-color', fontColor);
+    
+    localStorage.setItem('fontSize', fontSize);
+    localStorage.setItem('fontColor', fontColor);
+    localStorage.setItem('language', language);
+
+    // Update content based on selected language
+    setContent(Translation[language]);
+  }, [fontSize, fontColor, language]);
+  
+
+  useEffect(() => {
+    const userInfo = localStorage.getItem('user-info');
+    if (userInfo) {
+      const user = JSON.parse(userInfo);
+      if (user.admin_role_id === "SuperAdmin") {
+        navigate("/superadmin/");
+      } else if (user.vendor_role_id === "Vendor") {
+        navigate("/vendor/");
+      } else if (user.admin_role_id === "Admin") {
+        navigate("/admin/");
+      } else {
+        navigate("/");
+      }
+    }
+  }, [navigate]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: null
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+    } else if (!/^[A-Za-z\s-]+$/.test(formData.name)) {
+      newErrors.name = "Name can only contain letters and spaces";
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+    
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (!passwordRegex.test(formData.password)) {
+      newErrors.password = "Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character";
+    }
+    
+    if (!formData.password_confirmation) {
+      newErrors.password_confirmation = "Please confirm your password";
+    } else if (formData.password !== formData.password_confirmation) {
+      newErrors.password_confirmation = "Passwords do not match";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const signUp = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch("http://localhost:8000/api/register", {
+        method: 'POST',
+        body: JSON.stringify(formData),
+        headers: {
+          "Content-Type": 'application/json',
+          "Accept": 'application/json'
+>>>>>>> bbc1b58bb257d523ac9e14cfa967f6891aba95ff
         }
     }, [navigate]);
 

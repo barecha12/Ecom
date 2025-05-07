@@ -13,6 +13,7 @@ use App\Models\businessInfo;
 use App\Models\bankInfo;
 use App\Models\Category;
 use App\Models\SubCategory;
+use App\Models\Notification;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -61,6 +62,34 @@ class AdminController extends Controller
         $users = User::all(); // Fetch all users
         return response()->json(['users' => $users]);
     }
+
+    public function listadmins()
+    {
+        $users = Admin::where("admin_role_id", "!=", "SuperAdmin")->get(); // Fetch all users who are not superadmins
+        return response()->json(['users' => $users]);
+    }
+
+
+    public function changeuserstatusadmin(Request $request)
+    {
+        // Validate the incoming request
+        $validator = Validator::make($request->all(), [
+            'admin_id' => 'required|exists:admins,admin_id',
+            'status' => 'required|in:Active,Suspended',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 400);
+        }
+        // Find the user and update the status
+        $admin = Admin::find($request->admin_id);
+        $admin->status = $request->status; // Update status
+        $admin->save();
+
+        return response()->json(['success' => true, 'user' => $admin]);
+    }
+
+
 
     // Change user status
     public function changeuserstatus(Request $request)
@@ -432,6 +461,24 @@ public function addAdmins(Request $request)
 }
 
 
+public function addNotification(Request $request)
+    {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'notification_text' => 'required|string|max:255',
+            'user_id' => 'nullable|integer|exists:users,user_id',
+            'admin_id' => 'nullable|integer|exists:admins,admin_id',
+        ]);
+
+        // Create a new notification
+        $notification = Notification::create($validatedData);
+
+        // Return a response (you can customize the response as needed)
+        return response()->json([
+            'message' => 'Notification added successfully',
+            'notification' => $notification,
+        ], 201);
+    }
 
 
 

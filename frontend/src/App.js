@@ -9,7 +9,7 @@ import Cart from "./resources/user/cart"
 import ChatVendor from "./resources/user/chat-to-vendor"
 import ChatAdmin from "./resources/user/chat-to-admin"
 import CheckOut from "./resources/user/checkout"
-import OrderdItems from "./resources/user/ordered-items"
+import OrderedItems from "./resources/user/ordered-items"
 import ProductDetails from "./resources/user/product-details"
 import RefudnItems from "./resources/user/refund-items"
 import ShippedItems from "./resources/user/shipped-items"
@@ -153,7 +153,7 @@ function App() {
           <Route path="/chatvendor" element={<ProtectPath Cmp={ChatVendor} />} />
           <Route path="/helpcenter" element={<ChatAdmin />} />
           <Route path="/checkout" element={<ProtectPath Cmp={CheckOut} />} />
-          <Route path="/orderditems" element={<ProtectPath Cmp={OrderdItems} />} />
+          <Route path="/ordereditems" element={<ProtectPath Cmp={OrderedItems} />} />
           <Route path="/productdetails/:product_id" element={<ProductDetails />} />
           <Route path="/refunditems" element={<ProtectPath Cmp={RefudnItems} />} />
           <Route path="/settings" element={<ProtectPath Cmp={Settings} />} />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate,useParams  } from 'react-router-dom';
+import Translation from "../translations/lang.json";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/ProductDetail.css'; // Custom CSS file for additional styles
 
@@ -16,6 +17,29 @@ function ProductDetail() {
     "https://www.pcworld.com/wp-content/uploads/2024/03/alienware-gaming-laptop.jpg?resize=1024%2C576&quality=50&strip=all"
   ];
 
+
+  
+  const defaultFontSize = 'medium';
+  const defaultFontColor = '#000000';
+  const defaultLanguage = 'english'; // Default language
+
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
+  const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || defaultLanguage);
+  const [content, setContent] = useState(Translation[language]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--font-size', fontSize);
+    document.documentElement.style.setProperty('--font-color', fontColor);
+    
+    localStorage.setItem('fontSize', fontSize);
+    localStorage.setItem('fontColor', fontColor);
+    localStorage.setItem('language', language);
+
+    // Update content based on selected language
+    setContent(Translation[language]);
+  }, [fontSize, fontColor, language]);
+  
 
 
 

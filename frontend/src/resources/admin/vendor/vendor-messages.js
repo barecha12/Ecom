@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Container, Row, Col, Card, ListGroup, Button, Navbar, Nav, Dropdown, Modal, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FaTachometerAlt, FaUsers, FaUsersCog, FaShoppingCart, FaStore, FaUser, FaList, FaSignOutAlt, FaBars, FaCog, FaBox, FaDollarSign, FaFlag, FaAd, FaLock, FaComment, FaBell, FaUserCog } from "react-icons/fa";
+import Translation from "../../translations/lang.json";
 import './style.css';
 
 function VendorMessages() {
@@ -14,6 +15,28 @@ function VendorMessages() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+
+  const defaultFontSize = 'medium';
+  const defaultFontColor = '#000000';
+  const defaultLanguage = 'english'; // Default language
+
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
+  const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || defaultLanguage);
+  const [content, setContent] = useState(Translation[language]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--font-size', fontSize);
+    document.documentElement.style.setProperty('--font-color', fontColor);
+    
+    localStorage.setItem('fontSize', fontSize);
+    localStorage.setItem('fontColor', fontColor);
+    localStorage.setItem('language', language);
+
+    // Update content based on selected language
+    setContent(Translation[language]);
+  }, [fontSize, fontColor, language]);
+  
 
   const toggleProductManagement = () => setProductManagementOpen(!productManagementOpen);
   const toggleOrderManagement = () => setOrderManagementOpen(!orderManagementOpen);

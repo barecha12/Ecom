@@ -1,3 +1,14 @@
+
+:root {
+  --font-size: medium; /* Default font size */
+  --font-color: #000000; /* Default font color */
+}
+
+body {
+  font-size: var(--font-size);
+  color: var(--font-color);
+}
+
 /* Dashboard Wrapper */
 .dashboard-wrapper {
   display: flex;
@@ -202,4 +213,8 @@
   .custom-sidebar.hide {
     display: none;
   }
+}
+
+.notification-item {
+  text-align: center;
 }

@@ -5,6 +5,7 @@ import {
 import { Row, Col, Button, Form, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import Translation from "../../translations/lang.json";
 import "../style/list-admin.css";
 
 function SAdminListAdmins() {
@@ -20,6 +21,28 @@ function SAdminListAdmins() {
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({ email: '', password: '', name: '', phone: '', image: null });
   const navigate = useNavigate();
+
+  const defaultFontSize = 'medium';
+  const defaultFontColor = '#000000';
+  const defaultLanguage = 'english'; // Default language
+
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
+  const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || defaultLanguage);
+  const [content, setContent] = useState(Translation[language]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--font-size', fontSize);
+    document.documentElement.style.setProperty('--font-color', fontColor);
+    
+    localStorage.setItem('fontSize', fontSize);
+    localStorage.setItem('fontColor', fontColor);
+    localStorage.setItem('language', language);
+
+    // Update content based on selected language
+    setContent(Translation[language]);
+  }, [fontSize, fontColor, language]);
+  
 
   const toggleSidebar = () => setSidebarVisible(!sidebarVisible);
   const handleDropdown = (menu) => setOpenDropdown(openDropdown === menu ? null : menu);
@@ -43,7 +66,7 @@ function SAdminListAdmins() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/admin/listusers");
+      const response = await fetch("http://localhost:8000/api/admin/listadmins");
       const data = await response.json();
       setUsers(data.users);
     } catch {
@@ -55,10 +78,11 @@ function SAdminListAdmins() {
 
   const changeUserStatus = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/admin/changeuserstatus", {
+      console.log("Changing user status:", { admin_id: selectedUserId, status: userStatus }); // Debugging line
+      const response = await fetch("http://localhost:8000/api/admin/changeuserstatusadmin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: selectedUserId, status: userStatus }),
+        body: JSON.stringify({ admin_id: selectedUserId, status: userStatus }),
       });
       const result = await response.json();
       if (result.success) {
@@ -251,14 +275,14 @@ function SAdminListAdmins() {
             <div style={{ overflowY: 'auto', height: 'calc(100% - 60px)', padding: '1rem' }}>
               {currentUsers.length > 0 ? (
                 currentUsers.map((user) => (
-                  <div key={user.user_id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', marginBottom: '10px' }}>
+                  <div key={user.admin_id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', marginBottom: '10px' }}>
                     <div>
                       <h5 style={{ margin: 0 }}>{user.name}</h5>
                       <p style={{ margin: 0, color: '#666' }}>{user.email}</p>
                     </div>
                     <div>
                       <span style={{ padding: '0.5rem 1rem', borderRadius: '20px', backgroundColor: user.status === 'Active' ? '#d4edda' : '#f8d7da', color: user.status === 'Active' ? '#155724' : '#721c24', marginRight: '1rem' }}>{user.status}</span>
-                      <Button variant="primary" size="sm" onClick={() => { setSelectedUserId(user.user_id); setUserStatus(user.status); setShowEditModal(true); }}>Edit</Button>
+                      <Button variant="primary" size="sm" onClick={() => { setSelectedUserId(user.admin_id); setUserStatus(user.status); setShowEditModal(true); }}>Edit</Button>
                     </div>
                   </div>
                 ))

@@ -1,19 +1,11 @@
-import React, { useState } from "react";
-import {
-  FaBars,
-  FaChartLine,
-  FaBox,
-  FaShoppingCart,
-  FaComments,
-  FaUser,
-} from "react-icons/fa";
-import {
-  Card,
-} from "react-bootstrap";
+import React, { useState,useEffect } from "react";
+import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, } from "react-icons/fa";
+import { Card, } from "react-bootstrap";
 import { Bar } from 'react-chartjs-2';
 import { ToastContainer, toast } from 'react-toastify';
 import { Link, useNavigate } from "react-router-dom";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
+import Translation from "../translations/lang.json";
 import "./style/dashboard.css";
 
 // Register Chart.js components
@@ -23,6 +15,29 @@ function VendorDashboard() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
   const navigate = useNavigate();
+
+  
+  const defaultFontSize = 'medium';
+  const defaultFontColor = '#000000';
+  const defaultLanguage = 'english'; // Default language
+
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
+  const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || defaultLanguage);
+  const [content, setContent] = useState(Translation[language]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--font-size', fontSize);
+    document.documentElement.style.setProperty('--font-color', fontColor);
+    
+    localStorage.setItem('fontSize', fontSize);
+    localStorage.setItem('fontColor', fontColor);
+    localStorage.setItem('language', language);
+
+    // Update content based on selected language
+    setContent(Translation[language]);
+  }, [fontSize, fontColor, language]);
+  
 
   const data = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June'],
@@ -57,20 +72,20 @@ function VendorDashboard() {
   const handleDropdown = (menu) => {
     setOpenDropdown(openDropdown === menu ? null : menu);
   };
-function logout() {
-  localStorage.clear();
-  toast.success("Logout Successful!", {
-    position: "top-right",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-  });
-  setTimeout(() => {
-    navigate("/vendor/login");
-  }, 1000); // Delay the navigation for 3 seconds
-}
+  function logout() {
+    localStorage.clear();
+    toast.success("Logout Successful!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    setTimeout(() => {
+      navigate("/vendor/login");
+    }, 1000); // Delay the navigation for 3 seconds
+  }
   return (
     <div className="dashboard-wrapper">
       <button className="hamburger-btn" onClick={toggleSidebar}>
@@ -178,7 +193,7 @@ function logout() {
           </div>
         </div>
       </div>
-       <ToastContainer />
+      <ToastContainer />
     </div>
   );
 }

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
+import Translation from "./translations/lang.json";
 import 'react-toastify/dist/ReactToastify.css';
 import './user/styles/home.css';
 
@@ -11,6 +12,35 @@ function Home() {
   const navigate = useNavigate();
   const [searchproduct, setSearchProduct] = useState("");
   const [searchresult, setSearchResult] = useState([]);
+
+
+
+  
+  const defaultFontSize = 'medium';
+  const defaultFontColor = '#000000';
+  const defaultLanguage = 'english'; // Default language
+
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
+  const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || defaultLanguage);
+  const [content, setContent] = useState(Translation[language]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--font-size', fontSize);
+    document.documentElement.style.setProperty('--font-color', fontColor);
+    
+    localStorage.setItem('fontSize', fontSize);
+    localStorage.setItem('fontColor', fontColor);
+    localStorage.setItem('language', language);
+
+    // Update content based on selected language
+    setContent(Translation[language]);
+  }, [fontSize, fontColor, language]);
+  
+
+
+
+
 
   const toggleNav = () => {
     setNavOpen(!isNavOpen);
@@ -179,7 +209,7 @@ return (
                 {
                   localStorage.getItem('user-info') ? (
                     <>
-                      <li><a className="dropdown-item" href="/orderditems">Orders</a></li>
+                      <li><a className="dropdown-item" href="/ordereditems">Orders</a></li>
                       <li><a className="dropdown-item" href="/settings">Setting</a></li>
                       
                       <li><a className="dropdown-item" href="/notification">Notification</a></li>
@@ -206,7 +236,7 @@ return (
     {/* Main Content */}
     <div className="toppush container-fluid mt-5">
       <div className="bg-warning text-center p-4 rounded mb-4">
-        <h1 className="text-dark">Welcome to Your E-Commerce Dashboard</h1>
+        <h1 className="text-dark"> {content?.welcome || "Welcome to Your E-Commerce Dashboard"}</h1>
       </div>
 
       {/* Category and Sort Dropdowns */}
@@ -255,7 +285,7 @@ return (
                     addToCart(searchlist.product_id);
                   }}
                 >
-                  Add to Cart
+                  {content?.add_to_cart || " Add to Cart"}
                 </button>
               </div>
             </div>

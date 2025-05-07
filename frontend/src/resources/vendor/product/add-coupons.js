@@ -1,27 +1,9 @@
-import React, { useState } from "react";
-import {
-    FaBars,
-    FaChartLine,
-    FaBox,
-    FaShoppingCart,
-    FaComments,
-    FaUser,
-    FaPen,
-    FaTimes,
-} from "react-icons/fa";
-import {
-    Container,
-    Row,
-    Col,
-    Card,
-    ListGroup,
-    Button,
-    Modal,
-    Form,
-    Image,
-} from "react-bootstrap";
+import React, { useState,useEffect } from "react";
+import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, FaPen, FaTimes, } from "react-icons/fa";
+import { Container, Row, Col, Card, ListGroup, Button, Modal, Form, Image, } from "react-bootstrap";
 import { ToastContainer, toast } from 'react-toastify';
 import { Link, useNavigate } from "react-router-dom";
+import Translation from "../../translations/lang.json";
 import "../style/add-coupons.css";
 
 function AddCoupons() {
@@ -43,6 +25,29 @@ function AddCoupons() {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showEditProductModal, setShowEditProductModal] = useState(false);
 
+  
+    const defaultFontSize = 'medium';
+    const defaultFontColor = '#000000';
+    const defaultLanguage = 'english'; // Default language
+  
+    const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
+    const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
+    const [language, setLanguage] = useState(() => localStorage.getItem('language') || defaultLanguage);
+    const [content, setContent] = useState(Translation[language]);
+  
+    useEffect(() => {
+      document.documentElement.style.setProperty('--font-size', fontSize);
+      document.documentElement.style.setProperty('--font-color', fontColor);
+      
+      localStorage.setItem('fontSize', fontSize);
+      localStorage.setItem('fontColor', fontColor);
+      localStorage.setItem('language', language);
+  
+      // Update content based on selected language
+      setContent(Translation[language]);
+    }, [fontSize, fontColor, language]);
+    
+  
 
     const deleteProduct = (productId) => {
         console.warn("FUCK ID:", productId);
@@ -180,18 +185,18 @@ function AddCoupons() {
     function logout() {
         localStorage.clear();
         toast.success("Logout Successful!", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
         });
         setTimeout(() => {
-          navigate("/vendor/login");
+            navigate("/vendor/login");
         }, 1000); // Delay the navigation for 3 seconds
-      }
-            
+    }
+
     return (
         <div className="dashboard-wrapper">
             <button className="hamburger-btn" onClick={toggleSidebar}>

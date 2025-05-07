@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->string('notification_text', 255); // Increased length for notification text
             $table->unsignedInteger('user_id')->nullable(); // Foreign key reference to users, nullable
             $table->unsignedInteger('vendor_id')->nullable(); // Foreign key reference to vendors, nullable
-            $table->unsignedInteger('admin_id'); // Foreign key reference to admins
+            $table->unsignedInteger('admin_id')->nullable(); // Foreign key reference to admins
             $table->timestamps(); // Adding created_at and updated_at timestamps
 
             // Foreign key constraints
