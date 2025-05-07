@@ -14,7 +14,6 @@ const RegisterVendor = () => {
     const [passConfirmError, setPassConfirmError] = useState("");
     const navigate = useNavigate();
 
-<<<<<<< HEAD
     const [passReqMet, setPassReqMet] = useState({
         length: false,
         lowercase: false,
@@ -22,70 +21,6 @@ const RegisterVendor = () => {
         number: false,
         special: false,
     });
-=======
-  
-  const defaultFontSize = 'medium';
-  const defaultFontColor = '#000000';
-  const defaultLanguage = 'english'; // Default language
-
-  const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
-  const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
-  const [language, setLanguage] = useState(() => localStorage.getItem('language') || defaultLanguage);
-  const [content, setContent] = useState(Translation[language]);
-
-  useEffect(() => {
-    document.documentElement.style.setProperty('--font-size', fontSize);
-    document.documentElement.style.setProperty('--font-color', fontColor);
-    
-    localStorage.setItem('fontSize', fontSize);
-    localStorage.setItem('fontColor', fontColor);
-    localStorage.setItem('language', language);
-
-    // Update content based on selected language
-    setContent(Translation[language]);
-  }, [fontSize, fontColor, language]);
-  
-
-  useEffect(() => {
-    const userInfo = localStorage.getItem('user-info');
-    if (userInfo) {
-      const user = JSON.parse(userInfo);
-      if (user.admin_role_id === "SuperAdmin") {
-        navigate("/superadmin/");
-      } else if (user.vendor_role_id === "Vendor") {
-        navigate("/vendor/")
-      } else if (user.admin_role_id === "Admin") {
-        navigate("/admin/");
-      } else {
-        navigate("/");
-      }
-    }
-  }, []);
-  
-  async function handleSubmit(e) {
-    e.preventDefault();
-    if (!email || !password || !passConfirm) {
-      toast.error("Please fill out all fields.", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      return;
-    } else if (password !== passConfirm) {
-      toast.error("Passwords do not match. Please try again.", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      return;
-    }
->>>>>>> bbc1b58bb257d523ac9e14cfa967f6891aba95ff
 
     useEffect(() => {
         const userInfo = localStorage.getItem('user-info');
