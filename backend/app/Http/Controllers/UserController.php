@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Address;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 
@@ -143,6 +144,53 @@ class UserController extends Controller
         // Return a success response
         return response()->json(['success' => true, 'message' => 'Address saved successfully!', 'address' => $address], 201);
     }
+
+
+    public function getNotifications(Request $request)
+    {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'user_id' => 'required|integer|exists:users,user_id',
+        ]);
+
+        // Retrieve notifications for the specified user
+        $notifications = Notification::where('user_id', $validatedData['user_id'])->get();
+
+        // Return the notifications in a response
+        return response()->json([
+            'notifications' => $notifications,
+        ], 200);
+    }
+
+    public function deleteNotification(Request $request)
+    {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'user_id' => 'required|integer',
+            'notification_id' => 'required|integer',
+        ]);
+        // Find the notification
+        $notification = Notification::where('notification_id', $validatedData['notification_id'])
+        ->where('user_id', $validatedData['user_id'])
+        ->first();
+
+        // Check if the notification exists
+        if (!$notification) {
+            return response()->json([
+                'message' => 'Notification not found or does not belong to the user.',
+            ], 404);
+        }
+
+        // Delete the notification
+        $notification->delete();
+
+        // Return a response
+        return response()->json([
+            'message' => 'Notification deleted successfully.',
+        ], 200);
+    }
+
+   
 
 
 }

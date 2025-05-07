@@ -17,6 +17,7 @@ use App\Models\Cart;
 use App\Models\Category;
 use App\Models\SubCategory; 
 use App\Models\Orders;
+use App\Models\Notification;
 
 class VendorController extends Controller
 {
@@ -517,5 +518,75 @@ public function updateorderstatus(Request $request)
     }
     
 
+
+    public function addNotification(Request $request)
+    {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'notification_text' => 'required|string|max:255',
+            'user_id' => 'required|integer|exists:users,user_id',
+            'vendor_id' => 'required|integer|exists:vendors,vendor_id',
+            
+        ]);
+
+        // Create a new notification
+        $notification = Notification::create($validatedData);
+
+        // Return a response (you can customize the response as needed)
+        return response()->json([
+            'message' => 'Notification added successfully',
+            'notification' => $notification,
+        ], 201);
+    }
+
+
+    public function getNotifications(Request $request)
+    {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'admin_id' => 'required|integer|exists:users,user_id',
+            'vendor_id' => 'required|integer|exists:vendors,vendor_id',
+        ]);
+
+        // Retrieve notifications for the specified user
+        $notifications = Notification::where('admin_id', $validatedData['admin_id'])
+        ->where('vendor_id', $validatedData['vendor_id'])->
+        get();
+
+        // Return the notifications in a response
+        return response()->json([
+            'notifications' => $notifications,
+        ], 200);
+    }
+
+
+
+    public function deleteNotification(Request $request)
+    {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'vendor_id' => 'required|integer',
+            'notification_id' => 'required|integer',
+        ]);
+        // Find the notification
+        $notification = Notification::where('notification_id', $validatedData['notification_id'])
+        ->where('vendor_id', $validatedData['vendor_id'])
+        ->first();
+
+        // Check if the notification exists
+        if (!$notification) {
+            return response()->json([
+                'message' => 'Notification not found or does not belong to the user.',
+            ], 404);
+        }
+
+        // Delete the notification
+        $notification->delete();
+
+        // Return a response
+        return response()->json([
+            'message' => 'Notification deleted successfully.',
+        ], 200);
+    }
 
 }

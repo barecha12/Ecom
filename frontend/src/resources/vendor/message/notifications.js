@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from "react";
-import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, FaBell, } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, FaTrash } from "react-icons/fa";
 import { Container, Row, Col, Card, ListGroup, Button, Modal, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
@@ -13,12 +13,18 @@ function Notifications() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [notifications, setNotifications] = useState([
+    { id: 1, message: "Your order has been shipped.", time: "10 minutes ago" },
+    { id: 2, message: "You have a new message from support.", time: "1 hour ago" },
+    { id: 3, message: "Your profile has been updated.", time: "2 hours ago" },
+    { id: 4, message: "New product added to your favorites.", time: "3 hours ago" },
+  ]);
+  
   const navigate = useNavigate();
 
-  
   const defaultFontSize = 'medium';
   const defaultFontColor = '#000000';
-  const defaultLanguage = 'english'; // Default language
+  const defaultLanguage = 'english';
 
   const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
   const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
@@ -33,10 +39,8 @@ function Notifications() {
     localStorage.setItem('fontColor', fontColor);
     localStorage.setItem('language', language);
 
-    // Update content based on selected language
     setContent(Translation[language]);
   }, [fontSize, fontColor, language]);
-  
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -72,19 +76,9 @@ function Notifications() {
     return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   };
 
-  const users = [
-    { id: 1, name: "John Doe", email: "john@example.com", lastMessage: "How can I track my order?" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", lastMessage: "Can I cancel my order?" },
-    { id: 3, name: "Alice Johnson", email: "alice@example.com", lastMessage: "When will my product ship?" },
-    { id: 4, name: "Bob Brown", email: "bob@example.com", lastMessage: "I need a refund." },
-  ];
-
-  const notifications = [
-    { id: 1, message: "Your order has been shipped.", time: "10 minutes ago" },
-    { id: 2, message: "You have a new message from support.", time: "1 hour ago" },
-    { id: 3, message: "Your profile has been updated.", time: "2 hours ago" },
-    { id: 4, message: "New product added to your favorites.", time: "3 hours ago" },
-  ];
+  const handleDeleteNotification = (id) => {
+    setNotifications(notifications.filter(notification => notification.id !== id));
+  };
 
   function logout() {
     localStorage.clear();
@@ -98,11 +92,8 @@ function Notifications() {
     });
     setTimeout(() => {
       navigate("/vendor/login");
-    }, 1000); // Delay the navigation for 3 seconds
+    }, 1000);
   }
-
-
-
 
   return (
     <div className="dashboard-wrapper">
@@ -153,7 +144,7 @@ function Notifications() {
             <ul className="dropdown-menu custom-dropdown-menu">
               <li><a href="/vendor/user-messages" className="dropdown-item-vendor">User Message</a></li>
               <li><a href="/vendor/admin-messages" className="dropdown-item-vendor">Admin Message</a></li>
-              <li><a href="/vendor/review-messages " className="dropdown-item-vendor">Review Message</a></li>
+              <li><a href="/vendor/review-messages" className="dropdown-item-vendor">Review Message</a></li>
               <li><a href="/vendor/notifications" className="dropdown-item-vendor">Notification</a></li>
             </ul>
           )}
@@ -186,15 +177,24 @@ function Notifications() {
                 </Card.Header>
                 <Card.Body>
                   <ListGroup>
-                    {notifications.map(notification => (
-                      <ListGroup.Item key={notification.id} className="notification-item">
-                        <div>
-                          <strong>{notification.message}</strong>
-                          <br />
-                          <small className="text-muted">{notification.time}</small>
-                        </div>
+                    {notifications.length === 0 ? (
+                      <ListGroup.Item className="text-center">
+                        <strong>No notifications available.</strong>
                       </ListGroup.Item>
-                    ))}
+                    ) : (
+                      notifications.map(notification => (
+                        <ListGroup.Item key={notification.id} className="notification-item d-flex justify-content-between align-items-center text-center">
+                          <div className="flex-grow-1">
+                            <strong>{notification.message}</strong>
+                            <br />
+                            <small className="text-muted">{notification.time}</small>
+                          </div>
+                          <Button variant="link" onClick={() => handleDeleteNotification(notification.id)}>
+                            <FaTrash />
+                          </Button>
+                        </ListGroup.Item>
+                      ))
+                    )}
                   </ListGroup>
                 </Card.Body>
               </Card>

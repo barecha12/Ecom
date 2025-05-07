@@ -93,3 +93,22 @@ Route::post('/superadmin/addadmins', [AdminController::class, 'addAdmins']);
 
 
 
+
+Route::post('/admin/addnotification', [AdminController::class, 'addNotification']);//done
+Route::post('/getnotifications', [UserController::class, 'getNotifications']);//done
+Route::post('/deletenotification', [UserController::class, 'deleteNotification']);//done
+
+Route::post('/vendor/getnotifications', [VendorController::class, 'getNotifications']);//done
+Route::post('/vendor/deletenotification', [VendorController::class, 'deleteNotification']);//done
+Route::post('/vendor/addnotification', [VendorController::class, 'addNotification']);//done
+
+
+Route::get('/admin/listadmins', [AdminController::class, 'listadmins']);//done
+
+
+Route::post('/admin/changeuserstatusadmin', [AdminController::class, 'changeuserstatusadmin']);//done
+
+
+
+
+

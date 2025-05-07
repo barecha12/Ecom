@@ -209,7 +209,7 @@ return (
                 {
                   localStorage.getItem('user-info') ? (
                     <>
-                      <li><a className="dropdown-item" href="/orderditems">Orders</a></li>
+                      <li><a className="dropdown-item" href="/ordereditems">Orders</a></li>
                       <li><a className="dropdown-item" href="/settings">Setting</a></li>
                       
                       <li><a className="dropdown-item" href="/notification">Notification</a></li>
