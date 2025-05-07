@@ -14,7 +14,6 @@ const LoginVendro = () => {
 
     const navigate = useNavigate();
 
-<<<<<<< HEAD
     useEffect(() => {
         const vendorInfo = localStorage.getItem("vendor-info");
         const userInfo = localStorage.getItem("user-info");
@@ -42,51 +41,6 @@ const LoginVendro = () => {
             navigate("/admin/");
         }
     }, [navigate]);
-=======
-  
-  const defaultFontSize = 'medium';
-  const defaultFontColor = '#000000';
-  const defaultLanguage = 'english'; // Default language
-
-  const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
-  const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
-  const [language, setLanguage] = useState(() => localStorage.getItem('language') || defaultLanguage);
-  const [content, setContent] = useState(Translation[language]);
-
-  useEffect(() => {
-    document.documentElement.style.setProperty('--font-size', fontSize);
-    document.documentElement.style.setProperty('--font-color', fontColor);
-    
-    localStorage.setItem('fontSize', fontSize);
-    localStorage.setItem('fontColor', fontColor);
-    localStorage.setItem('language', language);
-
-    // Update content based on selected language
-    setContent(Translation[language]);
-  }, [fontSize, fontColor, language]);
-  
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const vendorInfo = localStorage.getItem("vendor-info");
-    const userInfo = localStorage.getItem("user-info");
-    const adminInfo = localStorage.getItem("admin-info");
-    if (vendorInfo) {
-      const vendor = JSON.parse(vendorInfo);
-      //status check
-      if (vendor.status === "Pending") {
-        navigate("/underreview/");
-      } else if (vendor.status === "Rejected") {
-        navigate("/vendor-info/");
-      } else if (vendor.status === "UnVerified") {
-        navigate("/vendor-info/");
-      } else if (vendor.status === "Suspended") {
-        navigate("/suspend/");
-      } else {
-        navigate("/vendor/");
-      }
->>>>>>> bbc1b58bb257d523ac9e14cfa967f6891aba95ff
 
     const validateEmail = (email) => {
         const allowedDomains = ["@gmail.com", "@hotmail.com", "@outlook.com", "@yahoo.com", "@icloud.com"];
