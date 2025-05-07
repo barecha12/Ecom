@@ -18,7 +18,8 @@ use App\Models\Category;
 use App\Models\SubCategory; 
 use App\Models\Orders;
 use App\Models\Notification;
-
+use App\Models\Review;
+use App\Models\User;
 class VendorController extends Controller
 {
 
@@ -539,26 +540,23 @@ public function updateorderstatus(Request $request)
         ], 201);
     }
 
-
     public function getNotifications(Request $request)
     {
         // Validate the incoming request data
         $validatedData = $request->validate([
-            'admin_id' => 'required|integer|exists:users,user_id',
             'vendor_id' => 'required|integer|exists:vendors,vendor_id',
         ]);
-
-        // Retrieve notifications for the specified user
-        $notifications = Notification::where('admin_id', $validatedData['admin_id'])
-        ->where('vendor_id', $validatedData['vendor_id'])->
-        get();
-
+    
+        // Retrieve notifications for the specified vendor where admin_id is not null
+        $notifications = Notification::where('vendor_id', $validatedData['vendor_id'])
+            ->whereNotNull('admin_id') // Check if admin_id is not null
+            ->get();
+    
         // Return the notifications in a response
         return response()->json([
             'notifications' => $notifications,
         ], 200);
     }
-
 
 
     public function deleteNotification(Request $request)
@@ -588,5 +586,38 @@ public function updateorderstatus(Request $request)
             'message' => 'Notification deleted successfully.',
         ], 200);
     }
+
+
+public function listproduct(Request $request){
+    $validatedData = $request->validate([
+        'vendor_id' => 'required|integer',
+    ]);
+
+    $products = Product::where('vendor_id', $validatedData['vendor_id'])
+        ->select(
+            'product_id',
+            'product_name',
+        )
+        ->get();
+
+    return response()->json($products);
+}
+
+public function listreview(Request $request) {
+    $validatedData = $request->validate([
+        'product_id' => 'required|integer',
+    ]);
+
+    $reviews = Review::where('product_id', $validatedData['product_id'])
+        ->with('user:user_id,name') // Fetching the user with only id and name
+        ->select('review_txt', 'rate', 'created_at', 'user_id') // Include user_id for reference
+        ->get();
+
+    return response()->json([
+        'success' => true,
+        'data' => $reviews,
+    ]);
+}
+
 
 }

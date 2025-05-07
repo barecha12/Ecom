@@ -1,6 +1,6 @@
-import React, { useState,useEffect } from "react";
-import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, FaUserCircle, } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { FaBars, FaChartLine, FaBox, FaShoppingCart, FaComments, FaUser, FaUserCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import { Container, Row, Col, Card, ListGroup, Button, Modal } from "react-bootstrap";
 import Translation from "../../translations/lang.json";
@@ -11,12 +11,12 @@ function ReviewMessages() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
-  
   const defaultFontSize = 'medium';
   const defaultFontColor = '#000000';
-  const defaultLanguage = 'english'; // Default language
+  const defaultLanguage = 'english';
 
   const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || defaultFontSize);
   const [fontColor, setFontColor] = useState(() => localStorage.getItem('fontColor') || defaultFontColor);
@@ -26,15 +26,36 @@ function ReviewMessages() {
   useEffect(() => {
     document.documentElement.style.setProperty('--font-size', fontSize);
     document.documentElement.style.setProperty('--font-color', fontColor);
-    
+
     localStorage.setItem('fontSize', fontSize);
     localStorage.setItem('fontColor', fontColor);
     localStorage.setItem('language', language);
 
-    // Update content based on selected language
     setContent(Translation[language]);
   }, [fontSize, fontColor, language]);
-  
+
+  useEffect(() => {
+    const vendorInfo = JSON.parse(localStorage.getItem("vendor-info"));
+    const vendorId = vendorInfo ? vendorInfo.vendor_id : null;
+
+    if (vendorId) {
+      // Fetch products from the API
+      fetch('http://localhost:8000/api/vendor/listproduct', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ vendor_id: vendorId })
+      })
+        .then(response => response.json())
+        .then(data => {
+          setProducts(data);
+        })
+        .catch(error => {
+          console.error('Error fetching products:', error);
+        });
+    }
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -46,6 +67,25 @@ function ReviewMessages() {
 
   const handleShow = (product) => {
     setSelectedProduct(product);
+    // Fetch reviews for the selected product
+    fetch('http://localhost:8000/api/vendor/listreview', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ product_id: product.product_id })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          setSelectedProduct(prev => ({ ...prev, reviews: data.data }));
+        } else {
+          setSelectedProduct(prev => ({ ...prev, reviews: [] })); // No reviews found
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching reviews:', error);
+      });
     setShowModal(true);
   };
 
@@ -53,40 +93,6 @@ function ReviewMessages() {
     setShowModal(false);
     setSelectedProduct(null);
   };
-
-  const products = [
-    {
-      id: 1,
-      name: "Product A",
-      reviews: [
-        { reviewer: "John Doe", comment: "Great product!", rating: 5, time: "10:30 AM" },
-        { reviewer: "Jane Smith", comment: "Good value for money.", rating: 4, time: "11:15 AM" },
-      ],
-    },
-    {
-      id: 2,
-      name: "Product B",
-      reviews: [
-        { reviewer: "Alice Johnson", comment: "Highly recommend it!", rating: 5, time: "9:00 AM" },
-        { reviewer: "Bob Brown", comment: "Not what I expected.", rating: 2, time: "10:00 AM" },
-      ],
-    },
-    {
-      id: 3,
-      name: "Product C",
-      reviews: [
-        { reviewer: "Charlie Green", comment: "Fantastic quality!", rating: 5, time: "2:00 PM" },
-      ],
-    },
-    {
-      id: 4,
-      name: "Product D",
-      reviews: [
-        { reviewer: "Diana Prince", comment: "Will buy again!", rating: 4, time: "3:30 PM" },
-        { reviewer: "Eve Adams", comment: "Satisfactory.", rating: 3, time: "4:15 PM" },
-      ],
-    },
-  ];
 
   function logout() {
     localStorage.clear();
@@ -100,10 +106,8 @@ function ReviewMessages() {
     });
     setTimeout(() => {
       navigate("/vendor/login");
-    }, 1000); // Delay the navigation for 3 seconds
+    }, 1000);
   }
-
-
 
   return (
     <div className="dashboard-wrapper">
@@ -180,13 +184,7 @@ function ReviewMessages() {
 
         <Container fluid>
           <Row>
-            <Col
-              lg={10}
-              className="p-4 d-flex justify-content-center align-items-center"
-              style={{
-                width: '100%',
-              }}
-            >
+            <Col lg={10} className="p-4 d-flex justify-content-center align-items-center" style={{ width: '100%' }}>
               <Card style={{ width: '80%', maxWidth: '1200px' }}>
                 <Card.Header>
                   <h4 className="text-center">Product Reviews</h4>
@@ -194,9 +192,9 @@ function ReviewMessages() {
                 <Card.Body>
                   <ListGroup>
                     {products.map(product => (
-                      <ListGroup.Item key={product.id} className="d-flex justify-content-between align-items-center">
+                      <ListGroup.Item key={product.product_id} className="d-flex justify-content-between align-items-center">
                         <div>
-                          <strong>{product.name}</strong>
+                          <strong>{product.product_name}</strong>
                         </div>
                         <Button variant="outline-primary" size="sm" onClick={() => handleShow(product)}>
                           View Reviews
@@ -212,20 +210,26 @@ function ReviewMessages() {
           {/* Modal for Viewing Reviews */}
           <Modal show={showModal} onHide={handleClose} size="lg">
             <Modal.Header closeButton>
-              <Modal.Title>{selectedProduct ? selectedProduct.name : ''} Reviews</Modal.Title>
+              <Modal.Title>{selectedProduct ? selectedProduct.product_name : ''} Reviews</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <ListGroup>
-                {selectedProduct && selectedProduct.reviews.map((review, index) => (
-                  <ListGroup.Item key={index} className="d-flex align-items-center">
-                    <FaUserCircle className="me-2" size={30} />
-                    <div>
-                      <strong>{review.reviewer}</strong>: {review.comment}
-                      <br />
-                      <small className="text-muted">{review.time} | Rating: {Array(review.rating).fill('⭐')}</small>
-                    </div>
+                {selectedProduct && selectedProduct.reviews && selectedProduct.reviews.length > 0 ? (
+                  selectedProduct.reviews.map((review, index) => (
+                    <ListGroup.Item key={index} className="d-flex align-items-center">
+                      <FaUserCircle className="me-2" size={30} />
+                      <div>
+                        <strong>{review.user.name}</strong>: {review.review_txt}
+                        <br />
+                        <small className="text-muted">{new Date(review.created_at).toLocaleString()} | Rating: {Array(review.rate).fill('⭐')}</small>
+                      </div>
+                    </ListGroup.Item>
+                  ))
+                ) : (
+                  <ListGroup.Item className="text-center">
+                    No reviews available for this product.
                   </ListGroup.Item>
-                ))}
+                )}
               </ListGroup>
             </Modal.Body>
             <Modal.Footer>
