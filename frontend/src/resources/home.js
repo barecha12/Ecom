@@ -285,7 +285,7 @@ return (
                     addToCart(searchlist.product_id);
                   }}
                 >
-                  Add to Cart
+                  {content?.add_to_cart || " Add to Cart"}
                 </button>
               </div>
             </div>
